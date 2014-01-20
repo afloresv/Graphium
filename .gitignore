@@ -1,6 +1,8 @@
 # Compiled source #
 ###################
-*.class
+ve/usb/graphdb/load/*.class
+ve/usb/graphdb/core/*.class
+ve/usb/graphdb/berlin/*.class
 
 # Test directory #
 ##################

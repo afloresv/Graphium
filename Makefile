@@ -5,4 +5,10 @@ LIBS = "./:$(NEO):$(DEX)"
 FLAGS = -source 6 -nowarn -cp
 
 compile:
-	javac $(FLAGS) $(LIBS) *.java
+	javac $(FLAGS) $(LIBS) ve/usb/graphdb/load/*.java
+	javac $(FLAGS) $(LIBS) ve/usb/graphdb/core/*.java
+
+clean:
+	rm -f ve/usb/graphdb/load/*.class
+	rm -f ve/usb/graphdb/core/*.class
+	rm -f ve/usb/graphdb/berlin/*.class
