@@ -1,0 +1,11 @@
+# Compiled source #
+###################
+*.class
+
+# Test directory #
+##################
+tests/
+
+# Other Files #
+###############
+dex.log
