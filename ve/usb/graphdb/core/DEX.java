@@ -55,9 +55,7 @@ public class DEX implements GraphDB {
 			TypeListIterator itEdge = g.findEdgeTypes().iterator();
 			if (!itEdge.hasNext()) {
 				System.err.println("Error: No edge type found.");
-				sess.close();
-				db.close();
-				dex.close();
+				this.close();
 				return;
 			}
 			EdgeType = itEdge.nextType();
