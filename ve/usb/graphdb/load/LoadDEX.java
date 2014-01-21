@@ -71,11 +71,11 @@ public class LoadDEX extends LoadNT {
 
 	public long addNode(int indexType, String value) {
 		long newNode;
-		if (E%100000==0) {
+		E++;
+		if (E % 100000 == 0) {
 			sess.commit();
 			sess.begin();
 		}
-		E++;
 		if (indexType==2) {
 			newNode = g.newNode(NodeType[2]);
 			TextStream valStream = new TextStream(false);
