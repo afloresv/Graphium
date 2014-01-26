@@ -37,9 +37,9 @@ public class ResultBQ01 implements Comparable<ResultBQ01> {
 	}
 
 	@Override
-    public int compareTo(ResultBQ01 other){
-        return this.label.compareTo(other.label);
-    }
+	public int compareTo(ResultBQ01 other){
+		return this.label.compareTo(other.label);
+	}
 
 	public void print() {
 		System.out.println(this.product + " " + this.label);
