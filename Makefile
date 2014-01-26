@@ -7,6 +7,7 @@ FLAGS = -source 6 -nowarn -cp
 compile:
 	javac $(FLAGS) $(LIBS) ve/usb/graphdb/load/*.java
 	javac $(FLAGS) $(LIBS) ve/usb/graphdb/core/*.java
+	javac $(FLAGS) $(LIBS) ve/usb/graphdb/berlin/*.java
 
 clean:
 	rm -f ve/usb/graphdb/load/*.class

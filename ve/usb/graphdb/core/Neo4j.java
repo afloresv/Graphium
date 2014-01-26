@@ -35,10 +35,13 @@ import org.neo4j.tooling.*;
 import org.neo4j.kernel.*;
 import org.neo4j.helpers.collection.*;
 
-public class Neo4j implements GraphDB {
+public abstract class Neo4j implements GraphDB {
 
 	public GraphDatabaseService graphDB;
 	public GlobalGraphOperations globalOP;
+	public IndexManager indexManager;
+	public Index<Node> indexURI, indexNodeID;
+	public RelationshipType relType;
 
 	public Neo4j(String path) {
 		graphDB = new GraphDatabaseFactory().
@@ -47,45 +50,21 @@ public class Neo4j implements GraphDB {
 			setConfig(GraphDatabaseSettings.relationship_auto_indexing, "true").
 			newGraphDatabase();
 		globalOP = GlobalGraphOperations.at(graphDB);
+		indexManager = graphDB.index();
+		indexURI    = indexManager.forNodes(prop[0]);
+		indexNodeID = indexManager.forNodes(prop[1]);
+		relType = globalOP.getAllRelationshipTypes().iterator().next();
 	}
 
 	public void close() {
 		graphDB.shutdown();
 	}
-}
 
-/*
-Iterator<Node> nodeIt = globalOP.getAllNodes().iterator();
-nodeIt.next();
-
-String val;
-Node node;
-int V=0, E=0;
-
-if (nodeIt.hasNext()) {
-	while(nodeIt.hasNext()) {
-		node = nodeIt.next();
-		V++;
-		if (node.hasProperty("URI"))
-			val = "URI | " + (String)node.getProperty("URI");
-		else if (node.hasProperty("NodeID"))
-			val = "NodeID | " + (String)node.getProperty("NodeID");
-		else if (node.hasProperty("Literal"))
-			val = "Literal | " + (String)node.getProperty("Literal");
-		else
-			val = "NOOOOOO";
-		System.out.println(val);
+	public String getAnyProp(Node node) {
+		String res = null;
+		for (int i=0 ; i<3 ; i++)
+			if (node.hasProperty(prop[i]))
+				res = (String)node.getProperty(prop[i]);
+		return res;
 	}
 }
-
-Iterator<Relationship> relIt = globalOP.getAllRelationships().iterator();
-while(relIt.hasNext()) {
-	relIt.next();
-	E++;
-}
-
-System.out.println("Nodes: "+V);
-System.out.println("Edges: "+E);
-
-this.close();
-*/
