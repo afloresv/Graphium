@@ -63,43 +63,34 @@ public class Neo4jQ01 extends Neo4j implements BerlinQuery {
 		Relationship rel;
 		Iterator<Relationship> it;
 
-		nURI = indexURI.get(prop[0],
-			"http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-			+inst[ind][0]).getSingle();
+		nURI = indexURI.get(prop[0],rdf+"type"+inst[ind][0]).getSingle();
 		if (nURI == null) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (rel.getProperty(prop[0]).equals(
-				"http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/productFeature"))
+			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature"))
 				sets[0].add(rel.getStartNode());
 		}
 
-		nURI = indexURI.get(prop[0],
-			"http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/ProductFeature"
-			+inst[ind][1]).getSingle();
+		nURI = indexURI.get(prop[0],bsbminst+"ProductType"+inst[ind][1]).getSingle();
 		if (nURI == null) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
 			nProd = rel.getStartNode();
-			if (rel.getProperty(prop[0]).equals(
-				"http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/productFeature")
+			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature")
 				&& sets[0].contains(nProd))
 				sets[1].add(nProd);
 		}
 		sets[0].clear();
 
-		nURI = indexURI.get(prop[0],
-			"http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/ProductFeature"
-			+inst[ind][2]).getSingle();
+		nURI = indexURI.get(prop[0],bsbminst+"ProductType"+inst[ind][2]).getSingle();
 		if (nURI == null) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
 			nProd = rel.getStartNode();
-			if (rel.getProperty(prop[0]).equals(
-				"http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/productFeature")
+			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature")
 				&& sets[1].contains(nProd))
 				sets[0].add(nProd);
 		}
@@ -115,10 +106,9 @@ public class Neo4jQ01 extends Neo4j implements BerlinQuery {
 			while (it.hasNext()) {
 				rel = it.next();
 				temp = (String)rel.getProperty(prop[0]);
-				if (temp.equals("http://www.w3.org/2000/01/rdf-schema#label"))
+				if (temp.equals(rdfs+"label"))
 					label = getAnyProp(rel.getEndNode());
-				else if (temp.equals(
-					"http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/productPropertyNumeric1"))
+				else if (temp.equals(bsbm+"productPropertyNumeric1"))
 					value = (String)rel.getEndNode().getProperty(prop[2]);
 			}
 			
