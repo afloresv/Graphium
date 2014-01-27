@@ -26,15 +26,15 @@ import com.sparsity.dex.gdb.*;
 
 public abstract class DEX implements GraphDB {
 
-	private DexConfig cfg;
-	private Dex dex;
-	private Database db;
-	private Session sess;
-	private com.sparsity.dex.gdb.Graph g;
-	private int[] NodeType = new int[4];
-	private int[] AttrType = new int[6];
-	private int   EdgeType;
-	private String licenceDEX = "46YMV-NFXTZ-GCG8K-QZ8ME";
+	public DexConfig cfg;
+	public Dex dex;
+	public Database db;
+	public Session sess;
+	public com.sparsity.dex.gdb.Graph g;
+	public int[] NodeType = new int[3];
+	public int[] AttrType = new int[6];
+	public int   EdgeType;
+	public String licenceDEX = "46YMV-NFXTZ-GCG8K-QZ8ME";
 
 	public DEX(String path) {
 		try {
@@ -59,11 +59,9 @@ public abstract class DEX implements GraphDB {
 				return;
 			}
 			EdgeType = itEdge.nextType();
-			AttrType[5] = g.findAttribute(EdgeType, prop[5]);
-		} catch (FileNotFoundException e){
+			AttrType[5] = g.findAttribute(EdgeType, prop[0]);
+		} catch (FileNotFoundException e) {
 			System.err.println("Error: " + e.getMessage());
-		} finally {
-			this.close();
 		}
 	}
 
@@ -72,48 +70,24 @@ public abstract class DEX implements GraphDB {
 		db.close();
 		dex.close();
 	}
-}
 
-/*
-Value value = new Value();
-for (int i=0 ; i<3 ; i++) {
-	Objects objNodes = g.select(NodeType[i]);
-	ObjectsIterator it = objNodes.iterator();
-	while (it.hasNext()) {
-		V++;
-		long NodeID = it.next();
-		if (i==2) {
-			TextStream valStream = g.getAttributeText(NodeID, AttrType[i]);
-			if (!valStream.isNull()) {
-				int read;
-				StringBuffer str = new StringBuffer();
-				do {
-					char[] buff = new char[10];
-					read = valStream.read(buff, 10);
-					str.append(buff, 0, read);
+	public String getAnyProp(long node) {
+		String res = null;
+		int ntype = g.getObjectType(node);
+		for (int i=0 ; i<3 ; i++) {
+			if (NodeType[i]==ntype) {
+				if (i==2) {
+					TextStream ts = g.getAttributeText(node,AttrType[i]);
+					char[] buff = new char[100000];
+					ts.read(buff,100000);
+					ts.close();
+					res = (new String(buff)).trim();
+				} else {
+					res = g.getAttribute(node,AttrType[i]).getString();
 				}
-				while (read > 0);
-				System.out.println(prop[i]+" | "+str);
+				break;
 			}
-			valStream.close();
-		} else {
-			g.getAttribute(NodeID, AttrType[i], value);
-			System.out.println(prop[i]+" | "+value.getString());
 		}
+		return res;
 	}
-	objNodes.close();
-	it.close();
 }
-
-Objects objEdges = g.select(EdgeType);
-ObjectsIterator it = objEdges.iterator();
-while (it.hasNext()) {
-	it.next();
-	E++;
-}
-objEdges.close();
-it.close();
-
-System.out.println("Nodes: "+V);
-System.out.println("Edges: "+E);
-*/

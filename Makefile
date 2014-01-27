@@ -2,12 +2,12 @@ NEO = lib/concurrentlinkedhashmap-lru-1.3.1.jar:lib/neo4j-lucene-index-1.9.jar:l
 DEX = lib/dexjava.jar
 
 LIBS = "./:$(NEO):$(DEX)"
-FLAGS = -source 6 -nowarn -cp
+FLAGS = -source 6 -nowarn -cp $(LIBS)
 
 compile:
-	javac $(FLAGS) $(LIBS) ve/usb/graphdb/load/*.java
-	javac $(FLAGS) $(LIBS) ve/usb/graphdb/core/*.java
-	javac $(FLAGS) $(LIBS) ve/usb/graphdb/berlin/*.java
+	javac $(FLAGS) ve/usb/graphdb/load/*.java
+	javac $(FLAGS) ve/usb/graphdb/core/*.java
+	javac $(FLAGS) ve/usb/graphdb/berlin/*.java
 
 clean:
 	rm -f ve/usb/graphdb/load/*.class

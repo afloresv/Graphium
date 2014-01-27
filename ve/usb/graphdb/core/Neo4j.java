@@ -62,9 +62,12 @@ public abstract class Neo4j implements GraphDB {
 
 	public String getAnyProp(Node node) {
 		String res = null;
-		for (int i=0 ; i<3 ; i++)
-			if (node.hasProperty(prop[i]))
+		for (int i=0 ; i<3 ; i++) {
+			if (node.hasProperty(prop[i])) {
 				res = (String)node.getProperty(prop[i]);
+				break;
+			}
+		}
 		return res;
 	}
 }

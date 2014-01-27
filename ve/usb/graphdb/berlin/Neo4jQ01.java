@@ -49,7 +49,7 @@ public class Neo4jQ01 extends Neo4j implements BerlinQuery {
 
 	public static void main(String args[]) {
 		Neo4jQ01 testQ = new Neo4jQ01(args[0]);
-		testQ.runQuery(Integer.parseInt(args[0]));
+		testQ.runQuery(Integer.parseInt(args[1]));
 		testQ.close();
 	}
 
@@ -63,16 +63,16 @@ public class Neo4jQ01 extends Neo4j implements BerlinQuery {
 		Relationship rel;
 		Iterator<Relationship> it;
 
-		nURI = indexURI.get(prop[0],rdf+"type"+inst[ind][0]).getSingle();
+		nURI = indexURI.get(prop[0],bsbminst+"ProductType"+inst[ind][0]).getSingle();
 		if (nURI == null) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature"))
+			if (rel.getProperty(prop[0]).equals(rdf+"type"))
 				sets[0].add(rel.getStartNode());
 		}
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductType"+inst[ind][1]).getSingle();
+		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][1]).getSingle();
 		if (nURI == null) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
@@ -84,7 +84,7 @@ public class Neo4jQ01 extends Neo4j implements BerlinQuery {
 		}
 		sets[0].clear();
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductType"+inst[ind][2]).getSingle();
+		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][2]).getSingle();
 		if (nURI == null) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
@@ -109,11 +109,13 @@ public class Neo4jQ01 extends Neo4j implements BerlinQuery {
 				if (temp.equals(rdfs+"label"))
 					label = getAnyProp(rel.getEndNode());
 				else if (temp.equals(bsbm+"productPropertyNumeric1"))
-					value = (String)rel.getEndNode().getProperty(prop[2]);
+					value = getAnyProp(rel.getEndNode());
 			}
-			
-			if (label!=null && value!=null && Integer.parseInt(value)>inst[ind][3])
-				results.add(new ResultBQ01(getAnyProp(nProd),label));
+
+			try {
+				if (label!=null && value!=null && Integer.parseInt(value)>inst[ind][3])
+					results.add(new ResultBQ01(getAnyProp(nProd),label));
+			} catch (NumberFormatException nfe) {}
 		}
 
 		// ORDER BY ?label

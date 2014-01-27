@@ -61,7 +61,7 @@ public class LoadDEX extends LoadNT {
 					DataType.String, AttributeKind.Basic);
 
 			EdgeType = g.newEdgeType(propString[5],true,true);
-			AttrType[5] = g.newAttribute(EdgeType, propString[5],
+			AttrType[5] = g.newAttribute(EdgeType, propString[0],
 					DataType.String, AttributeKind.Indexed);
 
 		} catch (FileNotFoundException e){
