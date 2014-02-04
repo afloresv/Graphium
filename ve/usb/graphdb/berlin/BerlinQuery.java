@@ -31,6 +31,7 @@ public interface BerlinQuery {
 	public String bsbm = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/";
 	public String rdfs = "http://www.w3.org/2000/01/rdf-schema#";
 	public String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+	public String dc = "http://purl.org/dc/elements/1.1/";
 	
 	void runQuery(int ind);
 }

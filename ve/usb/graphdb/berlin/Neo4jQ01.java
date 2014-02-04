@@ -97,25 +97,39 @@ public class Neo4jQ01 extends Neo4j implements BerlinQuery {
 
 		ArrayList<ResultBQ01> results = new ArrayList<ResultBQ01>();
 		Iterator<Node> itProd = sets[0].iterator();
-		String label, value, temp;
+		String product, label, value, temp;
 		while (itProd.hasNext()) {
+			HashSet<String>
+				setL = new HashSet<String>(),
+				setV = new HashSet<String>();
+
 			nProd = itProd.next();
 			it = nProd.getRelationships(relType,Direction.OUTGOING).iterator();
-			label = null;
-			value = null;
 			while (it.hasNext()) {
 				rel = it.next();
 				temp = (String)rel.getProperty(prop[0]);
 				if (temp.equals(rdfs+"label"))
-					label = getAnyProp(rel.getEndNode());
+					setL.add(getAnyProp(rel.getEndNode()));
 				else if (temp.equals(bsbm+"productPropertyNumeric1"))
-					value = getAnyProp(rel.getEndNode());
+					setV.add(getAnyProp(rel.getEndNode()));
 			}
 
-			try {
-				if (label!=null && value!=null && Integer.parseInt(value)>inst[ind][3])
-					results.add(new ResultBQ01(getAnyProp(nProd),label));
-			} catch (NumberFormatException nfe) {}
+			product = getAnyProp(nProd);
+			Iterator<String>
+				itL = setL.iterator(),
+				itV = setV.iterator();
+			while (itV.hasNext()) {
+				value = itV.next();
+				try {
+					if (Integer.parseInt(value)>inst[ind][3]) {
+						while (itL.hasNext()) {
+							label = itL.next();
+							results.add(new ResultBQ01(product,label));
+						}
+						break;
+					}
+				} catch (NumberFormatException nfe) {}
+			}
 		}
 
 		// ORDER BY ?label
@@ -124,6 +138,5 @@ public class Neo4jQ01 extends Neo4j implements BerlinQuery {
 		// LIMIT 10
 		for (int i=0 ; i<10 && i<results.size() ; i++)
 			results.get(i).print();
-
 	}
 }
