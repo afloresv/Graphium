@@ -95,28 +95,42 @@ public class DEXQ01 extends DEX implements BerlinQuery {
 
 		ArrayList<ResultBQ01> results = new ArrayList<ResultBQ01>();
 		ObjectsIterator itProd = productSet.iterator();
-		String label, value, temp;
+		String product, label, value, temp;
 		while (itProd.hasNext()) {
+			HashSet<String>
+				setL = new HashSet<String>(),
+				setV = new HashSet<String>();
+
 			nProd = itProd.next();
 			edgeSet = g.explode(nProd,EdgeType,EdgesDirection.Outgoing);
 			it = edgeSet.iterator();
-			label = null;
-			value = null;
 			while (it.hasNext()) {
 				rel = it.next();
 				temp = g.getAttribute(rel,AttrType[5]).getString();
 				if (temp.equals(rdfs+"label"))
-					label = getAnyProp(g.getEdgePeer(rel,nProd));
+					setL.add(getAnyProp(g.getEdgePeer(rel,nProd)));
 				else if (temp.equals(bsbm+"productPropertyNumeric1"))
-					value = getAnyProp(g.getEdgePeer(rel,nProd));
+					setV.add(getAnyProp(g.getEdgePeer(rel,nProd)));
 			}
 			it.close();
 			edgeSet.close();
 
-			try {
-				if (label!=null && value!=null && Integer.parseInt(value)>inst[ind][3])
-					results.add(new ResultBQ01(getAnyProp(nProd),label));
-			} catch (NumberFormatException nfe) {}
+			product = getAnyProp(nProd);
+			Iterator<String>
+				itL = setL.iterator(),
+				itV = setV.iterator();
+			while (itV.hasNext()) {
+				value = itV.next();
+				try {
+					if (Integer.parseInt(value)>inst[ind][3]) {
+						while (itL.hasNext()) {
+							label = itL.next();
+							results.add(new ResultBQ01(product,label));
+						}
+						break;
+					}
+				} catch (NumberFormatException nfe) {}
+			}
 		}
 		itProd.close();
 		productSet.close();
