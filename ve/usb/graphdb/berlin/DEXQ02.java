@@ -22,40 +22,30 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import org.neo4j.graphdb.*;
-import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexManager;
-import org.neo4j.graphdb.factory.*;
-import org.neo4j.graphdb.traversal.*;
-import org.neo4j.unsafe.batchinsert.*;
-import org.neo4j.index.lucene.unsafe.batchinsert.LuceneBatchInserterIndexProvider;
-import org.neo4j.cypher.javacompat.*;
-import org.neo4j.tooling.*;
-import org.neo4j.kernel.*;
-import org.neo4j.helpers.collection.*;
+import com.sparsity.dex.gdb.*;
 
 import ve.usb.graphdb.core.*;
 
-public class Neo4jQ02 extends Neo4j implements BerlinQuery {
+public class DEXQ02 extends DEX implements BerlinQuery {
 
 	int[] inst = {22652};
 
-	public Neo4jQ02(String path) {
+	public DEXQ02(String path) {
 		super(path);
 	}
 
 	public static void main(String args[]) {
-		Neo4jQ02 testQ = new Neo4jQ02(args[0]);
+		DEXQ02 testQ = new DEXQ02(args[0]);
 		testQ.runQuery(Integer.parseInt(args[1]));
 		testQ.close();
 	}
 
 	public void runQuery(int ind) {
 
-		Node xNode;
-		Relationship rel;
-		Iterator<Relationship> it, it2;
+		long xNode, vNode, rel, rel2;
+		Value v = new Value();
+		Objects setEdge, setEdge2;
+		ObjectsIterator it, it2;
 		String relStr, nodeStr;
 
 		HashSet<String>
@@ -72,14 +62,16 @@ public class Neo4jQ02 extends Neo4j implements BerlinQuery {
 			pPT5 = new HashSet<String>(),
 			pPN4 = new HashSet<String>();
 
-		xNode = indexURI.get(prop[0],
-			bsbminst+"dataFromProducer458/Product"+inst[ind]).getSingle();
-		if (xNode == null) return;
-		it = xNode.getRelationships(relType,Direction.OUTGOING).iterator();
+		xNode = g.findObject(AttrType[0], v.setString(bsbminst
+			+"dataFromProducer458/Product"+inst[ind]));
+		if (xNode == Objects.InvalidOID) return;
+		setEdge = g.explode(xNode,EdgeType,EdgesDirection.Outgoing);
+		it = setEdge.iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = (String)rel.getProperty(prop[0]);
-			nodeStr = getAnyProp(rel.getEndNode());
+			relStr = g.getAttribute(rel,AttrType[5]).getString();
+			vNode = g.getEdgePeer(rel,xNode);
+			nodeStr = getAnyProp(vNode);
 
 			if (relStr.equals(rdfs+"label")) {
 				// ?x rdfs:label ?label .
@@ -92,36 +84,42 @@ public class Neo4jQ02 extends Neo4j implements BerlinQuery {
 				// ?p rdfs:label ?producer .
 				// ?x dc:publisher ?p .
 				boolean found = false;
-				it2 = rel.getEndNode().getRelationships(
-					relType,Direction.INCOMING).iterator();
+				setEdge2 = g.explode(vNode,EdgeType,EdgesDirection.Ingoing);
+				it2 = setEdge2.iterator();
 				while (!found && it2.hasNext()) {
-					rel = it2.next();
-					if (rel.getProperty(prop[0]).equals(dc+"publisher")
-						&& rel.getStartNode().equals(xNode))
+					rel2 = it2.next();
+					if (g.getAttribute(rel2,AttrType[5]).getString().equals(dc+"publisher")
+						&& g.getEdgePeer(rel2,vNode) == xNode)
 						found = true;
 				}
+				it2.close();
+				setEdge2.close();
 				if (!found) continue;
-				it2 = rel.getEndNode().getRelationships(
-					relType,Direction.OUTGOING).iterator();
+				setEdge2 = g.explode(vNode,EdgeType,EdgesDirection.Outgoing);
+				it2 = setEdge2.iterator();
 				while (it2.hasNext()) {
-					rel = it2.next();
-					if (rel.getProperty(prop[0]).equals(rdfs+"label")) {
-						prS.add(getAnyProp(rel.getEndNode()));
+					rel2 = it2.next();
+					if (g.getAttribute(rel2,AttrType[5]).getString().equals(rdfs+"label")) {
+						prS.add(getAnyProp(g.getEdgePeer(rel2,vNode)));
 						break;
 					}
 				}
+				it2.close();
+				setEdge2.close();
 			} else if (relStr.equals(bsbm+"productFeature")) {
 				// ?x bsbm:productFeature ?f .
 				// ?f rdfs:label ?productFeature .
-				it2 = rel.getEndNode().getRelationships(
-					relType,Direction.OUTGOING).iterator();
+				setEdge2 = g.explode(vNode,EdgeType,EdgesDirection.Outgoing);
+				it2 = setEdge2.iterator();
 				while (it2.hasNext()) {
-					rel = it2.next();
-					if (rel.getProperty(prop[0]).equals(rdfs+"label")) {
-						pF.add(getAnyProp(rel.getEndNode()));
+					rel2 = it2.next();
+					if (g.getAttribute(rel2,AttrType[5]).getString().equals(rdfs+"label")) {
+						pF.add(getAnyProp(g.getEdgePeer(rel2,vNode)));
 						break;
 					}
 				}
+				it2.close();
+				setEdge2.close();
 			} else if (relStr.equals(bsbm+"productPropertyTextual1")) {
 				// ?x bsbm:productPropertyTextual1 ?propertyTextual1 .
 				pPT1.add(nodeStr);
@@ -148,6 +146,8 @@ public class Neo4jQ02 extends Neo4j implements BerlinQuery {
 				pPN4.add(nodeStr);
 			}
 		}
+		it.close();
+		setEdge.close();
 
 		// Results
 		if (pPT4.size()==0) pPT4.add("");
