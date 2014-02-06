@@ -43,9 +43,9 @@ public class ResultTuple implements Comparable<ResultTuple> {
 	}
 
 	public void print() {
-		String tupleStr = "";
-		for (int i=0, t=elem.length ; i<t ; i++)
-			tupleStr += elem[i]+"\t";
+		String tupleStr = elem[0];
+		for (int i=1, t=elem.length ; i<t ; i++)
+			tupleStr += "\t"+elem[i];
 		System.out.println(tupleStr);
 	}
 }
