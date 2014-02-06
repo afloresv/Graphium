@@ -93,9 +93,9 @@ public class DEXQ01 extends DEX implements BerlinQuery {
 		it.close();
 		edgeSet.close();
 
-		ArrayList<ResultBQ01> results = new ArrayList<ResultBQ01>();
+		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
 		ObjectsIterator itProd = productSet.iterator();
-		String product, label, value, temp;
+		String product, temp;
 		while (itProd.hasNext()) {
 			HashSet<String>
 				setL = new HashSet<String>(),
@@ -116,21 +116,11 @@ public class DEXQ01 extends DEX implements BerlinQuery {
 			edgeSet.close();
 
 			product = getAnyProp(nProd);
-			Iterator<String>
-				itL = setL.iterator(),
-				itV = setV.iterator();
-			while (itV.hasNext()) {
-				value = itV.next();
-				try {
-					if (Integer.parseInt(value)>inst[ind][3]) {
-						while (itL.hasNext()) {
-							label = itL.next();
-							results.add(new ResultBQ01(product,label));
-						}
-						break;
-					}
-				} catch (NumberFormatException nfe) {}
-			}
+			for (String value : setV) { try {
+				if (Integer.parseInt(value)>inst[ind][3])
+					for (String label : setL)
+						results.add(new ResultTuple(1,product,label));
+			} catch (NumberFormatException nfe) {} }
 		}
 		itProd.close();
 		productSet.close();
