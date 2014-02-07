@@ -2,7 +2,9 @@
 ###################
 ve/usb/graphdb/load/*.class
 ve/usb/graphdb/core/*.class
-ve/usb/graphdb/berlin/*.class
+ve/usb/graphdb/berlin/general/*.class
+ve/usb/graphdb/berlin/Neo4j/*.class
+ve/usb/graphdb/berlin/DEX/*.class
 
 # Test directory #
 ##################
