@@ -1,10 +1,10 @@
 # Compiled source #
 ###################
-ve/usb/graphdb/load/*.class
-ve/usb/graphdb/core/*.class
-ve/usb/graphdb/berlin/general/*.class
-ve/usb/graphdb/berlin/Neo4j/*.class
-ve/usb/graphdb/berlin/DEX/*.class
+ve/usb/ldc/graphium/load/*.class
+ve/usb/ldc/graphium/core/*.class
+ve/usb/ldc/graphium/berlin/general/*.class
+ve/usb/ldc/graphium/berlin/Neo4j/*.class
+ve/usb/ldc/graphium/berlin/DEX/*.class
 
 # Test directory #
 ##################

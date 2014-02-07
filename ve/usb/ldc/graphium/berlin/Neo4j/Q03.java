@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.graphdb.berlin.Neo4j;
+package ve.usb.ldc.graphium.berlin.Neo4j;
 
 import java.util.*;
 import java.lang.*;
@@ -35,8 +35,8 @@ import org.neo4j.tooling.*;
 import org.neo4j.kernel.*;
 import org.neo4j.helpers.collection.*;
 
-import ve.usb.graphdb.core.*;
-import ve.usb.graphdb.berlin.general.*;
+import ve.usb.ldc.graphium.core.*;
+import ve.usb.ldc.graphium.berlin.general.*;
 
 public class Q03 extends Neo4j implements BerlinQuery {
 

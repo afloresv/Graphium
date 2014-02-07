@@ -16,36 +16,17 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.graphdb.load;
+package ve.usb.ldc.graphium.core;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public class LoadGraph {
+public interface GraphDB {
 
-	public static void main (String[] args) {
+	public final String[] prop =
+		{"URI","NodeID","Literal","Lang","Type","Predicate"};
 
-		// Checking arguments
-		if (args.length != 3) {
-			System.err.println("Tree arguments needed to CREATE:"
-				+" <GDBM (DEX or Neo4j)> <.nt file> <DB location>");
-			return;
-		}
+	public void close();
 
-		// Load Process Init
-		LoadNT loadProcess;
-		if (args[0].equals("Neo4j"))
-			loadProcess = new LoadNeo4j(args[2]);
-		else if (args[0].equals("DEX"))
-			loadProcess = new LoadDEX(args[2]);
-		else {
-			System.err.println("The GDBM argument (first one)"
-				+" must be \"DEX\" or \"Neo4j\".");
-			return;
-		}
-
-		// Start Load Process
-		loadProcess.start(args[1]);
-	}
 }

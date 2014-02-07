@@ -16,22 +16,36 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.graphdb.berlin.general;
+package ve.usb.ldc.graphium.berlin.general;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import ve.usb.graphdb.core.*;
+import ve.usb.ldc.graphium.core.*;
 
-public interface BerlinQuery {
-	
-	// PREFIX
-	public final String bsbminst = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/";
-	public final String bsbm = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/";
-	public final String rdfs = "http://www.w3.org/2000/01/rdf-schema#";
-	public final String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-	public final String dc = "http://purl.org/dc/elements/1.1/";
-	
-	void runQuery(int ind);
+public class ResultTuple implements Comparable<ResultTuple> {
+	public String[] elem;
+	private int ind;
+
+	public ResultTuple(String ... _elem) {
+		this(0,_elem);
+	}
+
+	public ResultTuple(int _ind, String ... _elem) {
+		this.elem = _elem;
+		this.ind = _ind;
+	}
+
+	@Override
+	public int compareTo(ResultTuple other){
+		return this.elem[ind].compareTo(other.elem[ind]);
+	}
+
+	public void print() {
+		String tupleStr = elem[0];
+		for (int i=1, t=elem.length ; i<t ; i++)
+			tupleStr += "\t"+elem[i];
+		System.out.println(tupleStr);
+	}
 }

@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.graphdb.berlin.Neo4j;
+package ve.usb.ldc.graphium.berlin.Neo4j;
 
 import java.util.*;
 import java.lang.*;
@@ -35,27 +35,26 @@ import org.neo4j.tooling.*;
 import org.neo4j.kernel.*;
 import org.neo4j.helpers.collection.*;
 
-import ve.usb.graphdb.core.*;
-import ve.usb.graphdb.berlin.general.*;
+import ve.usb.ldc.graphium.core.*;
+import ve.usb.ldc.graphium.berlin.general.*;
 
-public class Q04 extends Neo4j implements BerlinQuery {
+public class Q01 extends Neo4j implements BerlinQuery {
 
 	int[][] inst = {
-		{252,897,8047,137,47,93}
+		{477,15422,123,54}
 	};
-	ArrayList<ResultTuple> results;
 
-	public Q04(String path) {
+	public Q01(String path) {
 		super(path);
 	}
 
 	public static void main(String args[]) {
-		Q04 testQ = new Q04(args[0]);
+		Q01 testQ = new Q01(args[0]);
 		testQ.runQuery(Integer.parseInt(args[1]));
 		testQ.close();
 	}
 
-	public void runQuery(int ind, int off) {
+	public void runQuery(int ind) {
 
 		HashSet[] sets = new HashSet[2];
 		sets[0] = new HashSet<Node>();
@@ -86,7 +85,7 @@ public class Q04 extends Neo4j implements BerlinQuery {
 		}
 		sets[0].clear();
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][2+off*2]).getSingle();
+		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][2]).getSingle();
 		if (nURI == null) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
@@ -97,13 +96,13 @@ public class Q04 extends Neo4j implements BerlinQuery {
 				sets[0].add(nProd);
 		}
 
+		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
 		Iterator<Node> itProd = sets[0].iterator();
 		String product, temp;
 		while (itProd.hasNext()) {
 			HashSet<String>
 				setL = new HashSet<String>(),
-				setPT = new HashSet<String>(),
-				setP = new HashSet<String>();
+				setV = new HashSet<String>();
 
 			nProd = itProd.next();
 			it = nProd.getRelationships(relType,Direction.OUTGOING).iterator();
@@ -112,33 +111,23 @@ public class Q04 extends Neo4j implements BerlinQuery {
 				temp = (String)rel.getProperty(prop[0]);
 				if (temp.equals(rdfs+"label"))
 					setL.add(getAnyProp(rel.getEndNode()));
-				else if (temp.equals(bsbm+"productPropertyTextual1"))
-					setPT.add(getAnyProp(rel.getEndNode()));
-				else if (temp.equals(bsbm+"productPropertyNumeric"+(off+1)))
-					setP.add(getAnyProp(rel.getEndNode()));
+				else if (temp.equals(bsbm+"productPropertyNumeric1"))
+					setV.add(getAnyProp(rel.getEndNode()));
 			}
 
 			product = getAnyProp(nProd);
-			for (String value : setP) { try {
-				if (Integer.parseInt(value)>inst[ind][3+2*off])
+			for (String value : setV) { try {
+				if (Integer.parseInt(value)>inst[ind][3])
 					for (String label : setL)
-						for (String propertyTextual : setPT)
-							results.add(new ResultTuple(1,product,label,propertyTextual));
+						results.add(new ResultTuple(1,product,label));
 			} catch (NumberFormatException nfe) {} }
 		}
-	}
-
-	public void runQuery(int ind) {
-
-		results = new ArrayList<ResultTuple>();
-		runQuery(ind,0);
-		runQuery(ind,1);
 
 		// ORDER BY ?label
 		Collections.sort(results);
 
 		// LIMIT 10
-		for (int i=5 ; i<15 && i<results.size() ; i++)
+		for (int i=0 ; i<10 && i<results.size() ; i++)
 			results.get(i).print();
 	}
 }

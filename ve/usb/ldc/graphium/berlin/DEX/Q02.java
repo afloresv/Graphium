@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.graphdb.berlin.DEX;
+package ve.usb.ldc.graphium.berlin.DEX;
 
 import java.util.*;
 import java.lang.*;
@@ -24,8 +24,8 @@ import java.io.*;
 
 import com.sparsity.dex.gdb.*;
 
-import ve.usb.graphdb.core.*;
-import ve.usb.graphdb.berlin.general.*;
+import ve.usb.ldc.graphium.core.*;
+import ve.usb.ldc.graphium.berlin.general.*;
 
 public class Q02 extends DEX implements BerlinQuery {
 

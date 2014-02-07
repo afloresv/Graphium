@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.graphdb.load;
+package ve.usb.ldc.graphium.load;
 
 import java.util.*;
 import java.lang.*;

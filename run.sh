@@ -6,7 +6,7 @@ FLAGS="-Xms4240m -Xmx4240m -XX:PermSize=4240m -XX:MaxPermSize=4240m -XX:-UseGCOv
 
 case $1 in
   "Create")
-  java $FLAGS -classpath $LIBS ve.usb.graphdb.load.LoadGraph $2 $3 $4;;
+  java $FLAGS -classpath $LIBS ve.usb.ldc.graphium.load.LoadGraph $2 $3 $4;;
   "Berlin")
-  java $FLAGS -classpath $LIBS ve.usb.graphdb.berlin.$4.$2 $5 $3;;
+  java $FLAGS -classpath $LIBS ve.usb.ldc.graphium.berlin.$4.$2 $5 $3;;
 esac
