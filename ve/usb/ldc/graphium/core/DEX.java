@@ -99,4 +99,12 @@ public abstract class DEX implements GraphDB {
 	public String getEdgeURI(long rel) {
 		return g.getAttribute(rel,AttrType[5]).getString();
 	}
+
+	public long getStartNode(long rel) {
+		return g.getEdgeData(rel).getTail();
+	}
+
+	public long getEndNode(long rel) {
+		return g.getEdgeData(rel).getHead();
+	}
 }
