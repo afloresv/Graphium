@@ -27,11 +27,11 @@ import ve.usb.graphdb.core.*;
 public interface BerlinQuery {
 	
 	// PREFIX
-	public String bsbminst = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/";
-	public String bsbm = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/";
-	public String rdfs = "http://www.w3.org/2000/01/rdf-schema#";
-	public String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-	public String dc = "http://purl.org/dc/elements/1.1/";
+	public final String bsbminst = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/";
+	public final String bsbm = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/";
+	public final String rdfs = "http://www.w3.org/2000/01/rdf-schema#";
+	public final String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+	public final String dc = "http://purl.org/dc/elements/1.1/";
 	
 	void runQuery(int ind);
 }
