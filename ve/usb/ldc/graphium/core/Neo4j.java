@@ -70,4 +70,13 @@ public abstract class Neo4j implements GraphDB {
 		}
 		return res;
 	}
+
+	public final Node NodeNotFound = null;
+	public Node getNodeFromURI(String strURI) {
+		return indexURI.get(prop[0],strURI).getSingle();
+	}
+
+	public String getEdgeURI(Relationship rel) {
+		return (String)rel.getProperty(prop[0]);
+	}
 }

@@ -90,4 +90,13 @@ public abstract class DEX implements GraphDB {
 		}
 		return res;
 	}
+
+	public final long NodeNotFound = Objects.InvalidOID;
+	public long getNodeFromURI(String strURI) {
+		return g.findObject(AttrType[0], (new Value()).setString(strURI));
+	}
+
+	public String getEdgeURI(long rel) {
+		return g.getAttribute(rel,AttrType[5]).getString();
+	}
 }
