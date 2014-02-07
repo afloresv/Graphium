@@ -16,87 +16,86 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.graphdb.berlin;
+package ve.usb.graphdb.berlin.DEX;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import org.neo4j.graphdb.*;
-import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexManager;
-import org.neo4j.graphdb.factory.*;
-import org.neo4j.graphdb.traversal.*;
-import org.neo4j.unsafe.batchinsert.*;
-import org.neo4j.index.lucene.unsafe.batchinsert.LuceneBatchInserterIndexProvider;
-import org.neo4j.cypher.javacompat.*;
-import org.neo4j.tooling.*;
-import org.neo4j.kernel.*;
-import org.neo4j.helpers.collection.*;
+import com.sparsity.dex.gdb.*;
 
 import ve.usb.graphdb.core.*;
+import ve.usb.graphdb.berlin.general.*;
 
-public class Neo4jQ04 extends Neo4j implements BerlinQuery {
+public class Q04 extends DEX implements BerlinQuery {
 
 	int[][] inst = {
 		{252,897,8047,137,47,93}
 	};
 	ArrayList<ResultTuple> results;
 
-	public Neo4jQ04(String path) {
+	public Q04(String path) {
 		super(path);
 	}
 
 	public static void main(String args[]) {
-		Neo4jQ04 testQ = new Neo4jQ04(args[0]);
+		Q04 testQ = new Q04(args[0]);
 		testQ.runQuery(Integer.parseInt(args[1]));
 		testQ.close();
 	}
 
 	public void runQuery(int ind, int off) {
 
-		HashSet[] sets = new HashSet[2];
-		sets[0] = new HashSet<Node>();
-		sets[1] = new HashSet<Node>();
+		Objects productSet, edgeSet, tempSet;
+		ObjectsIterator it;
+		Value v = new Value();
 
-		Node nURI, nProd;
-		Relationship rel;
-		Iterator<Relationship> it;
+		long nURI, nProd, rel;
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductType"+inst[ind][0]).getSingle();
-		if (nURI == null) return;
-		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
+		nURI = g.findObject(AttrType[0], v.setString(bsbminst+"ProductType"+inst[ind][0]));
+		if (nURI == Objects.InvalidOID) return;
+		edgeSet = g.explode(nURI,EdgeType,EdgesDirection.Ingoing);
+		it = edgeSet.iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (rel.getProperty(prop[0]).equals(rdf+"type"))
-				sets[0].add(rel.getStartNode());
+			if (!g.getAttribute(rel,AttrType[5]).getString().equals(rdf+"type"))
+				edgeSet.remove(rel);
 		}
+		productSet = g.tails(edgeSet);
+		it.close();
+		edgeSet.close();
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][1]).getSingle();
-		if (nURI == null) return;
-		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
+		nURI = g.findObject(AttrType[0], v.setString(bsbminst+"ProductFeature"+inst[ind][1]));
+		if (nURI == Objects.InvalidOID) return;
+		edgeSet = g.explode(nURI,EdgeType,EdgesDirection.Ingoing);
+		it = edgeSet.iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			nProd = rel.getStartNode();
-			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature")
-				&& sets[0].contains(nProd))
-				sets[1].add(nProd);
+			if (!g.getAttribute(rel,AttrType[5]).getString().equals(bsbm+"productFeature"))
+				edgeSet.remove(rel);
 		}
-		sets[0].clear();
+		tempSet = g.tails(edgeSet);
+		productSet.intersection(tempSet);
+		tempSet.close();
+		it.close();
+		edgeSet.close();
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][2+off*2]).getSingle();
-		if (nURI == null) return;
-		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
+		nURI = g.findObject(AttrType[0], v.setString(bsbminst+"ProductFeature"+inst[ind][2+off*2]));
+		if (nURI == Objects.InvalidOID) return;
+		edgeSet = g.explode(nURI,EdgeType,EdgesDirection.Ingoing);
+		it = edgeSet.iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			nProd = rel.getStartNode();
-			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature")
-				&& sets[1].contains(nProd))
-				sets[0].add(nProd);
+			if (!g.getAttribute(rel,AttrType[5]).getString().equals(bsbm+"productFeature"))
+				edgeSet.remove(rel);
 		}
+		tempSet = g.tails(edgeSet);
+		productSet.intersection(tempSet);
+		tempSet.close();
+		it.close();
+		edgeSet.close();
 
-		Iterator<Node> itProd = sets[0].iterator();
+		ObjectsIterator itProd = productSet.iterator();
 		String product, temp;
 		while (itProd.hasNext()) {
 			HashSet<String>
@@ -105,17 +104,20 @@ public class Neo4jQ04 extends Neo4j implements BerlinQuery {
 				setP = new HashSet<String>();
 
 			nProd = itProd.next();
-			it = nProd.getRelationships(relType,Direction.OUTGOING).iterator();
+			edgeSet = g.explode(nProd,EdgeType,EdgesDirection.Outgoing);
+			it = edgeSet.iterator();
 			while (it.hasNext()) {
 				rel = it.next();
-				temp = (String)rel.getProperty(prop[0]);
+				temp = g.getAttribute(rel,AttrType[5]).getString();
 				if (temp.equals(rdfs+"label"))
-					setL.add(getAnyProp(rel.getEndNode()));
+					setL.add(getAnyProp(g.getEdgePeer(rel,nProd)));
 				else if (temp.equals(bsbm+"productPropertyTextual1"))
-					setPT.add(getAnyProp(rel.getEndNode()));
+					setPT.add(getAnyProp(g.getEdgePeer(rel,nProd)));
 				else if (temp.equals(bsbm+"productPropertyNumeric"+(off+1)))
-					setP.add(getAnyProp(rel.getEndNode()));
+					setP.add(getAnyProp(g.getEdgePeer(rel,nProd)));
 			}
+			it.close();
+			edgeSet.close();
 
 			product = getAnyProp(nProd);
 			for (String value : setP) { try {
@@ -125,6 +127,8 @@ public class Neo4jQ04 extends Neo4j implements BerlinQuery {
 							results.add(new ResultTuple(1,product,label,propertyTextual));
 			} catch (NumberFormatException nfe) {} }
 		}
+		itProd.close();
+		productSet.close();
 	}
 
 	public void runQuery(int ind) {

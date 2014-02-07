@@ -16,85 +16,88 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.graphdb.berlin;
+package ve.usb.graphdb.berlin.Neo4j;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import com.sparsity.dex.gdb.*;
+import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.index.IndexHits;
+import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexManager;
+import org.neo4j.graphdb.factory.*;
+import org.neo4j.graphdb.traversal.*;
+import org.neo4j.unsafe.batchinsert.*;
+import org.neo4j.index.lucene.unsafe.batchinsert.LuceneBatchInserterIndexProvider;
+import org.neo4j.cypher.javacompat.*;
+import org.neo4j.tooling.*;
+import org.neo4j.kernel.*;
+import org.neo4j.helpers.collection.*;
 
 import ve.usb.graphdb.core.*;
+import ve.usb.graphdb.berlin.general.*;
 
-public class DEXQ04 extends DEX implements BerlinQuery {
+public class Q04 extends Neo4j implements BerlinQuery {
 
 	int[][] inst = {
 		{252,897,8047,137,47,93}
 	};
 	ArrayList<ResultTuple> results;
 
-	public DEXQ04(String path) {
+	public Q04(String path) {
 		super(path);
 	}
 
 	public static void main(String args[]) {
-		DEXQ04 testQ = new DEXQ04(args[0]);
+		Q04 testQ = new Q04(args[0]);
 		testQ.runQuery(Integer.parseInt(args[1]));
 		testQ.close();
 	}
 
 	public void runQuery(int ind, int off) {
 
-		Objects productSet, edgeSet, tempSet;
-		ObjectsIterator it;
-		Value v = new Value();
+		HashSet[] sets = new HashSet[2];
+		sets[0] = new HashSet<Node>();
+		sets[1] = new HashSet<Node>();
 
-		long nURI, nProd, rel;
+		Node nURI, nProd;
+		Relationship rel;
+		Iterator<Relationship> it;
 
-		nURI = g.findObject(AttrType[0], v.setString(bsbminst+"ProductType"+inst[ind][0]));
-		if (nURI == Objects.InvalidOID) return;
-		edgeSet = g.explode(nURI,EdgeType,EdgesDirection.Ingoing);
-		it = edgeSet.iterator();
+		nURI = indexURI.get(prop[0],bsbminst+"ProductType"+inst[ind][0]).getSingle();
+		if (nURI == null) return;
+		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (!g.getAttribute(rel,AttrType[5]).getString().equals(rdf+"type"))
-				edgeSet.remove(rel);
+			if (rel.getProperty(prop[0]).equals(rdf+"type"))
+				sets[0].add(rel.getStartNode());
 		}
-		productSet = g.tails(edgeSet);
-		it.close();
-		edgeSet.close();
 
-		nURI = g.findObject(AttrType[0], v.setString(bsbminst+"ProductFeature"+inst[ind][1]));
-		if (nURI == Objects.InvalidOID) return;
-		edgeSet = g.explode(nURI,EdgeType,EdgesDirection.Ingoing);
-		it = edgeSet.iterator();
+		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][1]).getSingle();
+		if (nURI == null) return;
+		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (!g.getAttribute(rel,AttrType[5]).getString().equals(bsbm+"productFeature"))
-				edgeSet.remove(rel);
+			nProd = rel.getStartNode();
+			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature")
+				&& sets[0].contains(nProd))
+				sets[1].add(nProd);
 		}
-		tempSet = g.tails(edgeSet);
-		productSet.intersection(tempSet);
-		tempSet.close();
-		it.close();
-		edgeSet.close();
+		sets[0].clear();
 
-		nURI = g.findObject(AttrType[0], v.setString(bsbminst+"ProductFeature"+inst[ind][2+off*2]));
-		if (nURI == Objects.InvalidOID) return;
-		edgeSet = g.explode(nURI,EdgeType,EdgesDirection.Ingoing);
-		it = edgeSet.iterator();
+		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][2+off*2]).getSingle();
+		if (nURI == null) return;
+		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (!g.getAttribute(rel,AttrType[5]).getString().equals(bsbm+"productFeature"))
-				edgeSet.remove(rel);
+			nProd = rel.getStartNode();
+			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature")
+				&& sets[1].contains(nProd))
+				sets[0].add(nProd);
 		}
-		tempSet = g.tails(edgeSet);
-		productSet.intersection(tempSet);
-		tempSet.close();
-		it.close();
-		edgeSet.close();
 
-		ObjectsIterator itProd = productSet.iterator();
+		Iterator<Node> itProd = sets[0].iterator();
 		String product, temp;
 		while (itProd.hasNext()) {
 			HashSet<String>
@@ -103,20 +106,17 @@ public class DEXQ04 extends DEX implements BerlinQuery {
 				setP = new HashSet<String>();
 
 			nProd = itProd.next();
-			edgeSet = g.explode(nProd,EdgeType,EdgesDirection.Outgoing);
-			it = edgeSet.iterator();
+			it = nProd.getRelationships(relType,Direction.OUTGOING).iterator();
 			while (it.hasNext()) {
 				rel = it.next();
-				temp = g.getAttribute(rel,AttrType[5]).getString();
+				temp = (String)rel.getProperty(prop[0]);
 				if (temp.equals(rdfs+"label"))
-					setL.add(getAnyProp(g.getEdgePeer(rel,nProd)));
+					setL.add(getAnyProp(rel.getEndNode()));
 				else if (temp.equals(bsbm+"productPropertyTextual1"))
-					setPT.add(getAnyProp(g.getEdgePeer(rel,nProd)));
+					setPT.add(getAnyProp(rel.getEndNode()));
 				else if (temp.equals(bsbm+"productPropertyNumeric"+(off+1)))
-					setP.add(getAnyProp(g.getEdgePeer(rel,nProd)));
+					setP.add(getAnyProp(rel.getEndNode()));
 			}
-			it.close();
-			edgeSet.close();
 
 			product = getAnyProp(nProd);
 			for (String value : setP) { try {
@@ -126,8 +126,6 @@ public class DEXQ04 extends DEX implements BerlinQuery {
 							results.add(new ResultTuple(1,product,label,propertyTextual));
 			} catch (NumberFormatException nfe) {} }
 		}
-		itProd.close();
-		productSet.close();
 	}
 
 	public void runQuery(int ind) {

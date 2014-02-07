@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.graphdb.berlin;
+package ve.usb.graphdb.berlin.Neo4j;
 
 import java.util.*;
 import java.lang.*;
@@ -36,19 +36,20 @@ import org.neo4j.kernel.*;
 import org.neo4j.helpers.collection.*;
 
 import ve.usb.graphdb.core.*;
+import ve.usb.graphdb.berlin.general.*;
 
-public class Neo4jQ03 extends Neo4j implements BerlinQuery {
+public class Q01 extends Neo4j implements BerlinQuery {
 
 	int[][] inst = {
-		{240,7647,228,156,7616}
+		{477,15422,123,54}
 	};
 
-	public Neo4jQ03(String path) {
+	public Q01(String path) {
 		super(path);
 	}
 
 	public static void main(String args[]) {
-		Neo4jQ03 testQ = new Neo4jQ03(args[0]);
+		Q01 testQ = new Q01(args[0]);
 		testQ.runQuery(Integer.parseInt(args[1]));
 		testQ.close();
 	}
@@ -82,15 +83,26 @@ public class Neo4jQ03 extends Neo4j implements BerlinQuery {
 				&& sets[0].contains(nProd))
 				sets[1].add(nProd);
 		}
+		sets[0].clear();
+
+		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][2]).getSingle();
+		if (nURI == null) return;
+		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
+		while (it.hasNext()) {
+			rel = it.next();
+			nProd = rel.getStartNode();
+			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature")
+				&& sets[1].contains(nProd))
+				sets[0].add(nProd);
+		}
 
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
-		Iterator<Node> itProd = sets[1].iterator();
+		Iterator<Node> itProd = sets[0].iterator();
 		String product, temp;
 		while (itProd.hasNext()) {
 			HashSet<String>
 				setL = new HashSet<String>(),
-				setP1 = new HashSet<String>(),
-				setP3 = new HashSet<String>();
+				setV = new HashSet<String>();
 
 			nProd = itProd.next();
 			it = nProd.getRelationships(relType,Direction.OUTGOING).iterator();
@@ -100,21 +112,14 @@ public class Neo4jQ03 extends Neo4j implements BerlinQuery {
 				if (temp.equals(rdfs+"label"))
 					setL.add(getAnyProp(rel.getEndNode()));
 				else if (temp.equals(bsbm+"productPropertyNumeric1"))
-					setP1.add(getAnyProp(rel.getEndNode()));
-				else if (temp.equals(bsbm+"productPropertyNumeric3"))
-					setP3.add(getAnyProp(rel.getEndNode()));
+					setV.add(getAnyProp(rel.getEndNode()));
 			}
 
 			product = getAnyProp(nProd);
-			for (String p1 : setP1) { try {
-				if (Integer.parseInt(p1)>inst[ind][2]) {
-					for (String p3 : setP3) { try {
-						if (Integer.parseInt(p3)>inst[ind][3]) {
-							for (String label : setL)
-								results.add(new ResultTuple(1,product,label));
-						}
-					} catch (NumberFormatException nfe) {} }
-				}
+			for (String value : setV) { try {
+				if (Integer.parseInt(value)>inst[ind][3])
+					for (String label : setL)
+						results.add(new ResultTuple(1,product,label));
 			} catch (NumberFormatException nfe) {} }
 		}
 

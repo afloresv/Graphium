@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.graphdb.berlin;
+package ve.usb.graphdb.berlin.DEX;
 
 import java.util.*;
 import java.lang.*;
@@ -25,19 +25,20 @@ import java.io.*;
 import com.sparsity.dex.gdb.*;
 
 import ve.usb.graphdb.core.*;
+import ve.usb.graphdb.berlin.general.*;
 
-public class DEXQ03 extends DEX implements BerlinQuery {
+public class Q01 extends DEX implements BerlinQuery {
 
 	int[][] inst = {
-		{240,7647,228,156,7616}
+		{477,15422,123,54}
 	};
 
-	public DEXQ03(String path) {
+	public Q01(String path) {
 		super(path);
 	}
 
 	public static void main(String args[]) {
-		DEXQ03 testQ = new DEXQ03(args[0]);
+		Q01 testQ = new Q01(args[0]);
 		testQ.runQuery(Integer.parseInt(args[1]));
 		testQ.close();
 	}
@@ -78,14 +79,28 @@ public class DEXQ03 extends DEX implements BerlinQuery {
 		it.close();
 		edgeSet.close();
 
+		nURI = g.findObject(AttrType[0], v.setString(bsbminst+"ProductFeature"+inst[ind][2]));
+		if (nURI == Objects.InvalidOID) return;
+		edgeSet = g.explode(nURI,EdgeType,EdgesDirection.Ingoing);
+		it = edgeSet.iterator();
+		while (it.hasNext()) {
+			rel = it.next();
+			if (!g.getAttribute(rel,AttrType[5]).getString().equals(bsbm+"productFeature"))
+				edgeSet.remove(rel);
+		}
+		tempSet = g.tails(edgeSet);
+		productSet.intersection(tempSet);
+		tempSet.close();
+		it.close();
+		edgeSet.close();
+
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
 		ObjectsIterator itProd = productSet.iterator();
 		String product, temp;
 		while (itProd.hasNext()) {
 			HashSet<String>
 				setL = new HashSet<String>(),
-				setP1 = new HashSet<String>(),
-				setP3 = new HashSet<String>();
+				setV = new HashSet<String>();
 
 			nProd = itProd.next();
 			edgeSet = g.explode(nProd,EdgeType,EdgesDirection.Outgoing);
@@ -96,23 +111,16 @@ public class DEXQ03 extends DEX implements BerlinQuery {
 				if (temp.equals(rdfs+"label"))
 					setL.add(getAnyProp(g.getEdgePeer(rel,nProd)));
 				else if (temp.equals(bsbm+"productPropertyNumeric1"))
-					setP1.add(getAnyProp(g.getEdgePeer(rel,nProd)));
-				else if (temp.equals(bsbm+"productPropertyNumeric3"))
-					setP3.add(getAnyProp(g.getEdgePeer(rel,nProd)));
+					setV.add(getAnyProp(g.getEdgePeer(rel,nProd)));
 			}
 			it.close();
 			edgeSet.close();
 
 			product = getAnyProp(nProd);
-			for (String p1 : setP1) { try {
-				if (Integer.parseInt(p1)>inst[ind][2]) {
-					for (String p3 : setP3) { try {
-						if (Integer.parseInt(p3)>inst[ind][3]) {
-							for (String label : setL)
-								results.add(new ResultTuple(1,product,label));
-						}
-					} catch (NumberFormatException nfe) {} }
-				}
+			for (String value : setV) { try {
+				if (Integer.parseInt(value)>inst[ind][3])
+					for (String label : setL)
+						results.add(new ResultTuple(1,product,label));
 			} catch (NumberFormatException nfe) {} }
 		}
 		itProd.close();

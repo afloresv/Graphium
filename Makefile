@@ -7,9 +7,13 @@ FLAGS = -source 6 -nowarn -cp $(LIBS)
 compile:
 	javac $(FLAGS) ve/usb/graphdb/load/*.java
 	javac $(FLAGS) ve/usb/graphdb/core/*.java
-	javac $(FLAGS) ve/usb/graphdb/berlin/*.java
+	javac $(FLAGS) ve/usb/graphdb/berlin/general/*.java
+	javac $(FLAGS) ve/usb/graphdb/berlin/neo4j/*.java
+	javac $(FLAGS) ve/usb/graphdb/berlin/dex/*.java
 
 clean:
 	rm -f ve/usb/graphdb/load/*.class
 	rm -f ve/usb/graphdb/core/*.class
-	rm -f ve/usb/graphdb/berlin/*.class
+	rm -f ve/usb/graphdb/berlin/general/*.class
+	rm -f ve/usb/graphdb/berlin/neo4j/*.class
+	rm -f ve/usb/graphdb/berlin/dex/*.class
