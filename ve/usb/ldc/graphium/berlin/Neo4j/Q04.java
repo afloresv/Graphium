@@ -65,40 +65,40 @@ public class Q04 extends Neo4j implements BerlinQuery {
 		Relationship rel;
 		Iterator<Relationship> it;
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductType"+inst[ind][0]).getSingle();
-		if (nURI == null) return;
+		nURI = getNodeFromURI(bsbminst+"ProductType"+inst[ind][0]);
+		if (nURI == NodeNotFound) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (rel.getProperty(prop[0]).equals(rdf+"type"))
+			if (getEdgeURI(rel).equals(rdf+"type"))
 				sets[0].add(rel.getStartNode());
 		}
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][1]).getSingle();
-		if (nURI == null) return;
+		nURI = getNodeFromURI(bsbminst+"ProductFeature"+inst[ind][1]);
+		if (nURI == NodeNotFound) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
 			nProd = rel.getStartNode();
-			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature")
+			if (getEdgeURI(rel).equals(bsbm+"productFeature")
 				&& sets[0].contains(nProd))
 				sets[1].add(nProd);
 		}
 		sets[0].clear();
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][2+off*2]).getSingle();
-		if (nURI == null) return;
+		nURI = getNodeFromURI(bsbminst+"ProductFeature"+inst[ind][2+off*2]);
+		if (nURI == NodeNotFound) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
 			nProd = rel.getStartNode();
-			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature")
+			if (getEdgeURI(rel).equals(bsbm+"productFeature")
 				&& sets[1].contains(nProd))
 				sets[0].add(nProd);
 		}
 
 		Iterator<Node> itProd = sets[0].iterator();
-		String product, temp;
+		String product, relStr;
 		while (itProd.hasNext()) {
 			HashSet<String>
 				setL = new HashSet<String>(),
@@ -109,13 +109,13 @@ public class Q04 extends Neo4j implements BerlinQuery {
 			it = nProd.getRelationships(relType,Direction.OUTGOING).iterator();
 			while (it.hasNext()) {
 				rel = it.next();
-				temp = (String)rel.getProperty(prop[0]);
-				if (temp.equals(rdfs+"label"))
-					setL.add(getAnyProp(rel.getEndNode()));
-				else if (temp.equals(bsbm+"productPropertyTextual1"))
-					setPT.add(getAnyProp(rel.getEndNode()));
-				else if (temp.equals(bsbm+"productPropertyNumeric"+(off+1)))
-					setP.add(getAnyProp(rel.getEndNode()));
+				relStr = getEdgeURI(rel);
+				if (relStr.equals(rdfs+"label"))
+					setL.add(getAnyProp(getEndNode(rel)));
+				else if (relStr.equals(bsbm+"productPropertyTextual1"))
+					setPT.add(getAnyProp(getEndNode(rel)));
+				else if (relStr.equals(bsbm+"productPropertyNumeric"+(off+1)))
+					setP.add(getAnyProp(getEndNode(rel)));
 			}
 
 			product = getAnyProp(nProd);
@@ -137,7 +137,7 @@ public class Q04 extends Neo4j implements BerlinQuery {
 		// ORDER BY ?label
 		Collections.sort(results);
 
-		// LIMIT 10
+		// OFFSET 5, LIMIT 10
 		for (int i=5 ; i<15 && i<results.size() ; i++)
 			results.get(i).print();
 	}

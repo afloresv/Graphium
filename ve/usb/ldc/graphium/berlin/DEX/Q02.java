@@ -43,8 +43,7 @@ public class Q02 extends DEX implements BerlinQuery {
 
 	public void runQuery(int ind) {
 
-		long xNode, vNode, rel, rel2;
-		Value v = new Value();
+		long xNode, vNode, rel;
 		Objects setEdge, setEdge2;
 		ObjectsIterator it, it2;
 		String relStr, nodeStr;
@@ -63,15 +62,14 @@ public class Q02 extends DEX implements BerlinQuery {
 			pPT5 = new HashSet<String>(),
 			pPN4 = new HashSet<String>();
 
-		xNode = g.findObject(AttrType[0], v.setString(bsbminst
-			+"dataFromProducer458/Product"+inst[ind]));
-		if (xNode == Objects.InvalidOID) return;
+		xNode = getNodeFromURI(bsbminst+"dataFromProducer458/Product"+inst[ind]);
+		if (xNode == NodeNotFound) return;
 		setEdge = g.explode(xNode,EdgeType,EdgesDirection.Outgoing);
 		it = setEdge.iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = g.getAttribute(rel,AttrType[5]).getString();
-			vNode = g.getEdgePeer(rel,xNode);
+			relStr = getEdgeURI(rel);
+			vNode = getEndNode(rel);
 			nodeStr = getAnyProp(vNode);
 
 			if (relStr.equals(rdfs+"label")) {
@@ -88,9 +86,9 @@ public class Q02 extends DEX implements BerlinQuery {
 				setEdge2 = g.explode(vNode,EdgeType,EdgesDirection.Ingoing);
 				it2 = setEdge2.iterator();
 				while (!found && it2.hasNext()) {
-					rel2 = it2.next();
-					if (g.getAttribute(rel2,AttrType[5]).getString().equals(dc+"publisher")
-						&& g.getEdgePeer(rel2,vNode) == xNode)
+					rel = it2.next();
+					if (getEdgeURI(rel).equals(dc+"publisher")
+						&& getStartNode(rel) == xNode)
 						found = true;
 				}
 				it2.close();
@@ -99,9 +97,9 @@ public class Q02 extends DEX implements BerlinQuery {
 				setEdge2 = g.explode(vNode,EdgeType,EdgesDirection.Outgoing);
 				it2 = setEdge2.iterator();
 				while (it2.hasNext()) {
-					rel2 = it2.next();
-					if (g.getAttribute(rel2,AttrType[5]).getString().equals(rdfs+"label")) {
-						prS.add(getAnyProp(g.getEdgePeer(rel2,vNode)));
+					rel = it2.next();
+					if (getEdgeURI(rel).equals(rdfs+"label")) {
+						prS.add(getAnyProp(getEndNode(rel)));
 						break;
 					}
 				}
@@ -113,9 +111,9 @@ public class Q02 extends DEX implements BerlinQuery {
 				setEdge2 = g.explode(vNode,EdgeType,EdgesDirection.Outgoing);
 				it2 = setEdge2.iterator();
 				while (it2.hasNext()) {
-					rel2 = it2.next();
-					if (g.getAttribute(rel2,AttrType[5]).getString().equals(rdfs+"label")) {
-						pF.add(getAnyProp(g.getEdgePeer(rel2,vNode)));
+					rel = it2.next();
+					if (getEdgeURI(rel).equals(rdfs+"label")) {
+						pF.add(getAnyProp(getEndNode(rel)));
 						break;
 					}
 				}
@@ -167,20 +165,8 @@ public class Q02 extends DEX implements BerlinQuery {
 		for (String propertyTextual4 : pPT4)
 		for (String propertyTextual5 : pPT5)
 		for (String propertyNumeric4 : pPN4)
-			System.out.println(
-				label +" "+
-				comment +" "+
-				producer +" "+
-				productFeature +" "+
-				propertyTextual1 +" "+
-				propertyTextual2 +" "+
-				propertyTextual3 +" "+
-				propertyNumeric1 +" "+
-				propertyNumeric2 +" "+
-				propertyTextual4 +" "+
-				propertyTextual5 +" "+
-				propertyNumeric4
-			);
-
+			(new ResultTuple(label,comment,producer,productFeature,propertyTextual1,
+				propertyTextual2,propertyTextual3,propertyNumeric1,propertyNumeric2,
+				propertyTextual4,propertyTextual5,propertyNumeric4)).print();
 	}
 }

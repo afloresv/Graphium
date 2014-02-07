@@ -62,7 +62,7 @@ public class Q06 extends DEX implements BerlinQuery {
 			relStr = getEdgeURI(rel);
 			// ?product rdf:type bsbm:Product .
 			if (relStr.equals(rdf+"type"))
-				setProduct.add(g.getEdgePeer(rel,bsbmProductNode));
+				setProduct.add(getStartNode(rel));
 		}
 		it.close();
 		edgeSet.close();
@@ -73,7 +73,7 @@ public class Q06 extends DEX implements BerlinQuery {
 			it = edgeSet.iterator();
 			while (it.hasNext()) {
 				rel = it.next();
-				label = getAnyProp(g.getEdgePeer(rel,productNode));
+				label = getAnyProp(getEndNode(rel));
 				// ?product rdfs:label ?label .
 				// FILTER regex(?label, "string")
 				if (getEdgeURI(rel).equals(rdfs+"label")

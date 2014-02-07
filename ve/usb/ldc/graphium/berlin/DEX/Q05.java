@@ -49,7 +49,6 @@ public class Q05 extends DEX implements BerlinQuery {
 		String relStr, nodeStr, product;
 		Objects edgeSet;
 		ObjectsIterator it;
-		Value v = new Value();
 
 		HashSet<Integer>
 			setOP1 = new HashSet<Integer>(),
@@ -59,15 +58,15 @@ public class Q05 extends DEX implements BerlinQuery {
 			setProd = new HashSet<Long>();
 
 		// FILTER (?p = bsbminst:dataFromProducer408/Product20183)
-		pNode = g.findObject(AttrType[0], v.setString(bsbminst
-			+"dataFromProducer"+inst[ind][0]+"/Product"+inst[ind][1]));
-		if (pNode == Objects.InvalidOID) return;
+		pNode = getNodeFromURI(bsbminst+"dataFromProducer"
+			+inst[ind][0]+"/Product"+inst[ind][1]);
+		if (pNode == NodeNotFound) return;
 		edgeSet = g.explode(pNode,EdgeType,EdgesDirection.Outgoing);
 		it = edgeSet.iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = g.getAttribute(rel,AttrType[5]).getString();
-			vNode = g.getEdgePeer(rel,pNode);
+			relStr = getEdgeURI(rel);
+			vNode = getEndNode(rel);
 
 			try {
 				if (relStr.equals(bsbm+"productFeature")) {
@@ -90,11 +89,10 @@ public class Q05 extends DEX implements BerlinQuery {
 			it = edgeSet.iterator();
 			while (it.hasNext()) {
 				rel = it.next();
-				vNode = g.getEdgePeer(rel,nodePF);
+				vNode = getStartNode(rel);
 				// ?product bsbm:productFeature ?prodFeature .
 				// FILTER (bsbminst:dataFromProducer408/Product20183 != ?product)
-				if (pNode != vNode && g.getAttribute(rel,AttrType[5]).getString()
-					.equals(bsbm+"productFeature"))
+				if (pNode != vNode && getEdgeURI(rel).equals(bsbm+"productFeature"))
 					setProd.add(vNode);
 			}
 			it.close();
@@ -115,8 +113,8 @@ public class Q05 extends DEX implements BerlinQuery {
 			it = edgeSet.iterator();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = g.getAttribute(rel,AttrType[5]).getString();
-				nodeStr = getAnyProp(g.getEdgePeer(rel,nodeProd));
+				relStr = getEdgeURI(rel);
+				nodeStr = getAnyProp(getEndNode(rel));
 				try {
 					if (relStr.equals(rdfs+"label")) {
 						// ?product rdfs:label ?productLabel .

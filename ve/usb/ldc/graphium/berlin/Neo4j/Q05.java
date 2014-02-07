@@ -69,14 +69,14 @@ public class Q05 extends Neo4j implements BerlinQuery {
 			setProd = new HashSet<Node>();
 
 		// FILTER (?p = bsbminst:dataFromProducer408/Product20183)
-		pNode = indexURI.get(prop[0],bsbminst+"dataFromProducer"
-			+inst[ind][0]+"/Product"+inst[ind][1]).getSingle();
-		if (pNode == null) return;
+		pNode = getNodeFromURI(bsbminst+"dataFromProducer"
+			+inst[ind][0]+"/Product"+inst[ind][1]);
+		if (pNode == NodeNotFound) return;
 		it = pNode.getRelationships(relType,Direction.OUTGOING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = (String)rel.getProperty(prop[0]);
-			vNode = rel.getEndNode();
+			relStr = getEdgeURI(rel);
+			vNode = getEndNode(rel);
 
 			try {
 				if (relStr.equals(bsbm+"productFeature")) {
@@ -96,11 +96,10 @@ public class Q05 extends Neo4j implements BerlinQuery {
 			it = nodePF.getRelationships(relType,Direction.INCOMING).iterator();
 			while (it.hasNext()) {
 				rel = it.next();
-				vNode = rel.getStartNode();
+				vNode = getStartNode(rel);
 				// ?product bsbm:productFeature ?prodFeature .
 				// FILTER (bsbminst:dataFromProducer408/Product20183 != ?product)
-				if (pNode != vNode && rel.getProperty(prop[0])
-					.equals(bsbm+"productFeature"))
+				if (!pNode.equals(vNode) && getEdgeURI(rel).equals(bsbm+"productFeature"))
 					setProd.add(vNode);
 			}
 		}
@@ -118,8 +117,8 @@ public class Q05 extends Neo4j implements BerlinQuery {
 			it = nodeProd.getRelationships(relType,Direction.OUTGOING).iterator();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = (String)rel.getProperty(prop[0]);
-				nodeStr = getAnyProp(rel.getEndNode());
+				relStr = getEdgeURI(rel);
+				nodeStr = getAnyProp(getEndNode(rel));
 				try {
 					if (relStr.equals(rdfs+"label")) {
 						// ?product rdfs:label ?productLabel .

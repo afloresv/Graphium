@@ -56,7 +56,7 @@ public class Q02 extends Neo4j implements BerlinQuery {
 
 	public void runQuery(int ind) {
 
-		Node xNode;
+		Node xNode, vNode;
 		Relationship rel;
 		Iterator<Relationship> it, it2;
 		String relStr, nodeStr;
@@ -75,14 +75,14 @@ public class Q02 extends Neo4j implements BerlinQuery {
 			pPT5 = new HashSet<String>(),
 			pPN4 = new HashSet<String>();
 
-		xNode = indexURI.get(prop[0],
-			bsbminst+"dataFromProducer458/Product"+inst[ind]).getSingle();
-		if (xNode == null) return;
+		xNode = getNodeFromURI(bsbminst+"dataFromProducer458/Product"+inst[ind]);
+		if (xNode == NodeNotFound) return;
 		it = xNode.getRelationships(relType,Direction.OUTGOING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = (String)rel.getProperty(prop[0]);
-			nodeStr = getAnyProp(rel.getEndNode());
+			relStr = getEdgeURI(rel);
+			vNode = getEndNode(rel);
+			nodeStr = getAnyProp(vNode);
 
 			if (relStr.equals(rdfs+"label")) {
 				// ?x rdfs:label ?label .
@@ -95,33 +95,30 @@ public class Q02 extends Neo4j implements BerlinQuery {
 				// ?p rdfs:label ?producer .
 				// ?x dc:publisher ?p .
 				boolean found = false;
-				it2 = rel.getEndNode().getRelationships(
-					relType,Direction.INCOMING).iterator();
+				it2 = vNode.getRelationships(relType,Direction.INCOMING).iterator();
 				while (!found && it2.hasNext()) {
 					rel = it2.next();
-					if (rel.getProperty(prop[0]).equals(dc+"publisher")
-						&& rel.getStartNode().equals(xNode))
+					if (getEdgeURI(rel).equals(dc+"publisher")
+						&& getStartNode(rel).equals(xNode))
 						found = true;
 				}
 				if (!found) continue;
-				it2 = rel.getEndNode().getRelationships(
-					relType,Direction.OUTGOING).iterator();
+				it2 = vNode.getRelationships(relType,Direction.OUTGOING).iterator();
 				while (it2.hasNext()) {
 					rel = it2.next();
-					if (rel.getProperty(prop[0]).equals(rdfs+"label")) {
-						prS.add(getAnyProp(rel.getEndNode()));
+					if (getEdgeURI(rel).equals(rdfs+"label")) {
+						prS.add(getAnyProp(getEndNode(rel)));
 						break;
 					}
 				}
 			} else if (relStr.equals(bsbm+"productFeature")) {
 				// ?x bsbm:productFeature ?f .
 				// ?f rdfs:label ?productFeature .
-				it2 = rel.getEndNode().getRelationships(
-					relType,Direction.OUTGOING).iterator();
+				it2 = vNode.getRelationships(relType,Direction.OUTGOING).iterator();
 				while (it2.hasNext()) {
 					rel = it2.next();
-					if (rel.getProperty(prop[0]).equals(rdfs+"label")) {
-						pF.add(getAnyProp(rel.getEndNode()));
+					if (getEdgeURI(rel).equals(rdfs+"label")) {
+						pF.add(getAnyProp(getEndNode(rel)));
 						break;
 					}
 				}
@@ -169,20 +166,8 @@ public class Q02 extends Neo4j implements BerlinQuery {
 		for (String propertyTextual4 : pPT4)
 		for (String propertyTextual5 : pPT5)
 		for (String propertyNumeric4 : pPN4)
-			System.out.println(
-				label +" "+
-				comment +" "+
-				producer +" "+
-				productFeature +" "+
-				propertyTextual1 +" "+
-				propertyTextual2 +" "+
-				propertyTextual3 +" "+
-				propertyNumeric1 +" "+
-				propertyNumeric2 +" "+
-				propertyTextual4 +" "+
-				propertyTextual5 +" "+
-				propertyNumeric4
-			);
-
+			(new ResultTuple(label,comment,producer,productFeature,propertyTextual1,
+				propertyTextual2,propertyTextual3,propertyNumeric1,propertyNumeric2,
+				propertyTextual4,propertyTextual5,propertyNumeric4)).print();
 	}
 }

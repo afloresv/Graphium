@@ -64,29 +64,29 @@ public class Q03 extends Neo4j implements BerlinQuery {
 		Relationship rel;
 		Iterator<Relationship> it;
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductType"+inst[ind][0]).getSingle();
-		if (nURI == null) return;
+		nURI = getNodeFromURI(bsbminst+"ProductType"+inst[ind][0]);
+		if (nURI == NodeNotFound) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (rel.getProperty(prop[0]).equals(rdf+"type"))
+			if (getEdgeURI(rel).equals(rdf+"type"))
 				sets[0].add(rel.getStartNode());
 		}
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][1]).getSingle();
-		if (nURI == null) return;
+		nURI = getNodeFromURI(bsbminst+"ProductFeature"+inst[ind][1]);
+		if (nURI == NodeNotFound) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
 			nProd = rel.getStartNode();
-			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature")
+			if (getEdgeURI(rel).equals(bsbm+"productFeature")
 				&& sets[0].contains(nProd))
 				sets[1].add(nProd);
 		}
 
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
 		Iterator<Node> itProd = sets[1].iterator();
-		String product, temp;
+		String product, relStr;
 		while (itProd.hasNext()) {
 			HashSet<String>
 				setL = new HashSet<String>(),
@@ -97,13 +97,13 @@ public class Q03 extends Neo4j implements BerlinQuery {
 			it = nProd.getRelationships(relType,Direction.OUTGOING).iterator();
 			while (it.hasNext()) {
 				rel = it.next();
-				temp = (String)rel.getProperty(prop[0]);
-				if (temp.equals(rdfs+"label"))
-					setL.add(getAnyProp(rel.getEndNode()));
-				else if (temp.equals(bsbm+"productPropertyNumeric1"))
-					setP1.add(getAnyProp(rel.getEndNode()));
-				else if (temp.equals(bsbm+"productPropertyNumeric3"))
-					setP3.add(getAnyProp(rel.getEndNode()));
+				relStr = getEdgeURI(rel);
+				if (relStr.equals(rdfs+"label"))
+					setL.add(getAnyProp(getEndNode(rel)));
+				else if (relStr.equals(bsbm+"productPropertyNumeric1"))
+					setP1.add(getAnyProp(getEndNode(rel)));
+				else if (relStr.equals(bsbm+"productPropertyNumeric3"))
+					setP3.add(getAnyProp(getEndNode(rel)));
 			}
 
 			product = getAnyProp(nProd);

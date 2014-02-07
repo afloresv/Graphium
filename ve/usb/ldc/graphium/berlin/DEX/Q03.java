@@ -47,30 +47,29 @@ public class Q03 extends DEX implements BerlinQuery {
 
 		Objects productSet, edgeSet, tempSet;
 		ObjectsIterator it;
-		Value v = new Value();
 
 		long nURI, nProd, rel;
 
-		nURI = g.findObject(AttrType[0], v.setString(bsbminst+"ProductType"+inst[ind][0]));
-		if (nURI == Objects.InvalidOID) return;
+		nURI = getNodeFromURI(bsbminst+"ProductType"+inst[ind][0]);
+		if (nURI == NodeNotFound) return;
 		edgeSet = g.explode(nURI,EdgeType,EdgesDirection.Ingoing);
 		it = edgeSet.iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (!g.getAttribute(rel,AttrType[5]).getString().equals(rdf+"type"))
+			if (!getEdgeURI(rel).equals(rdf+"type"))
 				edgeSet.remove(rel);
 		}
 		productSet = g.tails(edgeSet);
 		it.close();
 		edgeSet.close();
 
-		nURI = g.findObject(AttrType[0], v.setString(bsbminst+"ProductFeature"+inst[ind][1]));
-		if (nURI == Objects.InvalidOID) return;
+		nURI = getNodeFromURI(bsbminst+"ProductFeature"+inst[ind][1]);
+		if (nURI == NodeNotFound) return;
 		edgeSet = g.explode(nURI,EdgeType,EdgesDirection.Ingoing);
 		it = edgeSet.iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (!g.getAttribute(rel,AttrType[5]).getString().equals(bsbm+"productFeature"))
+			if (!getEdgeURI(rel).equals(bsbm+"productFeature"))
 				edgeSet.remove(rel);
 		}
 		tempSet = g.tails(edgeSet);
@@ -81,7 +80,7 @@ public class Q03 extends DEX implements BerlinQuery {
 
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
 		ObjectsIterator itProd = productSet.iterator();
-		String product, temp;
+		String product, relStr;
 		while (itProd.hasNext()) {
 			HashSet<String>
 				setL = new HashSet<String>(),
@@ -93,13 +92,13 @@ public class Q03 extends DEX implements BerlinQuery {
 			it = edgeSet.iterator();
 			while (it.hasNext()) {
 				rel = it.next();
-				temp = g.getAttribute(rel,AttrType[5]).getString();
-				if (temp.equals(rdfs+"label"))
-					setL.add(getAnyProp(g.getEdgePeer(rel,nProd)));
-				else if (temp.equals(bsbm+"productPropertyNumeric1"))
-					setP1.add(getAnyProp(g.getEdgePeer(rel,nProd)));
-				else if (temp.equals(bsbm+"productPropertyNumeric3"))
-					setP3.add(getAnyProp(g.getEdgePeer(rel,nProd)));
+				relStr = getEdgeURI(rel);
+				if (relStr.equals(rdfs+"label"))
+					setL.add(getAnyProp(getEndNode(rel)));
+				else if (relStr.equals(bsbm+"productPropertyNumeric1"))
+					setP1.add(getAnyProp(getEndNode(rel)));
+				else if (relStr.equals(bsbm+"productPropertyNumeric3"))
+					setP3.add(getAnyProp(getEndNode(rel)));
 			}
 			it.close();
 			edgeSet.close();

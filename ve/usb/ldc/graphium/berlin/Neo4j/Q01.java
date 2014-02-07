@@ -64,34 +64,34 @@ public class Q01 extends Neo4j implements BerlinQuery {
 		Relationship rel;
 		Iterator<Relationship> it;
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductType"+inst[ind][0]).getSingle();
-		if (nURI == null) return;
+		nURI = getNodeFromURI(bsbminst+"ProductType"+inst[ind][0]);
+		if (nURI == NodeNotFound) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (rel.getProperty(prop[0]).equals(rdf+"type"))
+			if (getEdgeURI(rel).equals(rdf+"type"))
 				sets[0].add(rel.getStartNode());
 		}
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][1]).getSingle();
-		if (nURI == null) return;
+		nURI = getNodeFromURI(bsbminst+"ProductFeature"+inst[ind][1]);
+		if (nURI == NodeNotFound) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
 			nProd = rel.getStartNode();
-			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature")
+			if (getEdgeURI(rel).equals(bsbm+"productFeature")
 				&& sets[0].contains(nProd))
 				sets[1].add(nProd);
 		}
 		sets[0].clear();
 
-		nURI = indexURI.get(prop[0],bsbminst+"ProductFeature"+inst[ind][2]).getSingle();
-		if (nURI == null) return;
+		nURI = getNodeFromURI(bsbminst+"ProductFeature"+inst[ind][2]);
+		if (nURI == NodeNotFound) return;
 		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
 		while (it.hasNext()) {
 			rel = it.next();
 			nProd = rel.getStartNode();
-			if (rel.getProperty(prop[0]).equals(bsbm+"productFeature")
+			if (getEdgeURI(rel).equals(bsbm+"productFeature")
 				&& sets[1].contains(nProd))
 				sets[0].add(nProd);
 		}
@@ -108,11 +108,11 @@ public class Q01 extends Neo4j implements BerlinQuery {
 			it = nProd.getRelationships(relType,Direction.OUTGOING).iterator();
 			while (it.hasNext()) {
 				rel = it.next();
-				temp = (String)rel.getProperty(prop[0]);
+				temp = getEdgeURI(rel);
 				if (temp.equals(rdfs+"label"))
-					setL.add(getAnyProp(rel.getEndNode()));
+					setL.add(getAnyProp(getEndNode(rel)));
 				else if (temp.equals(bsbm+"productPropertyNumeric1"))
-					setV.add(getAnyProp(rel.getEndNode()));
+					setV.add(getAnyProp(getEndNode(rel)));
 			}
 
 			product = getAnyProp(nProd);

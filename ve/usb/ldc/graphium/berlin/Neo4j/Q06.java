@@ -72,7 +72,7 @@ public class Q06 extends Neo4j implements BerlinQuery {
 			relStr = getEdgeURI(rel);
 			// ?product rdf:type bsbm:Product .
 			if (relStr.equals(rdf+"type"))
-				setProduct.add(rel.getStartNode());
+				setProduct.add(getStartNode(rel));
 		}
 
 		for (Node productNode : setProduct) {
@@ -80,7 +80,7 @@ public class Q06 extends Neo4j implements BerlinQuery {
 			it = productNode.getRelationships(relType,Direction.OUTGOING).iterator();
 			while (it.hasNext()) {
 				rel = it.next();
-				label = getAnyProp(rel.getEndNode());
+				label = getAnyProp(getEndNode(rel));
 				// ?product rdfs:label ?label .
 				// FILTER regex(?label, "string")
 				if (getEdgeURI(rel).equals(rdfs+"label")
