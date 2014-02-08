@@ -32,6 +32,8 @@ public interface BerlinQuery {
 	public final String rdfs = "http://www.w3.org/2000/01/rdf-schema#";
 	public final String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	public final String dc = "http://purl.org/dc/elements/1.1/";
+	public final String rev = "http://purl.org/stuff/rev#";
+	public final String foaf = "http://xmlns.com/foaf/0.1/";
 	
 	void runQuery(int ind);
 }
