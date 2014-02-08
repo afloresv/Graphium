@@ -94,6 +94,7 @@ public class Q08 extends Neo4j implements BerlinQuery {
 					setTitle.add(getAnyProp(vNode));
 				} else if (relStr.equals(rev+"text")) {
 					// ?review rev:text ?text .
+					// #FILTER langMatches( lang(?text), "EN" )
 					setText.add(getAnyProp(vNode));
 				} else if (relStr.equals(bsbm+"reviewDate")) {
 					// ?review bsbm:reviewDate ?reviewDate .

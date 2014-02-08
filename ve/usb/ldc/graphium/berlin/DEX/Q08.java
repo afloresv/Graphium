@@ -87,6 +87,7 @@ public class Q08 extends DEX implements BerlinQuery {
 					setTitle.add(getAnyProp(vNode));
 				} else if (relStr.equals(rev+"text")) {
 					// ?review rev:text ?text .
+					// #FILTER langMatches( lang(?text), "EN" )
 					setText.add(getAnyProp(vNode));
 				} else if (relStr.equals(bsbm+"reviewDate")) {
 					// ?review bsbm:reviewDate ?reviewDate .
