@@ -2,9 +2,7 @@
 ###################
 ve/usb/ldc/graphium/load/*.class
 ve/usb/ldc/graphium/core/*.class
-ve/usb/ldc/graphium/berlin/general/*.class
-ve/usb/ldc/graphium/berlin/Neo4j/*.class
-ve/usb/ldc/graphium/berlin/DEX/*.class
+ve/usb/ldc/graphium/berlin/*.class
 
 # Test directory #
 ##################
