@@ -24,7 +24,7 @@ import java.io.*;
 
 import com.sparsity.dex.gdb.*;
 
-public abstract class DEX implements GraphDB {
+public class DEX implements GraphDB {
 
 	public DexConfig cfg;
 	public Dex dex;

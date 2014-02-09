@@ -35,7 +35,7 @@ import org.neo4j.tooling.*;
 import org.neo4j.kernel.*;
 import org.neo4j.helpers.collection.*;
 
-public abstract class Neo4j implements GraphDB {
+public class Neo4j implements GraphDB {
 
 	public GraphDatabaseService graphDB;
 	public GlobalGraphOperations globalOP;
