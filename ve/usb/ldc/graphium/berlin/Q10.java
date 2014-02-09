@@ -127,10 +127,10 @@ public class Q10 extends BerlinQuery {
 
 			if (foundVendor)
 				for (String price : setPrice)
-					results.add(new ResultTuple(offer,price));
+					results.add(new ResultTuple(1,offer,price));
 		}
 
-		// ORDER BY ?label
+		// #ORDER BY xsd:double(str(?price))
 		Collections.sort(results);
 
 		// LIMIT 10
