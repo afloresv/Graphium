@@ -78,8 +78,8 @@ public abstract class DEX implements GraphDB {
 	}
 
 	public class VertexDEX implements Vertex {
-		public long node_id;
-		public long node_type;
+		private long node_id;
+		private int node_type;
 		public VertexDEX(long _id) {
 			node_id = _id;
 			node_type = g.getObjectType(node_id);
