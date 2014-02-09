@@ -24,13 +24,11 @@ import java.io.*;
 
 import ve.usb.ldc.graphium.core.*;
 
-public class Q12 implements BerlinQuery {
+public class Q12 extends BerlinQuery {
 
 	int[][] inst = {
 		{117,231837}
 	};
-
-	GraphDB g;
 
 	public Q12(GraphDB _g) {
 		g = _g;

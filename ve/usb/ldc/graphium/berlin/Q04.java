@@ -24,15 +24,13 @@ import java.io.*;
 
 import ve.usb.ldc.graphium.core.*;
 
-public class Q04 implements BerlinQuery {
+public class Q04 extends BerlinQuery {
 
 	int[][] inst = {
 		{252,897,8047,137,47,93}
 	};
 	
 	ArrayList<ResultTuple> results;
-
-	GraphDB g;
 
 	public Q04(GraphDB _g) {
 		g = _g;

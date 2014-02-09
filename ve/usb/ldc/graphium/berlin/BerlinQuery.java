@@ -24,7 +24,9 @@ import java.io.*;
 
 import ve.usb.ldc.graphium.core.*;
 
-public interface BerlinQuery {
+public abstract class BerlinQuery {
+
+	GraphDB g;
 
 	// PREFIX
 	public final String bsbm = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/";
@@ -36,5 +38,5 @@ public interface BerlinQuery {
 	public final String rev = "http://purl.org/stuff/rev#";
 	public final String foaf = "http://xmlns.com/foaf/0.1/";
 	
-	void runQuery(int ind);
+	public abstract void runQuery(int ind);
 }

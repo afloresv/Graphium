@@ -24,14 +24,12 @@ import java.io.*;
 
 import ve.usb.ldc.graphium.core.*;
 
-public class Q06 implements BerlinQuery {
+public class Q06 extends BerlinQuery {
 
 	String[] inst = {
 		"ambilateral",
 		"iterant"
 	};
-
-	GraphDB g;
 
 	public Q06(GraphDB _g) {
 		g = _g;
