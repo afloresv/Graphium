@@ -60,31 +60,91 @@ public abstract class Neo4j implements GraphDB {
 		graphDB.shutdown();
 	}
 
-	public String getAnyProp(Node node) {
-		String res = null;
-		for (int i=0 ; i<3 ; i++) {
-			if (node.hasProperty(prop[i])) {
-				res = (String)node.getProperty(prop[i]);
-				break;
-			}
+	public Vertex getVertexURI(String strURI) {
+		Node id = indexURI.get(prop[0],strURI).getSingle();
+		if (id==null) return null;
+		return (new VertexNeo4j(id));
+	}
+
+	public class VertexNeo4j implements Vertex {
+		private Node node_id;
+		public VertexNeo4j(Node _id) {
+			node_id = _id;
 		}
-		return res;
+		public boolean isURI() {
+			return node_id.hasProperty(prop[0]);
+		}
+		public boolean isNodeID() {
+			return node_id.hasProperty(prop[1]);
+		}
+		public boolean isLiteral() {
+			return node_id.hasProperty(prop[2]);
+		}
+		public String getURI() {
+			if (this.isURI()) {
+				return (String)node_id.getProperty(prop[0]);
+			} else return null;
+		}
+		public String getNodeID() {
+			if (this.isNodeID()) {
+				return (String)node_id.getProperty(prop[1]);
+			} else return null;
+		}
+		public String getLiteral() {
+			if (this.isLiteral()) {
+				return (String)node_id.getProperty(prop[2]);
+			} else return null;
+		}
+		public String getAny() {
+			String res = this.getURI();
+			if (res==null) res = this.getNodeID();
+			if (res==null) res = this.getLiteral();
+			return res;
+		}
+		public IteratorGraph getEdgesOut() {
+			return (new IteratorNeo4j(node_id.getRelationships
+				(relType,Direction.OUTGOING).iterator()));
+		}
+		public IteratorGraph getEdgesIn() {
+			return (new IteratorNeo4j(node_id.getRelationships
+				(relType,Direction.INCOMING).iterator()));
+		}
+		@Override
+		public boolean equals(Object other){
+			if (other instanceof VertexNeo4j)
+				return (this.node_id.equals(((VertexNeo4j)other).node_id));
+			return false;
+		}
 	}
 
-	public final Node NodeNotFound = null;
-	public Node getNodeFromURI(String strURI) {
-		return indexURI.get(prop[0],strURI).getSingle();
+	public class EdgeNeo4j implements Edge {
+		private Relationship rel_id;
+		public EdgeNeo4j(Relationship _id) {
+			rel_id = _id;
+		}
+		public String getURI() {
+			return (String)rel_id.getProperty(prop[0]);
+		}
+		public Vertex getStart() {
+			return (new VertexNeo4j(rel_id.getStartNode()));
+		}
+		public Vertex getEnd() {
+			return (new VertexNeo4j(rel_id.getEndNode()));
+		}
 	}
 
-	public String getEdgeURI(Relationship rel) {
-		return (String)rel.getProperty(prop[0]);
-	}
-
-	public Node getStartNode(Relationship rel) {
-		return rel.getStartNode();
-	}
-
-	public Node getEndNode(Relationship rel) {
-		return rel.getEndNode();
+	public class IteratorNeo4j implements IteratorGraph {
+		Iterator<Relationship> it;
+		public IteratorNeo4j(Iterator<Relationship> _it) {
+			it = _it;
+		}
+		public boolean hasNext() {
+			return it.hasNext();
+		}
+		public Edge next() {
+			return (new EdgeNeo4j(it.next()));
+		}
+		public void remove() {}
+		public void close() {}
 	}
 }

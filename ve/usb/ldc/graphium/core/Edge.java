@@ -22,13 +22,10 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public interface GraphDB {
+public interface Edge {
 
-	public final String[] prop =
-		{"URI","NodeID","Literal","Lang","Type","Predicate"};
-
-	public Vertex getVertexURI(String strURI);
-
-	public void close();
+	public String getURI();
+	public Vertex getStart();
+	public Vertex getEnd();
 
 }

@@ -71,40 +71,100 @@ public abstract class DEX implements GraphDB {
 		dex.close();
 	}
 
-	public String getAnyProp(long node) {
-		String res = null;
-		int ntype = g.getObjectType(node);
-		for (int i=0 ; i<3 ; i++) {
-			if (NodeType[i]==ntype) {
-				if (i==2) {
-					TextStream ts = g.getAttributeText(node,AttrType[i]);
-					char[] buff = new char[100000];
-					ts.read(buff,100000);
-					ts.close();
-					res = (new String(buff)).trim();
-				} else {
-					res = g.getAttribute(node,AttrType[i]).getString();
-				}
-				break;
-			}
+	public Vertex getVertexURI(String strURI) {
+		long id = g.findObject(AttrType[0],(new Value()).setString(strURI));
+		if (id==Objects.InvalidOID) return null;
+		return (new VertexDEX(id));
+	}
+
+	public class VertexDEX implements Vertex {
+		public long node_id;
+		public long node_type;
+		public VertexDEX(long _id) {
+			node_id = _id;
+			node_type = g.getObjectType(node_id);
 		}
-		return res;
+		public boolean isURI() {
+			return NodeType[0]==node_type;
+		}
+		public boolean isNodeID() {
+			return NodeType[1]==node_type;
+		}
+		public boolean isLiteral() {
+			return NodeType[2]==node_type;
+		}
+		public String getURI() {
+			if (this.isURI()) {
+				return g.getAttribute(node_id,AttrType[0]).getString();
+			} else return null;
+		}
+		public String getNodeID() {
+			if (this.isNodeID()) {
+				return g.getAttribute(node_id,AttrType[1]).getString();
+			} else return null;
+		}
+		public String getLiteral() {
+			if (this.isLiteral()) {
+				TextStream ts = g.getAttributeText(node_id,AttrType[2]);
+				char[] buff = new char[100000];
+				ts.read(buff,100000);
+				ts.close();
+				return (new String(buff)).trim();
+			} else return null;
+		}
+		public String getAny() {
+			String res = this.getURI();
+			if (res==null) res = this.getNodeID();
+			if (res==null) res = this.getLiteral();
+			return res;
+		}
+		public IteratorGraph getEdgesOut() {
+			return (new IteratorDEX(g.explode(node_id,EdgeType,EdgesDirection.Outgoing)));
+		}
+		public IteratorGraph getEdgesIn() {
+			return (new IteratorDEX(g.explode(node_id,EdgeType,EdgesDirection.Ingoing)));
+		}
+		@Override
+		public boolean equals(Object other){
+			if (other instanceof VertexDEX)
+				return (this.node_id == ((VertexDEX)other).node_id);
+			return false;
+		}
 	}
 
-	public final long NodeNotFound = Objects.InvalidOID;
-	public long getNodeFromURI(String strURI) {
-		return g.findObject(AttrType[0], (new Value()).setString(strURI));
+	public class EdgeDEX implements Edge {
+		private long rel_id;
+		public EdgeDEX(long _id) {
+			rel_id = _id;
+		}
+		public String getURI() {
+			return g.getAttribute(rel_id,AttrType[5]).getString();
+		}
+		public Vertex getStart() {
+			return (new VertexDEX(g.getEdgeData(rel_id).getTail()));
+		}
+		public Vertex getEnd() {
+			return (new VertexDEX(g.getEdgeData(rel_id).getHead()));
+		}
 	}
 
-	public String getEdgeURI(long rel) {
-		return g.getAttribute(rel,AttrType[5]).getString();
-	}
-
-	public long getStartNode(long rel) {
-		return g.getEdgeData(rel).getTail();
-	}
-
-	public long getEndNode(long rel) {
-		return g.getEdgeData(rel).getHead();
+	public class IteratorDEX implements IteratorGraph {
+		Objects obj;
+		ObjectsIterator it;
+		public IteratorDEX(Objects _o) {
+			obj = _o;
+			it = obj.iterator();
+		}
+		public boolean hasNext() {
+			return it.hasNext();
+		}
+		public Edge next() {
+			return (new EdgeDEX(it.next()));
+		}
+		public void remove() {}
+		public void close() {
+			it.close();
+			obj.close();
+		}
 	}
 }

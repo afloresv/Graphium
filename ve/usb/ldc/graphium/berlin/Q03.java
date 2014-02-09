@@ -16,70 +16,60 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.berlin.DEX;
+package ve.usb.ldc.graphium.berlin;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import com.sparsity.dex.gdb.*;
-
 import ve.usb.ldc.graphium.core.*;
-import ve.usb.ldc.graphium.berlin.general.*;
 
-public class Q03 extends DEX implements BerlinQuery {
+public class Q03 implements BerlinQuery {
 
 	int[][] inst = {
 		{240,7647,228,156,7616}
 	};
 
-	public Q03(String path) {
-		super(path);
-	}
+	GraphDB g;
 
-	public static void main(String args[]) {
-		Q03 testQ = new Q03(args[0]);
-		testQ.runQuery(Integer.parseInt(args[1]));
-		testQ.close();
+	public Q03(GraphDB _g) {
+		g = _g;
 	}
 
 	public void runQuery(int ind) {
 
-		Objects productSet, edgeSet, tempSet;
-		ObjectsIterator it;
+		HashSet[] sets = new HashSet[2];
+		sets[0] = new HashSet<Vertex>();
+		sets[1] = new HashSet<Vertex>();
 
-		long nURI, nProd, rel;
+		Vertex nURI, nProd;
+		Edge rel;
+		IteratorGraph it;
 
-		nURI = getNodeFromURI(bsbminst+"ProductType"+inst[ind][0]);
-		if (nURI == NodeNotFound) return;
-		edgeSet = g.explode(nURI,EdgeType,EdgesDirection.Ingoing);
-		it = edgeSet.iterator();
+		nURI = g.getVertexURI(bsbminst+"ProductType"+inst[ind][0]);
+		if (nURI == null) return;
+		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (!getEdgeURI(rel).equals(rdf+"type"))
-				edgeSet.remove(rel);
+			if (rel.getURI().equals(rdf+"type"))
+				sets[0].add(rel.getStart());
 		}
-		productSet = g.tails(edgeSet);
 		it.close();
-		edgeSet.close();
 
-		nURI = getNodeFromURI(bsbminst+"ProductFeature"+inst[ind][1]);
-		if (nURI == NodeNotFound) return;
-		edgeSet = g.explode(nURI,EdgeType,EdgesDirection.Ingoing);
-		it = edgeSet.iterator();
+		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst[ind][1]);
+		if (nURI == null) return;
+		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (!getEdgeURI(rel).equals(bsbm+"productFeature"))
-				edgeSet.remove(rel);
+			nProd = rel.getStart();
+			if (rel.getURI().equals(bsbm+"productFeature")
+				&& sets[0].contains(nProd))
+				sets[1].add(nProd);
 		}
-		tempSet = g.tails(edgeSet);
-		productSet.intersection(tempSet);
-		tempSet.close();
 		it.close();
-		edgeSet.close();
 
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
-		ObjectsIterator itProd = productSet.iterator();
+		Iterator<Vertex> itProd = sets[1].iterator();
 		String product, relStr;
 		while (itProd.hasNext()) {
 			HashSet<String>
@@ -88,22 +78,20 @@ public class Q03 extends DEX implements BerlinQuery {
 				setP3 = new HashSet<String>();
 
 			nProd = itProd.next();
-			edgeSet = g.explode(nProd,EdgeType,EdgesDirection.Outgoing);
-			it = edgeSet.iterator();
+			it = nProd.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = getEdgeURI(rel);
+				relStr = rel.getURI();
 				if (relStr.equals(rdfs+"label"))
-					setL.add(getAnyProp(getEndNode(rel)));
+					setL.add(rel.getEnd().getAny());
 				else if (relStr.equals(bsbm+"productPropertyNumeric1"))
-					setP1.add(getAnyProp(getEndNode(rel)));
+					setP1.add(rel.getEnd().getAny());
 				else if (relStr.equals(bsbm+"productPropertyNumeric3"))
-					setP3.add(getAnyProp(getEndNode(rel)));
+					setP3.add(rel.getEnd().getAny());
 			}
 			it.close();
-			edgeSet.close();
 
-			product = getAnyProp(nProd);
+			product = nProd.getAny();
 			for (String p1 : setP1) { try {
 				if (Integer.parseInt(p1)>inst[ind][2]) {
 					for (String p3 : setP3) { try {
@@ -115,8 +103,6 @@ public class Q03 extends DEX implements BerlinQuery {
 				}
 			} catch (NumberFormatException nfe) {} }
 		}
-		itProd.close();
-		productSet.close();
 
 		// ORDER BY ?label
 		Collections.sort(results);
@@ -124,6 +110,5 @@ public class Q03 extends DEX implements BerlinQuery {
 		// LIMIT 10
 		for (int i=0 ; i<10 && i<results.size() ; i++)
 			results.get(i).print();
-
 	}
 }

@@ -16,19 +16,36 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.core;
+package ve.usb.ldc.graphium.berlin;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public interface GraphDB {
+import ve.usb.ldc.graphium.core.*;
 
-	public final String[] prop =
-		{"URI","NodeID","Literal","Lang","Type","Predicate"};
+public class ResultTuple implements Comparable<ResultTuple> {
+	public String[] elem;
+	private int ind;
 
-	public Vertex getVertexURI(String strURI);
+	public ResultTuple(String ... _elem) {
+		this(0,_elem);
+	}
 
-	public void close();
+	public ResultTuple(int _ind, String ... _elem) {
+		this.elem = _elem;
+		this.ind = _ind;
+	}
 
+	@Override
+	public int compareTo(ResultTuple other){
+		return this.elem[ind].compareTo(other.elem[ind]);
+	}
+
+	public void print() {
+		String tupleStr = elem[0];
+		for (int i=1, t=elem.length ; i<t ; i++)
+			tupleStr += "\t"+elem[i];
+		System.out.println(tupleStr);
+	}
 }

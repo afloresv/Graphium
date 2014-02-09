@@ -16,36 +16,23 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.berlin.general;
+package ve.usb.ldc.graphium.core;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import ve.usb.ldc.graphium.core.*;
+public interface Vertex {
 
-public class ResultTuple implements Comparable<ResultTuple> {
-	public String[] elem;
-	private int ind;
+	public boolean isURI();
+	public boolean isNodeID();
+	public boolean isLiteral();
+	public String getURI();
+	public String getNodeID();
+	public String getLiteral();
+	public String getAny();
+	public IteratorGraph getEdgesOut();
+	public IteratorGraph getEdgesIn();
 
-	public ResultTuple(String ... _elem) {
-		this(0,_elem);
-	}
-
-	public ResultTuple(int _ind, String ... _elem) {
-		this.elem = _elem;
-		this.ind = _ind;
-	}
-
-	@Override
-	public int compareTo(ResultTuple other){
-		return this.elem[ind].compareTo(other.elem[ind]);
-	}
-
-	public void print() {
-		String tupleStr = elem[0];
-		for (int i=1, t=elem.length ; i<t ; i++)
-			tupleStr += "\t"+elem[i];
-		System.out.println(tupleStr);
-	}
 }
+

@@ -22,13 +22,9 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public interface GraphDB {
-
-	public final String[] prop =
-		{"URI","NodeID","Literal","Lang","Type","Predicate"};
-
-	public Vertex getVertexURI(String strURI);
-
+public interface IteratorGraph {
+	public boolean hasNext();
+	public Edge next();
+	public void remove();
 	public void close();
-
 }

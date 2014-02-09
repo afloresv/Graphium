@@ -16,49 +16,29 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.berlin.Neo4j;
+package ve.usb.ldc.graphium.berlin;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import org.neo4j.graphdb.*;
-import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexManager;
-import org.neo4j.graphdb.factory.*;
-import org.neo4j.graphdb.traversal.*;
-import org.neo4j.unsafe.batchinsert.*;
-import org.neo4j.index.lucene.unsafe.batchinsert.LuceneBatchInserterIndexProvider;
-import org.neo4j.cypher.javacompat.*;
-import org.neo4j.tooling.*;
-import org.neo4j.kernel.*;
-import org.neo4j.helpers.collection.*;
-
-import ve.usb.ldc.graphium.core.*;
-import ve.usb.ldc.graphium.berlin.general.*;
-
 import ve.usb.ldc.graphium.core.*;
 
-public class Q02 extends Neo4j implements BerlinQuery {
+public class Q02 implements BerlinQuery {
 
 	int[] inst = {22652};
 
-	public Q02(String path) {
-		super(path);
-	}
+	GraphDB g;
 
-	public static void main(String args[]) {
-		Q02 testQ = new Q02(args[0]);
-		testQ.runQuery(Integer.parseInt(args[1]));
-		testQ.close();
+	public Q02(GraphDB _g) {
+		g = _g;
 	}
 
 	public void runQuery(int ind) {
 
-		Node xNode, vNode;
-		Relationship rel;
-		Iterator<Relationship> it, it2;
+		Vertex xNode, vNode;
+		Edge rel;
+		IteratorGraph it, it2;
 		String relStr, nodeStr;
 
 		HashSet<String>
@@ -75,14 +55,14 @@ public class Q02 extends Neo4j implements BerlinQuery {
 			pPT5 = new HashSet<String>(),
 			pPN4 = new HashSet<String>();
 
-		xNode = getNodeFromURI(bsbminst+"dataFromProducer458/Product"+inst[ind]);
-		if (xNode == NodeNotFound) return;
-		it = xNode.getRelationships(relType,Direction.OUTGOING).iterator();
+		xNode = g.getVertexURI(bsbminst+"dataFromProducer458/Product"+inst[ind]);
+		if (xNode == null) return;
+		it = xNode.getEdgesOut();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = getEdgeURI(rel);
-			vNode = getEndNode(rel);
-			nodeStr = getAnyProp(vNode);
+			relStr = rel.getURI();
+			vNode = rel.getEnd();
+			nodeStr = vNode.getAny();
 
 			if (relStr.equals(rdfs+"label")) {
 				// ?x rdfs:label ?label .
@@ -95,33 +75,36 @@ public class Q02 extends Neo4j implements BerlinQuery {
 				// ?p rdfs:label ?producer .
 				// ?x dc:publisher ?p .
 				boolean found = false;
-				it2 = vNode.getRelationships(relType,Direction.INCOMING).iterator();
+				it2 = vNode.getEdgesIn();
 				while (!found && it2.hasNext()) {
 					rel = it2.next();
-					if (getEdgeURI(rel).equals(dc+"publisher")
-						&& getStartNode(rel).equals(xNode))
+					if (rel.getURI().equals(dc+"publisher")
+						&& rel.getStart().equals(xNode))
 						found = true;
 				}
+				it2.close();
 				if (!found) continue;
-				it2 = vNode.getRelationships(relType,Direction.OUTGOING).iterator();
+				it2 = vNode.getEdgesOut();
 				while (it2.hasNext()) {
 					rel = it2.next();
-					if (getEdgeURI(rel).equals(rdfs+"label")) {
-						prS.add(getAnyProp(getEndNode(rel)));
+					if (rel.getURI().equals(rdfs+"label")) {
+						prS.add(rel.getEnd().getAny());
 						break;
 					}
 				}
+				it2.close();
 			} else if (relStr.equals(bsbm+"productFeature")) {
 				// ?x bsbm:productFeature ?f .
 				// ?f rdfs:label ?productFeature .
-				it2 = vNode.getRelationships(relType,Direction.OUTGOING).iterator();
+				it2 = vNode.getEdgesOut();
 				while (it2.hasNext()) {
 					rel = it2.next();
-					if (getEdgeURI(rel).equals(rdfs+"label")) {
-						pF.add(getAnyProp(getEndNode(rel)));
+					if (rel.getURI().equals(rdfs+"label")) {
+						pF.add(rel.getEnd().getAny());
 						break;
 					}
 				}
+				it2.close();
 			} else if (relStr.equals(bsbm+"productPropertyTextual1")) {
 				// ?x bsbm:productPropertyTextual1 ?propertyTextual1 .
 				pPT1.add(nodeStr);
@@ -148,6 +131,7 @@ public class Q02 extends Neo4j implements BerlinQuery {
 				pPN4.add(nodeStr);
 			}
 		}
+		it.close();
 
 		// Results
 		if (pPT4.size()==0) pPT4.add("");

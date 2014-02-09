@@ -16,129 +16,114 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.berlin.Neo4j;
+package ve.usb.ldc.graphium.berlin;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import org.neo4j.graphdb.*;
-import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexManager;
-import org.neo4j.graphdb.factory.*;
-import org.neo4j.graphdb.traversal.*;
-import org.neo4j.unsafe.batchinsert.*;
-import org.neo4j.index.lucene.unsafe.batchinsert.LuceneBatchInserterIndexProvider;
-import org.neo4j.cypher.javacompat.*;
-import org.neo4j.tooling.*;
-import org.neo4j.kernel.*;
-import org.neo4j.helpers.collection.*;
-
 import ve.usb.ldc.graphium.core.*;
-import ve.usb.ldc.graphium.berlin.general.*;
 
-public class Q09 extends Neo4j implements BerlinQuery {
+public class Q09 implements BerlinQuery {
 
 	int[][] inst = {
 		{510,25065}
 	};
 
-	public Q09(String path) {
-		super(path);
-	}
+	GraphDB g;
 
-	public static void main(String args[]) {
-		Q09 testQ = new Q09(args[0]);
-		testQ.runQuery(Integer.parseInt(args[1]));
-		testQ.close();
+	public Q09(GraphDB _g) {
+		g = _g;
 	}
 
 	public void runQuery(int ind) {
 
-		Node iNode;
-		Relationship rel;
-		Iterator<Relationship> it;
+		Vertex iNode;
+		Edge rel;
+		IteratorGraph it;
 		String relStr, x, reviewer,
 			otherStrI = bsbminst+"dataFromRatingSite"+inst[ind][0]+"/Review"+inst[ind][1];
 
-		HashSet<Node> setX = new HashSet<Node>();
+		HashSet<Vertex> setX = new HashSet<Vertex>();
 
 		// ?x rdf:type foaf:Person
-		iNode = getNodeFromURI(foaf+"Person");
-		if (iNode == NodeNotFound) return;
-		it = iNode.getRelationships(relType,Direction.INCOMING).iterator();
+		iNode = g.getVertexURI(foaf+"Person");
+		if (iNode == null) return;
+		it = iNode.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = getEdgeURI(rel);
+			relStr = rel.getURI();
 			if (relStr.equals(rdf+"type"))
-				setX.add(getStartNode(rel));
+				setX.add(rel.getStart());
 		}
+		it.close();
 
-		for (Node xNode : setX) {
+		for (Vertex xNode : setX) {
 
 			boolean found = false;
-			HashSet<Node> setReviewer = new HashSet<Node>();
+			HashSet<Vertex> setReviewer = new HashSet<Vertex>();
 
-			it = xNode.getRelationships(relType,Direction.INCOMING).iterator();
+			it = xNode.getEdgesIn();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = getEdgeURI(rel);
-				iNode = getStartNode(rel);
-				if (relStr.equals(rdf+"type")) {
+				relStr = rel.getURI();
+				if (relStr.equals(rev+"reviewer")) {
 					// bsbminst:dataFromRatingSite8/Review75011 rev:reviewer ?x
-					if (getAnyProp(iNode).equals(otherStrI))
+					if (rel.getStart().getAny().equals(otherStrI))
 						found = true;
 				} else if (relStr.equals(rev+"reviewer")) {
 					// ?reviewer rev:reviewer ?x
-					setReviewer.add(iNode);
+					setReviewer.add(rel.getStart());
 				}
 			}
+			it.close();
 
 			if (!found) continue;
 
-			x = getAnyProp(xNode);
+			x = xNode.getAny();
 
 			HashSet<String>
 				setName = new HashSet<String>(),
 				setMbox = new HashSet<String>(),
 				setCountry = new HashSet<String>();
 
-			it = xNode.getRelationships(relType,Direction.OUTGOING).iterator();
+			it = xNode.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = getEdgeURI(rel);
+				relStr = rel.getURI();
 				if (relStr.equals(foaf+"name")) {
 					// ?x foaf:name ?name
-					setName.add(getAnyProp(getEndNode(rel)));
+					setName.add(rel.getEnd().getAny());
 				} else if (relStr.equals(foaf+"mbox_sha1sum")) {
 					// ?x foaf:mbox_sha1sum ?mbox
-					setMbox.add(getAnyProp(getEndNode(rel)));
+					setMbox.add(rel.getEnd().getAny());
 				} else if (relStr.equals(bsbm+"country")) {
 					// ?x bsbm:country ?country
-					setCountry.add(getAnyProp(getEndNode(rel)));
+					setCountry.add(rel.getEnd().getAny());
 				}
 			}
+			it.close();
 
-			for (Node rNode : setReviewer) {
-				reviewer = getAnyProp(rNode);
+			for (Vertex rNode : setReviewer) {
+				reviewer = rNode.getAny();
 
 				HashSet<String>
 					setProduct = new HashSet<String>(),
 					setTitle = new HashSet<String>();
 
-				it = rNode.getRelationships(relType,Direction.OUTGOING).iterator();
+				it = rNode.getEdgesOut();
 				while (it.hasNext()) {
 					rel = it.next();
-					relStr = getEdgeURI(rel);
+					relStr = rel.getURI();
 					if (relStr.equals(bsbm+"reviewFor")) {
 						// ?reviewer bsbm:reviewFor ?product
-						setProduct.add(getAnyProp(getEndNode(rel)));
+						setProduct.add(rel.getEnd().getAny());
 					} else if (relStr.equals(dc+"title")) {
 						// ?reviewer dc:title ?title
-						setTitle.add(getAnyProp(getEndNode(rel)));
+						setTitle.add(rel.getEnd().getAny());
 					}
 				}
+				it.close();
 
 				// Print results
 				for (String name : setName)

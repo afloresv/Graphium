@@ -7,13 +7,9 @@ FLAGS = -source 6 -nowarn -cp $(LIBS)
 compile:
 	javac $(FLAGS) ve/usb/ldc/graphium/load/*.java
 	javac $(FLAGS) ve/usb/ldc/graphium/core/*.java
-	javac $(FLAGS) ve/usb/ldc/graphium/berlin/general/*.java
-	javac $(FLAGS) ve/usb/ldc/graphium/berlin/neo4j/*.java
-	javac $(FLAGS) ve/usb/ldc/graphium/berlin/dex/*.java
+	javac $(FLAGS) ve/usb/ldc/graphium/berlin/*.java
 
 clean:
 	rm -f ve/usb/ldc/graphium/load/*.class
 	rm -f ve/usb/ldc/graphium/core/*.class
-	rm -f ve/usb/ldc/graphium/berlin/general/*.class
-	rm -f ve/usb/ldc/graphium/berlin/neo4j/*.class
-	rm -f ve/usb/ldc/graphium/berlin/dex/*.class
+	rm -f ve/usb/ldc/graphium/berlin/*.class

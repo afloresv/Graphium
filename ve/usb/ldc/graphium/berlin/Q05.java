@@ -16,105 +16,92 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.berlin.DEX;
+package ve.usb.ldc.graphium.berlin;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import com.sparsity.dex.gdb.*;
-
 import ve.usb.ldc.graphium.core.*;
-import ve.usb.ldc.graphium.berlin.general.*;
 
-public class Q05 extends DEX implements BerlinQuery {
+public class Q05 implements BerlinQuery {
 
 	int[][] inst = {
 		{408,20183}
 	};
 
-	public Q05(String path) {
-		super(path);
-	}
+	GraphDB g;
 
-	public static void main(String args[]) {
-		Q05 testQ = new Q05(args[0]);
-		testQ.runQuery(Integer.parseInt(args[1]));
-		testQ.close();
+	public Q05(GraphDB _g) {
+		g = _g;
 	}
 
 	public void runQuery(int ind) {
 
-		long pNode, vNode, rel;
+		Vertex pNode, vNode;
+		Edge rel;
+		IteratorGraph it;
 		String relStr, nodeStr, product;
-		Objects edgeSet;
-		ObjectsIterator it;
 
 		HashSet<Integer>
 			setOP1 = new HashSet<Integer>(),
 			setOP2 = new HashSet<Integer>();
-		HashSet<Long>
-			setPF = new HashSet<Long>(),
-			setProd = new HashSet<Long>();
+		HashSet<Vertex>
+			setPF = new HashSet<Vertex>(),
+			setProd = new HashSet<Vertex>();
 
 		// FILTER (?p = bsbminst:dataFromProducer408/Product20183)
-		pNode = getNodeFromURI(bsbminst+"dataFromProducer"
+		pNode = g.getVertexURI(bsbminst+"dataFromProducer"
 			+inst[ind][0]+"/Product"+inst[ind][1]);
-		if (pNode == NodeNotFound) return;
-		edgeSet = g.explode(pNode,EdgeType,EdgesDirection.Outgoing);
-		it = edgeSet.iterator();
+		if (pNode == null) return;
+		it = pNode.getEdgesOut();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = getEdgeURI(rel);
-			vNode = getEndNode(rel);
+			relStr = rel.getURI();
 
 			try {
 				if (relStr.equals(bsbm+"productFeature")) {
 					// ?p bsbm:productFeature ?prodFeature .
-					setPF.add(vNode);
+					setPF.add(rel.getEnd());
 				} else if (relStr.equals(bsbm+"productPropertyNumeric1")) {
 					// ?p bsbm:productPropertyNumeric1 ?origProperty1 .
-					setOP1.add(Integer.parseInt(getAnyProp(vNode)));
+					setOP1.add(Integer.parseInt(rel.getEnd().getAny()));
 				} else if (relStr.equals(bsbm+"productPropertyNumeric2")) {
 					// ?p bsbm:productPropertyNumeric2 ?origProperty2 .
-					setOP2.add(Integer.parseInt(getAnyProp(vNode)));
+					setOP2.add(Integer.parseInt(rel.getEnd().getAny()));
 				}
 			} catch (NumberFormatException nfe) {}
 		}
 		it.close();
-		edgeSet.close();
 
-		for (Long nodePF : setPF) {
-			edgeSet = g.explode(nodePF,EdgeType,EdgesDirection.Ingoing);
-			it = edgeSet.iterator();
+		for (Vertex nodePF : setPF) {
+			it = nodePF.getEdgesIn();
 			while (it.hasNext()) {
 				rel = it.next();
-				vNode = getStartNode(rel);
+				vNode = rel.getStart();
 				// ?product bsbm:productFeature ?prodFeature .
 				// FILTER (bsbminst:dataFromProducer408/Product20183 != ?product)
-				if (pNode != vNode && getEdgeURI(rel).equals(bsbm+"productFeature"))
+				if (!pNode.equals(vNode) && rel.getURI().equals(bsbm+"productFeature"))
 					setProd.add(vNode);
 			}
 			it.close();
-			edgeSet.close();
 		}
 
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
 
-		for (Long nodeProd : setProd) {
-			product = getAnyProp(nodeProd);
+		for (Vertex nodeProd : setProd) {
+			product = nodeProd.getAny();
 
 			HashSet<Integer>
 				setSP1 = new HashSet<Integer>(),
 				setSP2 = new HashSet<Integer>();
 			HashSet<String> setPL = new HashSet<String>();
 
-			edgeSet = g.explode(nodeProd,EdgeType,EdgesDirection.Outgoing);
-			it = edgeSet.iterator();
+			it = nodeProd.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = getEdgeURI(rel);
-				nodeStr = getAnyProp(getEndNode(rel));
+				relStr = rel.getURI();
+				nodeStr = rel.getEnd().getAny();
 				try {
 					if (relStr.equals(rdfs+"label")) {
 						// ?product rdfs:label ?productLabel .
@@ -129,7 +116,6 @@ public class Q05 extends DEX implements BerlinQuery {
 				} catch (NumberFormatException nfe) {}
 			}
 			it.close();
-			edgeSet.close();
 
 			// FILTER (?simProperty1 < (?origProperty1 + 120)
 			// && ?simProperty1 > (?origProperty1 - 120))

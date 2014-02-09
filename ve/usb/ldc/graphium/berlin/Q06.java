@@ -16,72 +16,61 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.berlin.DEX;
+package ve.usb.ldc.graphium.berlin;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import com.sparsity.dex.gdb.*;
-
 import ve.usb.ldc.graphium.core.*;
-import ve.usb.ldc.graphium.berlin.general.*;
 
-public class Q06 extends DEX implements BerlinQuery {
+public class Q06 implements BerlinQuery {
 
 	String[] inst = {
 		"ambilateral",
 		"iterant"
 	};
 
-	public Q06(String path) {
-		super(path);
-	}
+	GraphDB g;
 
-	public static void main(String args[]) {
-		Q06 testQ = new Q06(args[0]);
-		testQ.runQuery(Integer.parseInt(args[1]));
-		testQ.close();
+	public Q06(GraphDB _g) {
+		g = _g;
 	}
 
 	public void runQuery(int ind) {
 
-		long bsbmProductNode, rel;
-		Objects edgeSet;
-		ObjectsIterator it;
+		Vertex bsbmProductNode;
+		Edge rel;
+		IteratorGraph it;
 		String relStr, product, label;
-		HashSet<Long> setProduct = new HashSet<Long>();
+		HashSet<Vertex> setProduct = new HashSet<Vertex>();
 
 		// bsbm:Product
-		bsbmProductNode = getNodeFromURI(bsbm+"Product");
-		if (bsbmProductNode == NodeNotFound) return;
-		edgeSet = g.explode(bsbmProductNode,EdgeType,EdgesDirection.Ingoing);
-		it = edgeSet.iterator();
+		bsbmProductNode = g.getVertexURI(bsbm+"Product");
+		if (bsbmProductNode == null) return;
+		it = bsbmProductNode.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = getEdgeURI(rel);
+			relStr = rel.getURI();
 			// ?product rdf:type bsbm:Product .
 			if (relStr.equals(rdf+"type"))
-				setProduct.add(getStartNode(rel));
+				setProduct.add(rel.getStart());
 		}
 		it.close();
-		edgeSet.close();
 
-		for (Long productNode : setProduct) {
-			product = getAnyProp(productNode);
-			edgeSet = g.explode(productNode,EdgeType,EdgesDirection.Outgoing);
-			it = edgeSet.iterator();
+		for (Vertex productNode : setProduct) {
+			product = productNode.getAny();
+			it = productNode.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				label = getAnyProp(getEndNode(rel));
+				label = rel.getEnd().getAny();
 				// ?product rdfs:label ?label .
 				// FILTER regex(?label, "string")
-				if (getEdgeURI(rel).equals(rdfs+"label")
+				if (rel.getURI().equals(rdfs+"label")
 					&& label.matches(inst[ind]))
 					(new ResultTuple(product,label)).print();
 			}
 			it.close();
-			edgeSet.close();
 		}
 	}
 }

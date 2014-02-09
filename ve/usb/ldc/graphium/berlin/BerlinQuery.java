@@ -16,19 +16,25 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.core;
+package ve.usb.ldc.graphium.berlin;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public interface GraphDB {
+import ve.usb.ldc.graphium.core.*;
 
-	public final String[] prop =
-		{"URI","NodeID","Literal","Lang","Type","Predicate"};
+public interface BerlinQuery {
 
-	public Vertex getVertexURI(String strURI);
-
-	public void close();
-
+	// PREFIX
+	public final String bsbm = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/";
+	public final String bsbminst = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/";
+	public final String bsbmexport = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/export/";
+	public final String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+	public final String rdfs = "http://www.w3.org/2000/01/rdf-schema#";
+	public final String dc = "http://purl.org/dc/elements/1.1/";
+	public final String rev = "http://purl.org/stuff/rev#";
+	public final String foaf = "http://xmlns.com/foaf/0.1/";
+	
+	void runQuery(int ind);
 }

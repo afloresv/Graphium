@@ -16,43 +16,36 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.berlin.DEX;
+package ve.usb.ldc.graphium.berlin;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import com.sparsity.dex.gdb.*;
-
 import ve.usb.ldc.graphium.core.*;
-import ve.usb.ldc.graphium.berlin.general.*;
 
-public class Q12 extends DEX implements BerlinQuery {
+public class Q12 implements BerlinQuery {
 
 	int[][] inst = {
 		{117,231837}
 	};
 
-	public Q12(String path) {
-		super(path);
-	}
+	GraphDB g;
 
-	public static void main(String args[]) {
-		Q12 testQ = new Q12(args[0]);
-		testQ.runQuery(Integer.parseInt(args[1]));
-		testQ.close();
+	public Q12(GraphDB _g) {
+		g = _g;
 	}
 
 	public void runQuery(int ind) {
 
-		long iNode, vNode, rel;
-		Objects edgeSet;
-		ObjectsIterator it;
-		String relStr, nodeStr1, nodeStr2, vendorURI;
+		Vertex iNode;
+		Edge rel;
+		IteratorGraph it;
+		String relStr, nodeStr, vendorURI;
 
-		HashSet<Long>
-			setProductURI = new HashSet<Long>(),
-			setVendorURI = new HashSet<Long>();
+		HashSet<Vertex>
+			setProductURI = new HashSet<Vertex>(),
+			setVendorURI = new HashSet<Vertex>();
 		HashSet<String>
 			setOfferURL = new HashSet<String>(),
 			setPrice = new HashSet<String>(),
@@ -61,78 +54,69 @@ public class Q12 extends DEX implements BerlinQuery {
 		ArrayList<ResultTuple> productTuples = new ArrayList<ResultTuple>();
 
 		// FILTER (?o = bsbminst:dataFromVendor117/Offer231837)
-		iNode = getNodeFromURI(bsbminst+"dataFromVendor"+inst[ind][0]+"/Offer"+inst[ind][1]);
-		if (iNode == NodeNotFound) return;
-		edgeSet = g.explode(iNode,EdgeType,EdgesDirection.Outgoing);
-		it = edgeSet.iterator();
+		iNode = g.getVertexURI(bsbminst+"dataFromVendor"+inst[ind][0]+"/Offer"+inst[ind][1]);
+		if (iNode == null) return;
+		it = iNode.getEdgesOut();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = getEdgeURI(rel);
-			vNode = getEndNode(rel);
+			relStr = rel.getURI();
 
 			if (relStr.equals(bsbm+"product")) {
 				// ?o bsbm:product ?productURI
-				setProductURI.add(vNode);
+				setProductURI.add(rel.getEnd());
 			} else if (relStr.equals(bsbm+"vendor")) {
 				// ?o bsbm:vendor ?vendorURI
-				setVendorURI.add(vNode);
+				setVendorURI.add(rel.getEnd());
 			} else if (relStr.equals(bsbm+"offerWebpage")) {
 				// ?o bsbm:offerWebpage ?offerURL
-				setOfferURL.add(getAnyProp(vNode));
+				setOfferURL.add(rel.getEnd().getAny());
 			} else if (relStr.equals(bsbm+"price")) {
 				// ?o bsbm:price ?price
-				setPrice.add(getAnyProp(vNode));
+				setPrice.add(rel.getEnd().getAny());
 			} else if (relStr.equals(bsbm+"deliveryDays")) {
 				// ?o bsbm:deliveryDays ?deliveryDays
-				setDeliveryDays.add(getAnyProp(vNode));
+				setDeliveryDays.add(rel.getEnd().getAny());
 			} else if (relStr.equals(bsbm+"validTo")) {
 				// ?o bsbm:validTo ?validTo
-				setValidTo.add(getAnyProp(vNode));
+				setValidTo.add(rel.getEnd().getAny());
 			}
 		}
 		it.close();
-		edgeSet.close();
 
-		for (Long puNode : setProductURI) {
-			nodeStr1 = getAnyProp(puNode);
-			edgeSet = g.explode(puNode,EdgeType,EdgesDirection.Outgoing);
-			it = edgeSet.iterator();
+		for (Vertex puNode : setProductURI) {
+			nodeStr = puNode.getAny();
+			it = puNode.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = getEdgeURI(rel);
-				nodeStr2 = getAnyProp(getEndNode(rel));
+				relStr = rel.getURI();
 				if (relStr.equals(rdfs+"label")) {
 					// ?productURI rdfs:label ?productLabel
-					productTuples.add(new ResultTuple(nodeStr1,nodeStr2));
+					productTuples.add(new ResultTuple(nodeStr,rel.getEnd().getAny()));
 				}
 			}
 			it.close();
-			edgeSet.close();
 		}
 
-		for (Long vuNode : setVendorURI) {
+		for (Vertex vuNode : setVendorURI) {
 
-			vendorURI = getAnyProp(vuNode);
+			vendorURI = vuNode.getAny();
 			HashSet<String>
 				setVendorName = new HashSet<String>(),
 				setVendorHomePage = new HashSet<String>();
 
-			edgeSet = g.explode(vuNode,EdgeType,EdgesDirection.Outgoing);
-			it = edgeSet.iterator();
+			it = vuNode.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = getEdgeURI(rel);
-				nodeStr2 = getAnyProp(getEndNode(rel));
+				relStr = rel.getURI();
 				if (relStr.equals(rdfs+"label")) {
 					// ?vendorURI rdfs:label ?vendorName
-					setVendorName.add(nodeStr2);
+					setVendorName.add(rel.getEnd().getAny());
 				} else if (relStr.equals(foaf+"homepage")) {
 					// ?vendorURI foaf:homepage ?vendorHomePage
-					setVendorHomePage.add(nodeStr2);
+					setVendorHomePage.add(rel.getEnd().getAny());
 				}
 			}
 			it.close();
-			edgeSet.close();
 
 			for (ResultTuple product : productTuples)
 			for (String vendorname : setVendorName)

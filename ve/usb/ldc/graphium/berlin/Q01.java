@@ -16,88 +16,73 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.berlin.Neo4j;
+package ve.usb.ldc.graphium.berlin;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import org.neo4j.graphdb.*;
-import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexManager;
-import org.neo4j.graphdb.factory.*;
-import org.neo4j.graphdb.traversal.*;
-import org.neo4j.unsafe.batchinsert.*;
-import org.neo4j.index.lucene.unsafe.batchinsert.LuceneBatchInserterIndexProvider;
-import org.neo4j.cypher.javacompat.*;
-import org.neo4j.tooling.*;
-import org.neo4j.kernel.*;
-import org.neo4j.helpers.collection.*;
-
 import ve.usb.ldc.graphium.core.*;
-import ve.usb.ldc.graphium.berlin.general.*;
 
-public class Q01 extends Neo4j implements BerlinQuery {
+public class Q01 implements BerlinQuery {
 
 	int[][] inst = {
 		{477,15422,123,54}
 	};
 
-	public Q01(String path) {
-		super(path);
-	}
+	GraphDB g;
 
-	public static void main(String args[]) {
-		Q01 testQ = new Q01(args[0]);
-		testQ.runQuery(Integer.parseInt(args[1]));
-		testQ.close();
+	public Q01(GraphDB _g) {
+		g = _g;
 	}
 
 	public void runQuery(int ind) {
 
 		HashSet[] sets = new HashSet[2];
-		sets[0] = new HashSet<Node>();
-		sets[1] = new HashSet<Node>();
+		sets[0] = new HashSet<Vertex>();
+		sets[1] = new HashSet<Vertex>();
 
-		Node nURI, nProd;
-		Relationship rel;
-		Iterator<Relationship> it;
+		Vertex nURI, nProd;
+		Edge rel;
+		IteratorGraph it;
 
-		nURI = getNodeFromURI(bsbminst+"ProductType"+inst[ind][0]);
-		if (nURI == NodeNotFound) return;
-		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
+		nURI = g.getVertexURI(bsbminst+"ProductType"+inst[ind][0]);
+		if (nURI == null) return;
+		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (getEdgeURI(rel).equals(rdf+"type"))
-				sets[0].add(rel.getStartNode());
+			if (rel.getURI().equals(rdf+"type"))
+				sets[0].add(rel.getStart());
 		}
+		it.close();
 
-		nURI = getNodeFromURI(bsbminst+"ProductFeature"+inst[ind][1]);
-		if (nURI == NodeNotFound) return;
-		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
+		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst[ind][1]);
+		if (nURI == null) return;
+		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
-			nProd = rel.getStartNode();
-			if (getEdgeURI(rel).equals(bsbm+"productFeature")
+			nProd = rel.getStart();
+			if (rel.getURI().equals(bsbm+"productFeature")
 				&& sets[0].contains(nProd))
 				sets[1].add(nProd);
 		}
+		it.close();
 		sets[0].clear();
 
-		nURI = getNodeFromURI(bsbminst+"ProductFeature"+inst[ind][2]);
-		if (nURI == NodeNotFound) return;
-		it = nURI.getRelationships(relType,Direction.INCOMING).iterator();
+		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst[ind][2]);
+		if (nURI == null) return;
+		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
-			nProd = rel.getStartNode();
-			if (getEdgeURI(rel).equals(bsbm+"productFeature")
+			nProd = rel.getStart();
+			if (rel.getURI().equals(bsbm+"productFeature")
 				&& sets[1].contains(nProd))
 				sets[0].add(nProd);
 		}
+		it.close();
 
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
-		Iterator<Node> itProd = sets[0].iterator();
+		Iterator<Vertex> itProd = sets[0].iterator();
 		String product, temp;
 		while (itProd.hasNext()) {
 			HashSet<String>
@@ -105,17 +90,17 @@ public class Q01 extends Neo4j implements BerlinQuery {
 				setV = new HashSet<String>();
 
 			nProd = itProd.next();
-			it = nProd.getRelationships(relType,Direction.OUTGOING).iterator();
+			it = nProd.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				temp = getEdgeURI(rel);
+				temp = rel.getURI();
 				if (temp.equals(rdfs+"label"))
-					setL.add(getAnyProp(getEndNode(rel)));
+					setL.add(rel.getEnd().getAny());
 				else if (temp.equals(bsbm+"productPropertyNumeric1"))
-					setV.add(getAnyProp(getEndNode(rel)));
+					setV.add(rel.getEnd().getAny());
 			}
 
-			product = getAnyProp(nProd);
+			product = nProd.getAny();
 			for (String value : setV) { try {
 				if (Integer.parseInt(value)>inst[ind][3])
 					for (String label : setL)

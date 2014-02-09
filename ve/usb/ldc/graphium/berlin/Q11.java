@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.berlin.general;
+package ve.usb.ldc.graphium.berlin;
 
 import java.util.*;
 import java.lang.*;
@@ -24,17 +24,42 @@ import java.io.*;
 
 import ve.usb.ldc.graphium.core.*;
 
-public interface BerlinQuery {
-	
-	// PREFIX
-	public final String bsbm = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/";
-	public final String bsbminst = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/";
-	public final String bsbmexport = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/export/";
-	public final String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-	public final String rdfs = "http://www.w3.org/2000/01/rdf-schema#";
-	public final String dc = "http://purl.org/dc/elements/1.1/";
-	public final String rev = "http://purl.org/stuff/rev#";
-	public final String foaf = "http://xmlns.com/foaf/0.1/";
-	
-	void runQuery(int ind);
+public class Q11 implements BerlinQuery {
+
+	int[][] inst = {
+		{215,423241}
+	};
+
+	GraphDB g;
+
+	public Q11(GraphDB _g) {
+		g = _g;
+	}
+
+	public void runQuery(int ind) {
+
+		Vertex iNode;
+		Edge rel;
+		IteratorGraph it;
+
+		iNode = g.getVertexURI(bsbminst+"dataFromVendor"+inst[ind][0]+"/Offer"+inst[ind][1]);
+		if (iNode == null) return;
+		it = iNode.getEdgesOut();
+		while (it.hasNext()) {
+			rel = it.next();
+			// bsbminst:dataFromVendor215/Offer423241 ?property ?hasValue
+			(new ResultTuple(rel.getURI(),rel.getEnd().getAny(),"")).print();
+		}
+		it.close();
+
+		// UNION
+
+		it = iNode.getEdgesIn();
+		while (it.hasNext()) {
+			rel = it.next();
+			// ?isValueOf ?property bsbminst:dataFromVendor215/Offer423241
+			(new ResultTuple(rel.getURI(),"",rel.getStart().getAny())).print();
+		}
+		it.close();
+	}
 }

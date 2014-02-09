@@ -16,92 +16,80 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.berlin.DEX;
+package ve.usb.ldc.graphium.berlin;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import com.sparsity.dex.gdb.*;
-
 import ve.usb.ldc.graphium.core.*;
-import ve.usb.ldc.graphium.berlin.general.*;
 
-public class Q08 extends DEX implements BerlinQuery {
+public class Q08 implements BerlinQuery {
 
 	int[][] inst = {
 		{510,25065}
 	};
 
-	public Q08(String path) {
-		super(path);
-	}
+	GraphDB g;
 
-	public static void main(String args[]) {
-		Q08 testQ = new Q08(args[0]);
-		testQ.runQuery(Integer.parseInt(args[1]));
-		testQ.close();
+	public Q08(GraphDB _g) {
+		g = _g;
 	}
 
 	public void runQuery(int ind) {
 
-		long iNode, vNode, rel;
-		Objects edgeSet;
-		ObjectsIterator it;
-		String relStr, reviewer, temp;
+		Vertex iNode;
+		Edge rel;
+		IteratorGraph it;
+		String relStr, reviewer;
 
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
 
-		HashSet<Long> setReview = new HashSet<Long>();
+		HashSet<Vertex> setReview = new HashSet<Vertex>();
 
 		// ?review bsbm:reviewFor bsbminst:dataFromProducer510/Product25065 .
-		iNode = getNodeFromURI(bsbminst+"dataFromProducer"
+		iNode = g.getVertexURI(bsbminst+"dataFromProducer"
 			+inst[ind][0]+"/Product"+inst[ind][1]);
-		if (iNode == NodeNotFound) return;
-		edgeSet = g.explode(iNode,EdgeType,EdgesDirection.Ingoing);
-		it = edgeSet.iterator();
+		if (iNode == null) return;
+		it = iNode.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = getEdgeURI(rel);
+			relStr = rel.getURI();
 			if (relStr.equals(bsbm+"reviewFor"))
-				setReview.add(getStartNode(rel));
+				setReview.add(rel.getStart());
 		}
 		it.close();
-		edgeSet.close();
 
-		for (Long reviewNode : setReview) {
-			HashSet<Long> setReviewer = new HashSet<Long>();
+		for (Vertex reviewNode : setReview) {
+			HashSet<Vertex> setReviewer = new HashSet<Vertex>();
 			HashSet<String>
 				setTitle = new HashSet<String>(),
 				setText = new HashSet<String>(),
 				setReviewDate = new HashSet<String>();
 
-			edgeSet = g.explode(reviewNode,EdgeType,EdgesDirection.Outgoing);
-			it = edgeSet.iterator();
+			it = reviewNode.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = getEdgeURI(rel);
-				vNode = getStartNode(rel);
+				relStr = rel.getURI();
 				if (relStr.equals(dc+"title")) {
 					// ?review dc:title ?title .
-					setTitle.add(getAnyProp(vNode));
+					setTitle.add(rel.getStart().getAny());
 				} else if (relStr.equals(rev+"text")) {
 					// ?review rev:text ?text .
 					// #FILTER langMatches( lang(?text), "EN" )
-					setText.add(getAnyProp(vNode));
+					setText.add(rel.getStart().getAny());
 				} else if (relStr.equals(bsbm+"reviewDate")) {
 					// ?review bsbm:reviewDate ?reviewDate .
-					setReviewDate.add(getAnyProp(vNode));
+					setReviewDate.add(rel.getStart().getAny());
 				} else if (relStr.equals(rev+"reviewer")) {
 					// ?review rev:reviewer ?reviewer .
-					setReviewer.add(vNode);
+					setReviewer.add(rel.getStart());
 				}
 			}
 			it.close();
-			edgeSet.close();
 
-			for (Long reviewerNode : setReviewer) {
-				reviewer = getAnyProp(reviewerNode);
+			for (Vertex reviewerNode : setReviewer) {
+				reviewer = reviewerNode.getAny();
 
 				HashSet<String>
 					setReviewerName = new HashSet<String>(),
@@ -110,32 +98,28 @@ public class Q08 extends DEX implements BerlinQuery {
 					setRating3 = new HashSet<String>(),
 					setRating4 = new HashSet<String>();
 
-				edgeSet = g.explode(reviewerNode,EdgeType,EdgesDirection.Outgoing);
-				it = edgeSet.iterator();
+				it = reviewerNode.getEdgesOut();
 				while (it.hasNext()) {
 					rel = it.next();
-					relStr = getEdgeURI(rel);
-					vNode = getStartNode(rel);
-					temp = getAnyProp(vNode);
+					relStr = rel.getURI();
 					if (relStr.equals(foaf+"name")) {
 						// ?reviewer foaf:name ?reviewerName .
-						setReviewerName.add(temp);
+						setReviewerName.add(rel.getStart().getAny());
 					} else if (relStr.equals(bsbm+"rating1")) {
 						// OPTIONAL { ?review bsbm:rating1 ?rating1 . }
-						setRating1.add(temp);
+						setRating1.add(rel.getStart().getAny());
 					} else if (relStr.equals(bsbm+"rating2")) {
 						// OPTIONAL { ?review bsbm:rating2 ?rating2 . }
-						setRating2.add(temp);
+						setRating2.add(rel.getStart().getAny());
 					} else if (relStr.equals(bsbm+"rating3")) {
 						// OPTIONAL { ?review bsbm:rating3 ?rating3 . }
-						setRating3.add(temp);
+						setRating3.add(rel.getStart().getAny());
 					} else if (relStr.equals(bsbm+"rating4")) {
 						// OPTIONAL { ?review bsbm:rating4 ?rating4 . }
-						setRating4.add(temp);
+						setRating4.add(rel.getStart().getAny());
 					}
 				}
 				it.close();
-				edgeSet.close();
 
 				if (setRating1.size()==0) setRating1.add("");
 				if (setRating2.size()==0) setRating2.add("");
