@@ -47,6 +47,7 @@ public abstract class BerlinQuery {
 	public final String dc = "http://purl.org/dc/elements/1.1/";
 	public final String rev = "http://purl.org/stuff/rev#";
 	public final String foaf = "http://xmlns.com/foaf/0.1/";
+	public final String xsd = "http://www.w3.org/2001/XMLSchema#";
 	
 	public abstract void runQuery(int ind);
 	public void close() {
