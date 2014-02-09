@@ -1,5 +1,7 @@
-GraphDB-Benchmark
-=================
+Graphium
+========
+
+**Graph Database Benchmark**
 
 ##Observations
 
