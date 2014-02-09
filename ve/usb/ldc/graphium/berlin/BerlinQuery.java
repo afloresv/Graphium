@@ -28,6 +28,16 @@ public abstract class BerlinQuery {
 
 	GraphDB g;
 
+	public BerlinQuery(String gdbm, String path) {
+		if (gdbm.equals("Neo4j"))
+			g = new Neo4j(path);
+		else if (gdbm.equals("DEX"))
+			g = new DEX(path);
+		else {
+			throw (new Error("Wrong GDBM (Neo4j or DEX)"));
+		}
+	}
+
 	// PREFIX
 	public final String bsbm = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/";
 	public final String bsbminst = "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/";
@@ -39,4 +49,7 @@ public abstract class BerlinQuery {
 	public final String foaf = "http://xmlns.com/foaf/0.1/";
 	
 	public abstract void runQuery(int ind);
+	public void close() {
+		g.close();
+	}
 }

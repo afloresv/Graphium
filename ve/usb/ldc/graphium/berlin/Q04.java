@@ -29,12 +29,18 @@ public class Q04 extends BerlinQuery {
 	int[][] inst = {
 		{252,897,8047,137,47,93}
 	};
+
+	public static void main(String[] args) {
+		BerlinQuery Q = new Q04(args[1],args[2]);
+		Q.runQuery(Integer.parseInt(args[0]));
+		Q.close();
+	}
+
+	public Q04(String gdbm, String path) {
+		super(gdbm,path);
+	}
 	
 	ArrayList<ResultTuple> results;
-
-	public Q04(GraphDB _g) {
-		g = _g;
-	}
 
 	public void runQuery(int ind, int off) {
 

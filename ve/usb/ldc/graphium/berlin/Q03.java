@@ -30,8 +30,14 @@ public class Q03 extends BerlinQuery {
 		{240,7647,228,156,7616}
 	};
 
-	public Q03(GraphDB _g) {
-		g = _g;
+	public static void main(String[] args) {
+		BerlinQuery Q = new Q03(args[1],args[2]);
+		Q.runQuery(Integer.parseInt(args[0]));
+		Q.close();
+	}
+
+	public Q03(String gdbm, String path) {
+		super(gdbm,path);
 	}
 
 	public void runQuery(int ind) {
