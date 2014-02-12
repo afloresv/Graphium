@@ -95,15 +95,9 @@ public class DEX implements GraphDB {
 			node_id = _id;
 			node_type = g.getObjectType(node_id);
 		}
-		public boolean isURI() {
-			return node_type==TypeURI;
-		}
-		public boolean isNodeID() {
-			return node_type==TypeNodeID;
-		}
-		public boolean isLiteral() {
-			return node_type==TypeLiteral;
-		}
+		public boolean isURI()     { return node_type==TypeURI; }
+		public boolean isNodeID()  { return node_type==TypeNodeID; }
+		public boolean isLiteral() { return node_type==TypeLiteral; }
 		public String getURI() {
 			if (this.isURI()) {
 				return g.getAttribute(node_id,AttrURI).getString();

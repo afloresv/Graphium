@@ -118,35 +118,34 @@ public abstract class LoadNT {
 		if (i==len) return false;
 		else if (i==len-1) {
 			// Simple String Literal
-			lastN = addNode(2,str.substring(1,i));
+			lastN = addNode(2,str.substring(0,i+1));
 		} else if (str.charAt(i+1)=='@'
 			&& str.substring(i+2).matches("^[a-z]+(-[a-z0-9]+)*$")) {
 			// String Literal with Language
-			lastN = addNode(2,str.substring(1,i));
+			lastN = addNode(2,str.substring(0,i+1));
 			addAttr(lastN,3,str.substring(i+2));
 		} else if (i+5<len && str.charAt(i+1)=='^' && str.charAt(i+2)=='^'
 			&& tryURI(str.substring(i+3),false)) {
 			// Datatype Literal
-			String valStr = str.substring(1,i);
-			lastN = addNode(2,valStr);
+			lastN = addNode(2,str.substring(0,i+1));
 			addAttr(lastN,4,lastURI);
 			Object val = null;
 			int indType = 2;
 			if (lastURI.equals(xsd+"boolean")) {
 				indType = 5;
-				val = new Boolean(valStr);
+				val = new Boolean(str.substring(1,i));
 			} else if (lastURI.equals(xsd+"integer")) {
 				indType = 6;
-				val = new Long(valStr);
+				val = new Long(str.substring(1,i));
 			} else if (lastURI.equals(xsd+"decimal")
 				|| lastURI.equals(xsd+"float")
 				|| lastURI.equals(xsd+"double")) {
 				indType = 7;
-				val = new Double(valStr);
+				val = new Double(str.substring(1,i));
 			} else if (lastURI.equals(xsd+"date")
 				|| lastURI.equals(xsd+"dateTime")) {
 				indType = 8;
-				val = DatatypeConverter.parseDateTime(valStr).getTime();
+				val = DatatypeConverter.parseDateTime(str.substring(1,i)).getTime();
 			}
 			if (val!=null)
 				addAttr(lastN,indType,val);

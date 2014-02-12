@@ -1,8 +1,6 @@
 # Compiled source #
 ###################
-ve/usb/ldc/graphium/load/*.class
-ve/usb/ldc/graphium/core/*.class
-ve/usb/ldc/graphium/berlin/*.class
+*.class
 
 # Test directory #
 ##################
@@ -11,3 +9,4 @@ tests/
 # Other Files #
 ###############
 dex.log
+*.swp
