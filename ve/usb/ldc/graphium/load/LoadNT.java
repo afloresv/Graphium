@@ -21,10 +21,12 @@ package ve.usb.ldc.graphium.load;
 import java.util.*;
 import java.lang.*;
 import java.io.*;
+import javax.xml.bind.DatatypeConverter;
 
 public abstract class LoadNT {
 
 	public String objS, lastURI;
+	public static final String xsd = "http://www.w3.org/2001/XMLSchema#";
 	public long lastN;
 
 	public void start (String nt_file) {
@@ -115,15 +117,39 @@ public abstract class LoadNT {
 		}
 		if (i==len) return false;
 		else if (i==len-1) {
+			// Simple String Literal
 			lastN = addNode(2,str.substring(1,i));
 		} else if (str.charAt(i+1)=='@'
 			&& str.substring(i+2).matches("^[a-z]+(-[a-z0-9]+)*$")) {
+			// String Literal with Language
 			lastN = addNode(2,str.substring(1,i));
 			addAttr(lastN,3,str.substring(i+2));
 		} else if (i+5<len && str.charAt(i+1)=='^' && str.charAt(i+2)=='^'
 			&& tryURI(str.substring(i+3),false)) {
-			lastN = addNode(2,str.substring(1,i));
+			// Datatype Literal
+			String valStr = str.substring(1,i);
+			lastN = addNode(2,valStr);
 			addAttr(lastN,4,lastURI);
+			Object val = null;
+			int indType = 2;
+			if (lastURI.equals(xsd+"boolean")) {
+				indType = 5;
+				val = new Boolean(valStr);
+			} else if (lastURI.equals(xsd+"integer")) {
+				indType = 6;
+				val = new Long(valStr);
+			} else if (lastURI.equals(xsd+"decimal")
+				|| lastURI.equals(xsd+"float")
+				|| lastURI.equals(xsd+"double")) {
+				indType = 7;
+				val = new Double(valStr);
+			} else if (lastURI.equals(xsd+"date")
+				|| lastURI.equals(xsd+"dateTime")) {
+				indType = 8;
+				val = DatatypeConverter.parseDateTime(valStr).getTime();
+			}
+			if (val!=null)
+				addAttr(lastN,indType,val);
 		} else return false;
 
 		return true;

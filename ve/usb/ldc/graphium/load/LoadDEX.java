@@ -36,14 +36,13 @@ public class LoadDEX extends LoadNT {
 	private int[] NodeType = new int[3];
 	private int[] AttrType = new int[9];
 	private int TypeEdge, AttrEdge;
-	private String licenceDEX = "46YMV-NFXTZ-GCG8K-QZ8ME";
 	private int E;
 	private Value valdb = new Value();
 
 	public LoadDEX(String pathDB) {
 		try {
 			cfg = new DexConfig();
-			cfg.setLicense(licenceDEX);
+			cfg.setLicense(DEX.licence);
 			dex = new Dex(cfg);
 			(new File(pathDB)).mkdirs();
 			db = dex.create(pathDB+"/DexDB.dex", "DexBD");
@@ -73,7 +72,7 @@ public class LoadDEX extends LoadNT {
 			AttrType[5] = g.newAttribute(NodeType[2], Attr.valBool,
 				DataType.Boolean, AttributeKind.Basic);
 			AttrType[6] = g.newAttribute(NodeType[2], Attr.valInt,
-				DataType.Integer, AttributeKind.Basic);
+				DataType.Long, AttributeKind.Basic);
 			AttrType[7] = g.newAttribute(NodeType[2], Attr.valDouble,
 				DataType.Double, AttributeKind.Basic);
 			AttrType[8] = g.newAttribute(NodeType[2], Attr.valDate,

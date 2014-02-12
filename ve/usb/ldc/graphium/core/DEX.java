@@ -34,13 +34,12 @@ public class DEX implements GraphDB {
 	public int TypeURI, TypeNodeID, TypeLiteral, TypeEdge;
 	public int AttrURI, AttrNodeID, AttrLiteral, AttrPredicate,
 		AttrLang, AttrType, AttrBool, AttrInt, AttrDouble, AttrDate;
-	public int EdgeType;
-	public String licenceDEX = "46YMV-NFXTZ-GCG8K-QZ8ME";
+	public static String licence = "Q4GTF-H9X01-EJTM2-9MM89";
 
 	public DEX(String path) {
 		try {
 			cfg = new DexConfig();
-			cfg.setLicense(licenceDEX);
+			cfg.setLicense(licence);
 			dex = new Dex(cfg);
 			db = dex.open(path+"/DexDB.dex", true);
 			sess = db.newSession();
@@ -71,7 +70,7 @@ public class DEX implements GraphDB {
 				return;
 			}
 			TypeEdge = itEdge.nextType();
-			AttrPredicate = g.findAttribute(EdgeType, Attr.Predicate);
+			AttrPredicate = g.findAttribute(TypeEdge, Attr.Predicate);
 		} catch (FileNotFoundException e) {
 			System.err.println("Error: " + e.getMessage());
 		}
