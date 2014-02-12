@@ -51,19 +51,19 @@ public class Neo4j implements GraphDB {
 			newGraphDatabase();
 		globalOP = GlobalGraphOperations.at(graphDB);
 		indexManager = graphDB.index();
-		indexURI    = indexManager.forNodes(prop[0]);
-		indexNodeID = indexManager.forNodes(prop[1]);
+		indexURI    = indexManager.forNodes(Attr.URI);
+		indexNodeID = indexManager.forNodes(Attr.NodeID);
 		relType = globalOP.getAllRelationshipTypes().iterator().next();
+	}
+
+	public Vertex getVertexURI(String strURI) {
+		Node id = indexURI.get(Attr.URI,strURI).getSingle();
+		if (id==null) return null;
+		return (new VertexNeo4j(id));
 	}
 
 	public void close() {
 		graphDB.shutdown();
-	}
-
-	public Vertex getVertexURI(String strURI) {
-		Node id = indexURI.get(prop[0],strURI).getSingle();
-		if (id==null) return null;
-		return (new VertexNeo4j(id));
 	}
 
 	public class VertexNeo4j implements Vertex {
@@ -72,27 +72,27 @@ public class Neo4j implements GraphDB {
 			node_id = _id;
 		}
 		public boolean isURI() {
-			return node_id.hasProperty(prop[0]);
+			return node_id.hasProperty(Attr.URI);
 		}
 		public boolean isNodeID() {
-			return node_id.hasProperty(prop[1]);
+			return node_id.hasProperty(Attr.NodeID);
 		}
 		public boolean isLiteral() {
-			return node_id.hasProperty(prop[2]);
+			return node_id.hasProperty(Attr.Literal);
 		}
 		public String getURI() {
 			if (this.isURI()) {
-				return (String)node_id.getProperty(prop[0]);
+				return (String)node_id.getProperty(Attr.URI);
 			} else return null;
 		}
 		public String getNodeID() {
 			if (this.isNodeID()) {
-				return (String)node_id.getProperty(prop[1]);
+				return (String)node_id.getProperty(Attr.NodeID);
 			} else return null;
 		}
 		public String getLiteral() {
 			if (this.isLiteral()) {
-				return (String)node_id.getProperty(prop[2]);
+				return (String)node_id.getProperty(Attr.Literal);
 			} else return null;
 		}
 		public String getAny() {
@@ -123,7 +123,7 @@ public class Neo4j implements GraphDB {
 			rel_id = _id;
 		}
 		public String getURI() {
-			return (String)rel_id.getProperty(prop[0]);
+			return (String)rel_id.getProperty(Attr.Predicate);
 		}
 		public Vertex getStart() {
 			return (new VertexNeo4j(rel_id.getStartNode()));

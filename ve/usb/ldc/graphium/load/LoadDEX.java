@@ -24,6 +24,8 @@ import java.io.*;
 
 import com.sparsity.dex.gdb.*;
 
+import ve.usb.ldc.graphium.core.*;
+
 public class LoadDEX extends LoadNT {
 
 	private DexConfig cfg;
@@ -31,11 +33,12 @@ public class LoadDEX extends LoadNT {
 	private Database db;
 	private Session sess;
 	private com.sparsity.dex.gdb.Graph g;
-	private int[] NodeType = new int[4];
-	private int[] AttrType = new int[6];
-	private int   EdgeType;
+	private int[] NodeType = new int[3];
+	private int[] AttrType = new int[9];
+	private int TypeEdge, AttrEdge;
 	private String licenceDEX = "46YMV-NFXTZ-GCG8K-QZ8ME";
 	private int E;
+	private Value valdb = new Value();
 
 	public LoadDEX(String pathDB) {
 		try {
@@ -49,22 +52,39 @@ public class LoadDEX extends LoadNT {
 			E = 0;
 			sess.begin();
 
-			for (int i=0 ; i<3 ; i++) {
-				NodeType[i] = g.newNodeType(propString[i]);
-				AttrType[i] = g.newAttribute(NodeType[i], propString[i],
-					(i==2 ? DataType.Text : DataType.String),
-					(i==2 ? AttributeKind.Basic : AttributeKind.Unique));
-			}
+			// URI Nodes
+			NodeType[0] = g.newNodeType(Attr.URI);
+			AttrType[0] = g.newAttribute(NodeType[0], Attr.URI,
+				DataType.String, AttributeKind.Unique);
 
-			for (int i=3 ; i<5 ; i++)
-				AttrType[i] = g.newAttribute(NodeType[2], propString[i],
-					DataType.String, AttributeKind.Basic);
+			// NodeID Nodes
+			NodeType[1] = g.newNodeType(Attr.NodeID);
+			AttrType[1] = g.newAttribute(NodeType[1], Attr.NodeID,
+				DataType.String, AttributeKind.Unique);
 
-			EdgeType = g.newEdgeType(propString[5],true,true);
-			AttrType[5] = g.newAttribute(EdgeType, propString[0],
-					DataType.String, AttributeKind.Indexed);
+			// Literal Nodes
+			NodeType[2] = g.newNodeType(Attr.Literal);
+			AttrType[2] = g.newAttribute(NodeType[2], Attr.Literal,
+				DataType.Text, AttributeKind.Basic);
+			AttrType[3] = g.newAttribute(NodeType[2], Attr.Lang,
+				DataType.String, AttributeKind.Basic);
+			AttrType[4] = g.newAttribute(NodeType[2], Attr.Type,
+				DataType.String, AttributeKind.Basic);
+			AttrType[5] = g.newAttribute(NodeType[2], Attr.valBool,
+				DataType.Boolean, AttributeKind.Basic);
+			AttrType[6] = g.newAttribute(NodeType[2], Attr.valInt,
+				DataType.Integer, AttributeKind.Basic);
+			AttrType[7] = g.newAttribute(NodeType[2], Attr.valDouble,
+				DataType.Double, AttributeKind.Basic);
+			AttrType[8] = g.newAttribute(NodeType[2], Attr.valDate,
+				DataType.Timestamp, AttributeKind.Basic);
 
-		} catch (FileNotFoundException e){
+			// Edges
+			TypeEdge = g.newEdgeType(Attr.Predicate,true,true);
+			AttrEdge = g.newAttribute(TypeEdge, Attr.Predicate,
+				DataType.String, AttributeKind.Basic);
+
+		} catch (FileNotFoundException e) {
 			System.err.println("Error: " + e.getMessage());
 		}
 	}
@@ -76,32 +96,46 @@ public class LoadDEX extends LoadNT {
 			sess.commit();
 			sess.begin();
 		}
-		if (indexType==2) {
+		switch (indexType) {
+		case 2:
 			newNode = g.newNode(NodeType[2]);
 			TextStream valStream = new TextStream(false);
 			g.setAttributeText(newNode, AttrType[2],valStream);
 			char[] buff = value.toCharArray();
 			valStream.write(buff, buff.length);
 			valStream.close();
-			return newNode;
-		}
-		newNode = g.findObject(AttrType[indexType],
-			(new Value()).setString(value));
-		if (newNode == Objects.InvalidOID) {
-			newNode = g.newNode(NodeType[indexType]);
-			g.setAttribute(newNode, AttrType[indexType],
-				(new Value()).setString(value));
+			break;
+		default:
+			newNode = g.findObject(AttrType[indexType],
+				valdb.setString(value));
+			if (newNode == Objects.InvalidOID) {
+				newNode = g.newNode(NodeType[indexType]);
+				g.setAttribute(newNode, AttrType[indexType],
+					valdb.setString(value));
+			}
+			break;
 		}
 		return newNode;
 	}
 
-	public void addAttr(long node, int indexType, String value) {
-		g.setAttribute(node,AttrType[indexType],(new Value()).setString(value));
+	public void addAttr(long node, int indexType, Object value) {
+		if (value instanceof String)
+			valdb.setString((String)value);
+		else if (value instanceof Boolean)
+			valdb.setBoolean((Boolean)value);
+		else if (value instanceof Long)
+			valdb.setLong((Long)value);
+		else if (value instanceof Double)
+			valdb.setDouble((Double)value);
+		else if (value instanceof Date)
+			valdb.setTimestamp((Date)value);
+		else throw (new Error("Type Error."));
+		g.setAttribute(node,AttrType[indexType],valdb);
 	}
 
 	public void addRelationship(long src, long dst, String URI) {
-		long edgeID = g.newEdge(EdgeType,src,dst);
-		g.setAttribute(edgeID,AttrType[5],(new Value()).setString(URI));
+		long edgeID = g.newEdge(TypeEdge,src,dst);
+		g.setAttribute(edgeID,AttrEdge,valdb.setString(URI));
 	}
 
 	public void close() {

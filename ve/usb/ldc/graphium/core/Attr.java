@@ -22,8 +22,15 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public interface GraphDB {
-
-	public Vertex getVertexURI(String strURI);
-	public void close();
+public final class Attr {
+	public static final String URI       = "URI";
+	public static final String NodeID    = "NodeID";
+	public static final String Literal   = "Literal";
+	public static final String Lang      = "Lang";
+	public static final String Type      = "Type";
+	public static final String valBool   = "Boolean";
+	public static final String valInt    = "Integer";
+	public static final String valDouble = "Double";
+	public static final String valDate   = "Date";
+	public static final String Predicate = "Predicate";
 }

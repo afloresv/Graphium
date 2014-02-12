@@ -24,8 +24,6 @@ import java.io.*;
 
 public abstract class LoadNT {
 
-	public final String[] propString =
-		{"URI","NodeID","Literal","Lang","Type","Predicate"};
 	public String objS, lastURI;
 	public long lastN;
 
@@ -46,7 +44,7 @@ public abstract class LoadNT {
 					continue;
 				else if (tryURI(subS) || tryNodeID(subS))
 					subN = lastN;
-				else System.out.println("NOOOO");
+				else throw (new Error("Parsing Error."));
 
 				// Predicate
 				preS = in.next();
@@ -55,13 +53,13 @@ public abstract class LoadNT {
 				if (trimObj(in.nextLine())
 					&& (tryURI(objS) || tryNodeID(objS) || tryLiteral(objS)))
 						objN = lastN;
-				else System.out.println("NOOOO");
+				else throw (new Error("Parsing Error."));
 
 				// Relationship
 				if (tryURI(preS,false)) {
 					addRelationship(subN,objN,lastURI);
 					//System.out.println(subS+" "+preS+" "+objS);
-				}
+				} else throw (new Error("Parsing Error."));
 			}
 		} catch (FileNotFoundException fnfe) {
 			System.out.println(fnfe.getMessage());
@@ -144,7 +142,7 @@ public abstract class LoadNT {
 	}
 
 	abstract long addNode(int indexType, String value);
-	abstract void addAttr(long node, int indexType, String value);
+	abstract void addAttr(long node, int indexType, Object value);
 	abstract void addRelationship(long src, long dst, String URI);
 	abstract void close();
 }

@@ -35,53 +35,70 @@ import org.neo4j.tooling.*;
 import org.neo4j.kernel.*;
 import org.neo4j.helpers.collection.*;
 
+import ve.usb.ldc.graphium.core.*;
+
 public class LoadNeo4j extends LoadNT {
 
 	private BatchInserter inserter;
 	private BatchInserterIndexProvider indexProvider;
 	private BatchInserterIndex[] indexNode = new BatchInserterIndex[2];
 	private Map<String, Object> pMap;
-	private DynamicRelationshipType relType;
+	private DynamicRelationshipType TypeEdge;
+	private String AttrStr[] = new String[9];
 
 	public LoadNeo4j(String pathDB) {
+
+		AttrStr[0] = Attr.URI;
+		AttrStr[1] = Attr.NodeID;
+		AttrStr[2] = Attr.Literal;
+		AttrStr[3] = Attr.Lang;
+		AttrStr[4] = Attr.Type;
+		AttrStr[5] = Attr.valBool;
+		AttrStr[6] = Attr.valInt;
+		AttrStr[7] = Attr.valDouble;
+		AttrStr[8] = Attr.valDate;
+
 		inserter = BatchInserters.inserter(pathDB);
 		indexProvider = new LuceneBatchInserterIndexProvider(inserter);
 		for (int i=0 ; i<2 ; i++) {
 			indexNode[i] = indexProvider.
-				nodeIndex(propString[i], MapUtil.stringMap("type","exact"));
-			indexNode[i].setCacheCapacity(propString[i],5000000);
+				nodeIndex(AttrStr[i], MapUtil.stringMap("type","exact"));
+			indexNode[i].setCacheCapacity(AttrStr[i],5000000);
 		}
-		relType = DynamicRelationshipType.withName(propString[5]);
+		TypeEdge = DynamicRelationshipType.withName(Attr.Predicate);
 	}
 
 	public long addNode(int indexType, String value) {
 		long newNode;
-		if (indexType==2) {
-			pMap = MapUtil.map(propString[indexType],value);
+		switch (indexType) {
+		case 2:
+			pMap = MapUtil.map(AttrStr[indexType],value);
 			newNode = inserter.createNode(pMap);
-			return newNode;
-		}
-		IndexHits<Long> hitSearch =
-			indexNode[indexType].get(propString[indexType],value);
-		if (hitSearch.size() == 0) {
-			pMap = MapUtil.map(propString[indexType],value);
-			newNode = inserter.createNode(pMap);
-			indexNode[indexType].add(newNode,pMap);
-		} else {
-			newNode = hitSearch.getSingle();
+			break;
+		default:
+			IndexHits<Long> hitSearch =
+				indexNode[indexType].get(AttrStr[indexType],value);
+			if (hitSearch.size() == 0) {
+				pMap = MapUtil.map(AttrStr[indexType],value);
+				newNode = inserter.createNode(pMap);
+				indexNode[indexType].add(newNode,pMap);
+			} else newNode = hitSearch.getSingle();
+			break;
 		}
 		return newNode;
 	}
 
-	public void addAttr(long node, int indexType, String value) {
+	public void addAttr(long node, int indexType, Object value) {
 		pMap = inserter.getNodeProperties(node);
-		pMap.put(propString[indexType],value);
+		if (value instanceof Date)
+			value = new Long(((Date)value).getTime());
+		pMap.put(AttrStr[indexType],value);
 		inserter.setNodeProperties(node,pMap);
 	}
 
 	public void addRelationship(long src, long dst, String URI) {
-		pMap = MapUtil.map(propString[0],URI);
-		inserter.createRelationship(src,dst,relType,pMap);
+		pMap = MapUtil.map(Attr.Predicate,URI);
+		inserter.createRelationship(src,dst,TypeEdge,pMap);
 	}
 
 	public void close() {

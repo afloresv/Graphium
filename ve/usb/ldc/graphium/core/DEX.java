@@ -31,9 +31,10 @@ public class DEX implements GraphDB {
 	public Database db;
 	public Session sess;
 	public com.sparsity.dex.gdb.Graph g;
-	public int[] NodeType = new int[3];
-	public int[] AttrType = new int[6];
-	public int   EdgeType;
+	public int TypeURI, TypeNodeID, TypeLiteral, TypeEdge;
+	public int AttrURI, AttrNodeID, AttrLiteral, AttrPredicate,
+		AttrLang, AttrType, AttrBool, AttrInt, AttrDouble, AttrDate;
+	public int EdgeType;
 	public String licenceDEX = "46YMV-NFXTZ-GCG8K-QZ8ME";
 
 	public DEX(String path) {
@@ -45,12 +46,23 @@ public class DEX implements GraphDB {
 			sess = db.newSession();
 			g = sess.getGraph();
 
-			for (int i=0 ; i<3 ; i++) {
-				NodeType[i] = g.findType(prop[i]);
-				AttrType[i] = g.findAttribute(NodeType[i], prop[i]);
-			}
-			for (int i=3 ; i<5 ; i++)
-				AttrType[i] = g.findAttribute(NodeType[2], prop[i]);
+			// URI Nodes
+			TypeURI = g.findType(Attr.URI);
+			AttrURI = g.findAttribute(TypeURI, Attr.URI);
+
+			// NodeID Nodes
+			TypeNodeID = g.findType(Attr.NodeID);
+			AttrNodeID = g.findAttribute(TypeNodeID, Attr.NodeID);
+
+			// Literal Nodes
+			TypeLiteral = g.findType(Attr.Literal);
+			AttrLiteral = g.findAttribute(TypeLiteral, Attr.Literal);
+			AttrLang    = g.findAttribute(TypeLiteral, Attr.Lang);
+			AttrType    = g.findAttribute(TypeLiteral, Attr.Type);
+			AttrBool    = g.findAttribute(TypeLiteral, Attr.valBool);
+			AttrInt     = g.findAttribute(TypeLiteral, Attr.valInt);
+			AttrDouble  = g.findAttribute(TypeLiteral, Attr.valDouble);
+			AttrDate    = g.findAttribute(TypeLiteral, Attr.valDate);
 
 			TypeListIterator itEdge = g.findEdgeTypes().iterator();
 			if (!itEdge.hasNext()) {
@@ -58,8 +70,8 @@ public class DEX implements GraphDB {
 				this.close();
 				return;
 			}
-			EdgeType = itEdge.nextType();
-			AttrType[5] = g.findAttribute(EdgeType, prop[0]);
+			TypeEdge = itEdge.nextType();
+			AttrPredicate = g.findAttribute(EdgeType, Attr.Predicate);
 		} catch (FileNotFoundException e) {
 			System.err.println("Error: " + e.getMessage());
 		}
@@ -72,7 +84,7 @@ public class DEX implements GraphDB {
 	}
 
 	public Vertex getVertexURI(String strURI) {
-		long id = g.findObject(AttrType[0],(new Value()).setString(strURI));
+		long id = g.findObject(AttrURI,(new Value()).setString(strURI));
 		if (id==Objects.InvalidOID) return null;
 		return (new VertexDEX(id));
 	}
@@ -85,27 +97,27 @@ public class DEX implements GraphDB {
 			node_type = g.getObjectType(node_id);
 		}
 		public boolean isURI() {
-			return NodeType[0]==node_type;
+			return node_type==TypeURI;
 		}
 		public boolean isNodeID() {
-			return NodeType[1]==node_type;
+			return node_type==TypeNodeID;
 		}
 		public boolean isLiteral() {
-			return NodeType[2]==node_type;
+			return node_type==TypeLiteral;
 		}
 		public String getURI() {
 			if (this.isURI()) {
-				return g.getAttribute(node_id,AttrType[0]).getString();
+				return g.getAttribute(node_id,AttrURI).getString();
 			} else return null;
 		}
 		public String getNodeID() {
 			if (this.isNodeID()) {
-				return g.getAttribute(node_id,AttrType[1]).getString();
+				return g.getAttribute(node_id,AttrNodeID).getString();
 			} else return null;
 		}
 		public String getLiteral() {
 			if (this.isLiteral()) {
-				TextStream ts = g.getAttributeText(node_id,AttrType[2]);
+				TextStream ts = g.getAttributeText(node_id,AttrLiteral);
 				char[] buff = new char[100000];
 				ts.read(buff,100000);
 				ts.close();
@@ -119,10 +131,10 @@ public class DEX implements GraphDB {
 			return res;
 		}
 		public IteratorGraph getEdgesOut() {
-			return (new IteratorDEX(g.explode(node_id,EdgeType,EdgesDirection.Outgoing)));
+			return (new IteratorDEX(g.explode(node_id,TypeEdge,EdgesDirection.Outgoing)));
 		}
 		public IteratorGraph getEdgesIn() {
-			return (new IteratorDEX(g.explode(node_id,EdgeType,EdgesDirection.Ingoing)));
+			return (new IteratorDEX(g.explode(node_id,TypeEdge,EdgesDirection.Ingoing)));
 		}
 		@Override
 		public boolean equals(Object other){
@@ -138,7 +150,7 @@ public class DEX implements GraphDB {
 			rel_id = _id;
 		}
 		public String getURI() {
-			return g.getAttribute(rel_id,AttrType[5]).getString();
+			return g.getAttribute(rel_id,AttrPredicate).getString();
 		}
 		public Vertex getStart() {
 			return (new VertexDEX(g.getEdgeData(rel_id).getTail()));

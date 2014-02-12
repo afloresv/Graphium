@@ -33,9 +33,7 @@ public abstract class BerlinQuery {
 			g = new Neo4j(path);
 		else if (gdbm.equals("DEX"))
 			g = new DEX(path);
-		else {
-			throw (new Error("Wrong GDBM (Neo4j or DEX)"));
-		}
+		else throw (new Error("Wrong GDBM (Neo4j or DEX)"));
 	}
 
 	// PREFIX

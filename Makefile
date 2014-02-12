@@ -5,11 +5,11 @@ LIBS = "./:$(NEO):$(DEX)"
 FLAGS = -source 6 -nowarn -cp $(LIBS)
 
 compile:
-	javac $(FLAGS) ve/usb/ldc/graphium/load/*.java
 	javac $(FLAGS) ve/usb/ldc/graphium/core/*.java
+	javac $(FLAGS) ve/usb/ldc/graphium/load/*.java
 	javac $(FLAGS) ve/usb/ldc/graphium/berlin/*.java
 
 clean:
-	rm -f ve/usb/ldc/graphium/load/*.class
 	rm -f ve/usb/ldc/graphium/core/*.class
+	rm -f ve/usb/ldc/graphium/load/*.class
 	rm -f ve/usb/ldc/graphium/berlin/*.class
