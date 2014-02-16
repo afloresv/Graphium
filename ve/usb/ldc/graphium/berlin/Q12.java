@@ -42,6 +42,7 @@ public class Q12 extends BerlinQuery {
 
 	public void runQuery(int ind) {
 
+		r = new ResultGenerator();
 		Vertex iNode;
 		Edge rel;
 		IteratorGraph it;
@@ -95,7 +96,7 @@ public class Q12 extends BerlinQuery {
 				relStr = rel.getURI();
 				if (relStr.equals(rdfs+"label")) {
 					// ?productURI rdfs:label ?productLabel
-					productTuples.add(new ResultTuple(nodeStr,rel.getEnd().getAny()));
+					productTuples.add(r.newResult(nodeStr,rel.getEnd().getAny()));
 				}
 			}
 			it.close();
@@ -129,7 +130,7 @@ public class Q12 extends BerlinQuery {
 			for (String price : setPrice)
 			for (String deliveryDays : setDeliveryDays)
 			for (String validTo : setValidTo)
-				(new ResultTuple(product.elem[0],product.elem[1],vendorURI,vendorname,
+				(r.newResult(product.elem[0],product.elem[1],vendorURI,vendorname,
 				vendorhomepage,offerURL,price,deliveryDays,validTo)).print();
 		}
 	}

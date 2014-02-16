@@ -24,8 +24,28 @@ import java.io.*;
 
 import ve.usb.ldc.graphium.core.*;
 
-public abstract class ResultTuple implements Comparable<ResultTuple> {
-	public Comparable[] elem;
-	public abstract int compareTo(ResultTuple other);
-	public abstract void print();
+public class ResultGenerator {
+	private int ind;
+	public ResultGenerator() {}
+	public ResultGenerator(int _ind) {
+		this.ind = _ind;
+	}
+	public ResultTuple newResult(Comparable ... _elem) {
+		return (new TupleGen(_elem));
+	}
+	public class TupleGen extends ResultTuple {
+		public TupleGen(Comparable ... _elem) {
+			this.elem = _elem;
+		}
+		@Override
+		public int compareTo(ResultTuple other){
+			return this.elem[ind].compareTo(other.elem[ind]);
+		}
+		public void print() {
+			String tupleStr = elem[0].toString();
+			for (int i=1, t=elem.length ; i<t ; i++)
+				tupleStr += "\t"+elem[i].toString();
+			System.out.println(tupleStr);
+		}
+	}
 }

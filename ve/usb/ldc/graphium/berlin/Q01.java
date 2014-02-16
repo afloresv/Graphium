@@ -42,6 +42,7 @@ public class Q01 extends BerlinQuery {
 
 	public void runQuery(int ind) {
 
+		r = new ResultGenerator(1);
 		HashSet[] sets = new HashSet[2];
 		sets[0] = new HashSet<Vertex>();
 		sets[1] = new HashSet<Vertex>();
@@ -108,7 +109,7 @@ public class Q01 extends BerlinQuery {
 			for (String value : setV) { try {
 				if (Integer.parseInt(value)>inst[ind][3])
 					for (String label : setL)
-						results.add(new ResultTuple(1,product,label));
+						results.add(r.newResult(product,label));
 			} catch (NumberFormatException nfe) {} }
 		}
 

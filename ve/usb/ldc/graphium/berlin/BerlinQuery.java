@@ -27,6 +27,7 @@ import ve.usb.ldc.graphium.core.*;
 public abstract class BerlinQuery {
 
 	GraphDB g;
+	ResultGenerator r;
 
 	public BerlinQuery(String gdbm, String path) {
 		if (gdbm.equals("Neo4j"))

@@ -42,6 +42,7 @@ public class Q07 extends BerlinQuery {
 
 	public void runQuery(int ind) {
 		
+		r = new ResultGenerator();
 		Vertex pNode;
 		Edge rel;
 		IteratorGraph it;
@@ -83,18 +84,18 @@ public class Q07 extends BerlinQuery {
 		for (Vertex oNode : setOffer)
 			findOffers(oNode);
 		if (optBlock1.size()==0)
-			optBlock1.add(new ResultTuple("","","",""));
+			optBlock1.add(r.newResult("","","",""));
 
 		optBlock2 = new ArrayList<ResultTuple>();
 		for (Vertex rNode : setReview)
 			findReview(rNode);
 		if (optBlock2.size()==0)
-			optBlock2.add(new ResultTuple("","","","","",""));
+			optBlock2.add(r.newResult("","","","","",""));
 
 		for (String productLabel : setProductLabel)
 		for (ResultTuple opt1 : optBlock1)
 		for (ResultTuple opt2 : optBlock2)
-			(new ResultTuple(productLabel,opt1.elem[0],opt1.elem[1],
+			(r.newResult(productLabel,opt1.elem[0],opt1.elem[1],
 			opt1.elem[2],opt1.elem[3],opt2.elem[0],opt2.elem[1],opt2.elem[2],
 			opt2.elem[3],opt2.elem[4],opt2.elem[5])).print();
 	}
@@ -171,7 +172,7 @@ public class Q07 extends BerlinQuery {
 			for (String vendorTitle : setVendorTitle)
 			for (String price : setPrice)
 			for (int i=0 ; i<filterDate ; i++)
-				optBlock1.add(new ResultTuple(offer,price,vendor,vendorTitle));
+				optBlock1.add(r.newResult(offer,price,vendor,vendorTitle));
 		}
 	}
 
@@ -219,7 +220,7 @@ public class Q07 extends BerlinQuery {
 					for (String revTitle : setRevTitle)
 					for (String rating1 : setRating1)
 					for (String rating2 : setRating2)
-						optBlock2.add(new ResultTuple(review,revTitle,
+						optBlock2.add(r.newResult(review,revTitle,
 						reviewer,rel.getEnd().getAny(),rating1,rating2));
 				}
 			}

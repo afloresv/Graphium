@@ -42,6 +42,7 @@ public class Q11 extends BerlinQuery {
 
 	public void runQuery(int ind) {
 
+		r = new ResultGenerator();
 		Vertex iNode;
 		Edge rel;
 		IteratorGraph it;
@@ -52,7 +53,7 @@ public class Q11 extends BerlinQuery {
 		while (it.hasNext()) {
 			rel = it.next();
 			// bsbminst:dataFromVendor215/Offer423241 ?property ?hasValue
-			(new ResultTuple(rel.getURI(),rel.getEnd().getAny(),"")).print();
+			(r.newResult(rel.getURI(),rel.getEnd().getAny(),"")).print();
 		}
 		it.close();
 
@@ -62,7 +63,7 @@ public class Q11 extends BerlinQuery {
 		while (it.hasNext()) {
 			rel = it.next();
 			// ?isValueOf ?property bsbminst:dataFromVendor215/Offer423241
-			(new ResultTuple(rel.getURI(),"",rel.getStart().getAny())).print();
+			(r.newResult(rel.getURI(),"",rel.getStart().getAny())).print();
 		}
 		it.close();
 	}

@@ -42,6 +42,7 @@ public class Q10 extends BerlinQuery {
 
 	public void runQuery(int ind) {
 		
+		r = new ResultGenerator(1);
 		Vertex pNode;
 		Edge rel;
 		IteratorGraph it;
@@ -127,7 +128,7 @@ public class Q10 extends BerlinQuery {
 
 			if (foundVendor)
 				for (String price : setPrice)
-					results.add(new ResultTuple(1,offer,price));
+					results.add(r.newResult(offer,price));
 		}
 
 		// #ORDER BY xsd:double(str(?price))

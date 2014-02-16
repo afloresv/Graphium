@@ -43,6 +43,7 @@ public class Q06 extends BerlinQuery {
 
 	public void runQuery(int ind) {
 
+		r = new ResultGenerator();
 		Vertex bsbmProductNode;
 		Edge rel;
 		IteratorGraph it;
@@ -72,7 +73,7 @@ public class Q06 extends BerlinQuery {
 				// FILTER regex(?label, "string")
 				if (rel.getURI().equals(rdfs+"label")
 					&& label.matches(inst[ind]))
-					(new ResultTuple(product,label)).print();
+					(r.newResult(product,label)).print();
 			}
 			it.close();
 		}

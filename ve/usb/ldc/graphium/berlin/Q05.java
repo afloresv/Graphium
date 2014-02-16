@@ -42,6 +42,7 @@ public class Q05 extends BerlinQuery {
 
 	public void runQuery(int ind) {
 
+		r = new ResultGenerator(1);
 		Vertex pNode, vNode;
 		Edge rel;
 		IteratorGraph it;
@@ -152,7 +153,7 @@ public class Q05 extends BerlinQuery {
 
 			if (passFilter)
 				for (String productLabel : setPL)
-					results.add(new ResultTuple(1,product,productLabel));
+					results.add(r.newResult(product,productLabel));
 		}
 
 		// ORDER BY ?productLabel

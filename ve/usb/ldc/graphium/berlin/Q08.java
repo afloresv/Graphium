@@ -42,6 +42,7 @@ public class Q08 extends BerlinQuery {
 
 	public void runQuery(int ind) {
 
+		r = new ResultGenerator(2);
 		Vertex iNode;
 		Edge rel;
 		IteratorGraph it;
@@ -138,7 +139,7 @@ public class Q08 extends BerlinQuery {
 				for (String rating2 : setRating2)
 				for (String rating3 : setRating3)
 				for (String rating4 : setRating4)
-					results.add(new ResultTuple(2,title,text,reviewDate,reviewer,
+					results.add(r.newResult(title,text,reviewDate,reviewer,
 						reviewerName,rating1,rating2,rating3,rating4));
 			}
 		}

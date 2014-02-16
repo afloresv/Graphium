@@ -42,6 +42,7 @@ public class Q09 extends BerlinQuery {
 
 	public void runQuery(int ind) {
 
+		r = new ResultGenerator();
 		Vertex iNode;
 		Edge rel;
 		IteratorGraph it;
@@ -135,7 +136,7 @@ public class Q09 extends BerlinQuery {
 				for (String country : setCountry)
 				for (String product : setProduct)
 				for (String title : setTitle)
-					(new ResultTuple(x,name,mbox,country,reviewer,product,title)).print();
+					(r.newResult(x,name,mbox,country,reviewer,product,title)).print();
 			}
 		}
 	}

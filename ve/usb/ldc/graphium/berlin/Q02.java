@@ -40,6 +40,7 @@ public class Q02 extends BerlinQuery {
 
 	public void runQuery(int ind) {
 
+		r = new ResultGenerator();
 		Vertex xNode, vNode;
 		Edge rel;
 		IteratorGraph it, it2;
@@ -154,7 +155,7 @@ public class Q02 extends BerlinQuery {
 		for (String propertyTextual4 : pPT4)
 		for (String propertyTextual5 : pPT5)
 		for (String propertyNumeric4 : pPN4)
-			(new ResultTuple(label,comment,producer,productFeature,propertyTextual1,
+			(r.newResult(label,comment,producer,productFeature,propertyTextual1,
 				propertyTextual2,propertyTextual3,propertyNumeric1,propertyNumeric2,
 				propertyTextual4,propertyTextual5,propertyNumeric4)).print();
 	}
