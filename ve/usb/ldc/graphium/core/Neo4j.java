@@ -66,40 +66,34 @@ public class Neo4j implements GraphDB {
 		graphDB.shutdown();
 	}
 
-	public class VertexNeo4j implements Vertex {
+	public class VertexNeo4j extends Vertex {
 		private Node node_id;
 		public VertexNeo4j(Node _id) {
 			node_id = _id;
 		}
-		public boolean isURI() {
-			return node_id.hasProperty(Attr.URI);
-		}
-		public boolean isNodeID() {
-			return node_id.hasProperty(Attr.NodeID);
-		}
-		public boolean isLiteral() {
-			return node_id.hasProperty(Attr.Literal);
-		}
+		public boolean isURI()     { return node_id.hasProperty(Attr.URI); }
+		public boolean isNodeID()  { return node_id.hasProperty(Attr.NodeID); }
+		public boolean isLiteral() { return node_id.hasProperty(Attr.Literal); }
 		public String getURI() {
 			if (this.isURI()) {
-				return (String)node_id.getProperty(Attr.URI);
+				return ("<" + (String)node_id.getProperty(Attr.URI) + ">");
 			} else return null;
 		}
 		public String getNodeID() {
 			if (this.isNodeID()) {
-				return (String)node_id.getProperty(Attr.NodeID);
+				return ("_:" + (String)node_id.getProperty(Attr.NodeID));
 			} else return null;
 		}
 		public String getLiteral() {
 			if (this.isLiteral()) {
-				return (String)node_id.getProperty(Attr.Literal);
+				String lit = (String)node_id.getProperty(Attr.Literal);
+				Object extra = node_id.getProperty(Attr.Lang,null);
+				if (extra==null) {
+					extra = node_id.getProperty(Attr.Type,null);
+					if (extra!=null) lit += "^^<" + (String)extra + ">";
+				} lit += "@" + (String)extra;
+				return lit;
 			} else return null;
-		}
-		public String getAny() {
-			String res = this.getURI();
-			if (res==null) res = this.getNodeID();
-			if (res==null) res = this.getLiteral();
-			return res;
 		}
 		public IteratorGraph getEdgesOut() {
 			return (new IteratorNeo4j(node_id.getRelationships

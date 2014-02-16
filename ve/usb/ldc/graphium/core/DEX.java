@@ -88,7 +88,7 @@ public class DEX implements GraphDB {
 		return (new VertexDEX(id));
 	}
 
-	public class VertexDEX implements Vertex {
+	public class VertexDEX extends Vertex {
 		private long node_id;
 		private int node_type;
 		public VertexDEX(long _id) {
@@ -100,12 +100,12 @@ public class DEX implements GraphDB {
 		public boolean isLiteral() { return node_type==TypeLiteral; }
 		public String getURI() {
 			if (this.isURI()) {
-				return g.getAttribute(node_id,AttrURI).getString();
+				return ("<" + g.getAttribute(node_id,AttrURI).getString() + ">");
 			} else return null;
 		}
 		public String getNodeID() {
 			if (this.isNodeID()) {
-				return g.getAttribute(node_id,AttrNodeID).getString();
+				return ("_:" + g.getAttribute(node_id,AttrNodeID).getString());
 			} else return null;
 		}
 		public String getLiteral() {
@@ -114,14 +114,14 @@ public class DEX implements GraphDB {
 				char[] buff = new char[100000];
 				ts.read(buff,100000);
 				ts.close();
-				return (new String(buff)).trim();
+				String lit = (new String(buff)).trim();
+				Value extra = g.getAttribute(node_id,AttrLang);
+				if (extra.isNull()) {
+					extra = g.getAttribute(node_id,AttrType);
+					if (!extra.isNull()) lit += "^^<" + extra.getString() + ">";
+				} lit += "@" + extra.getString();
+				return lit;
 			} else return null;
-		}
-		public String getAny() {
-			String res = this.getURI();
-			if (res==null) res = this.getNodeID();
-			if (res==null) res = this.getLiteral();
-			return res;
 		}
 		public IteratorGraph getEdgesOut() {
 			return (new IteratorDEX(g.explode(node_id,TypeEdge,EdgesDirection.Outgoing)));

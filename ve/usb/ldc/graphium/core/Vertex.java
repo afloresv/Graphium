@@ -22,17 +22,21 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public interface Vertex {
+public abstract class Vertex {
 
-	public boolean isURI();
-	public boolean isNodeID();
-	public boolean isLiteral();
-	public String getURI();
-	public String getNodeID();
-	public String getLiteral();
-	public String getAny();
-	public IteratorGraph getEdgesOut();
-	public IteratorGraph getEdgesIn();
+	public abstract boolean isURI();
+	public abstract boolean isNodeID();
+	public abstract boolean isLiteral();
+	public abstract String getURI();
+	public abstract String getNodeID();
+	public abstract String getLiteral();
+	public String getAny() {
+		String res = this.getURI();
+		if (res==null) res = this.getNodeID();
+		if (res==null) res = this.getLiteral();
+		return res;
+	}
+	public abstract IteratorGraph getEdgesOut();
+	public abstract IteratorGraph getEdgesIn();
 
 }
-
