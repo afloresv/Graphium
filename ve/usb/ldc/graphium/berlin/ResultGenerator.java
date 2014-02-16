@@ -42,8 +42,11 @@ public class ResultGenerator {
 			return this.elem[ind].compareTo(other.elem[ind]);
 		}
 		public void print() {
+			this.print(elem.length);
+		}
+		public void print(int lim) {
 			String tupleStr = elem[0].toString();
-			for (int i=1, t=elem.length ; i<t ; i++)
+			for (int i=1, t=lim ; i<t ; i++)
 				tupleStr += "\t"+elem[i].toString();
 			System.out.println(tupleStr);
 		}

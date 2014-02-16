@@ -29,6 +29,8 @@ public class Q07 extends BerlinQuery {
 	int[][] inst = {
 		{510,25065}
 	};
+	// 2008Y06M20D
+	Date dateF = (new GregorianCalendar(2008,5,20)).getTime();
 
 	public static void main(String[] args) {
 		BerlinQuery Q = new Q07(args[1],args[2]);
@@ -112,6 +114,7 @@ public class Q07 extends BerlinQuery {
 		HashSet[] setVendor = new HashSet[2];
 		setVendor[0] = new HashSet<Vertex>();
 		setVendor[1] = new HashSet<Vertex>();
+		Date dateV;
 
 		it = oNode.getEdgesOut();
 		while (it.hasNext()) {
@@ -123,7 +126,8 @@ public class Q07 extends BerlinQuery {
 			} else if (relStr.equals(bsbm+"validTo")) {
 				// ?offer bsbm:validTo ?date
 				// FILTER (?date > 2008Y06M20D )
-				if (/* FILTER */ true)
+				dateV = rel.getEnd().getDate();
+				if (dateV!=null && dateF.compareTo(dateV)<0)
 					filterDate++;
 			} else if (relStr.equals(bsbm+"vendor")) {
 				// ?offer bsbm:vendor ?vendor

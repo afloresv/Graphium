@@ -28,4 +28,5 @@ public abstract class ResultTuple implements Comparable<ResultTuple> {
 	public Comparable[] elem;
 	public abstract int compareTo(ResultTuple other);
 	public abstract void print();
+	public abstract void print(int lim);
 }

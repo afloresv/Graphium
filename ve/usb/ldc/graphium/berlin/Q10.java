@@ -29,6 +29,8 @@ public class Q10 extends BerlinQuery {
 	int[][] inst = {
 		{510,25065}
 	};
+	// 2008Y06M20D
+	Date dateF = (new GregorianCalendar(2008,5,20)).getTime();
 
 	public static void main(String[] args) {
 		BerlinQuery Q = new Q10(args[1],args[2]);
@@ -42,13 +44,13 @@ public class Q10 extends BerlinQuery {
 
 	public void runQuery(int ind) {
 		
-		r = new ResultGenerator(1);
+		r = new ResultGenerator(2);
 		Vertex pNode;
 		Edge rel;
 		IteratorGraph it;
 		String relStr;
 
-		HashSet<String> setPrice = new HashSet<String>();
+		HashSet<Vertex> setPrice = new HashSet<Vertex>();
 		HashSet<Vertex> setOffer = new HashSet<Vertex>();
 
 		pNode = g.getVertexURI(bsbminst+"dataFromProducer"
@@ -74,6 +76,7 @@ public class Q10 extends BerlinQuery {
 			HashSet[] setVendor = new HashSet[2];
 			setVendor[0] = new HashSet<Vertex>();
 			setVendor[1] = new HashSet<Vertex>();
+			Date dateV;
 
 			it = oNode.getEdgesOut();
 			while (it.hasNext()) {
@@ -81,11 +84,11 @@ public class Q10 extends BerlinQuery {
 				relStr = rel.getURI();
 				if (relStr.equals(bsbm+"price")) {
 					// ?offer bsbm:price ?price
-					setPrice.add(rel.getEnd().getAny());
+					setPrice.add(rel.getEnd());
 				} else if (relStr.equals(bsbm+"validTo")) {
 					// ?offer bsbm:validTo ?date
-					// FILTER (?date > 2008Y06M20D )
-					if (/* FILTER */ true)
+					dateV = rel.getEnd().getDate();
+					if (dateV!=null && dateF.compareTo(dateV)<0)
 						foundDate = true;
 				} else if (relStr.equals(bsbm+"deliveryDays")) {
 					// ?offer bsbm:deliveryDays ?deliveryDays
@@ -127,8 +130,8 @@ public class Q10 extends BerlinQuery {
 			}
 
 			if (foundVendor)
-				for (String price : setPrice)
-					results.add(r.newResult(offer,price));
+			for (Vertex price : setPrice)
+				results.add(r.newResult(offer,price.getLiteral(),price.getDouble()));
 		}
 
 		// #ORDER BY xsd:double(str(?price))
@@ -136,6 +139,6 @@ public class Q10 extends BerlinQuery {
 
 		// LIMIT 10
 		for (int i=0 ; i<10 && i<results.size() ; i++)
-			results.get(i).print();
+			results.get(i).print(2);
 	}
 }
