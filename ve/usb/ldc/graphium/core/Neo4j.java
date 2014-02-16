@@ -95,6 +95,26 @@ public class Neo4j implements GraphDB {
 				return lit;
 			} else return null;
 		}
+		public Boolean getBoolean() {
+			if (node_id.hasProperty(Attr.valBool)) {
+				return (Boolean)node_id.getProperty(Attr.valBool);
+			} else return null;
+		}
+		public Long getLong() {
+			if (node_id.hasProperty(Attr.valInt)) {
+				return (Long)node_id.getProperty(Attr.valInt);
+			} else return null;
+		}
+		public Double getDouble() {
+			if (node_id.hasProperty(Attr.valDouble)) {
+				return (Double)node_id.getProperty(Attr.valDouble);
+			} else return null;
+		}
+		public Date getDate() {
+			if (node_id.hasProperty(Attr.valDate)) {
+				return (new Date((Long)node_id.getProperty(Attr.valDate)));
+			} else return null;
+		}
 		public IteratorGraph getEdgesOut() {
 			return (new IteratorNeo4j(node_id.getRelationships
 				(relType,Direction.OUTGOING).iterator()));

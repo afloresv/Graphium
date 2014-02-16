@@ -35,6 +35,7 @@ public class DEX implements GraphDB {
 	public int AttrURI, AttrNodeID, AttrLiteral, AttrPredicate,
 		AttrLang, AttrType, AttrBool, AttrInt, AttrDouble, AttrDate;
 	public static String licence = "Q4GTF-H9X01-EJTM2-9MM89";
+	public static Value val = new Value();
 
 	public DEX(String path) {
 		try {
@@ -83,7 +84,7 @@ public class DEX implements GraphDB {
 	}
 
 	public Vertex getVertexURI(String strURI) {
-		long id = g.findObject(AttrURI,(new Value()).setString(strURI));
+		long id = g.findObject(AttrURI,val.setString(strURI));
 		if (id==Objects.InvalidOID) return null;
 		return (new VertexDEX(id));
 	}
@@ -121,6 +122,30 @@ public class DEX implements GraphDB {
 					if (!extra.isNull()) lit += "^^<" + extra.getString() + ">";
 				} lit += "@" + extra.getString();
 				return lit;
+			} else return null;
+		}
+		public Boolean getBoolean() {
+			val = g.getAttribute(node_id,AttrBool);
+			if (!val.isNull()) {
+				return val.getBoolean();
+			} else return null;
+		}
+		public Long getLong() {
+			val = g.getAttribute(node_id,AttrInt);
+			if (!val.isNull()) {
+				return val.getLong();
+			} else return null;
+		}
+		public Double getDouble() {
+			val = g.getAttribute(node_id,AttrDouble);
+			if (!val.isNull()) {
+				return val.getDouble();
+			} else return null;
+		}
+		public Date getDate() {
+			val = g.getAttribute(node_id,AttrDate);
+			if (!val.isNull()) {
+				return val.getTimestampAsDate();
 			} else return null;
 		}
 		public IteratorGraph getEdgesOut() {
