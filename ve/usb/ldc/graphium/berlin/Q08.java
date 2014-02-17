@@ -82,7 +82,9 @@ public class Q08 extends BerlinQuery {
 				} else if (relStr.equals(rev+"text")) {
 					// ?review rev:text ?text .
 					// #FILTER langMatches( lang(?text), "EN" )
-					setText.add(rel.getStart().getAny());
+					Vertex tempN = rel.getStart();
+					if (tempN.getLang().matches("(E|e)(N|n)(|-[a-zA-Z]*)"))
+						setText.add(tempN.getLiteral());
 				} else if (relStr.equals(bsbm+"reviewDate")) {
 					// ?review bsbm:reviewDate ?reviewDate .
 					setReviewDate.add(rel.getStart().getAny());
