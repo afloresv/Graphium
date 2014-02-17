@@ -27,13 +27,15 @@ public abstract class Vertex {
 	public abstract boolean isURI();
 	public abstract boolean isNodeID();
 	public abstract boolean isLiteral();
-	public abstract String getURI();
-	public abstract String getNodeID();
-	public abstract String getLiteral();
+	public abstract String  getURI();
+	public abstract String  getNodeID();
+	public abstract String  getLiteral();
+	public abstract String  getLang();
+	public abstract String  getType();
 	public abstract Boolean getBoolean();
-	public abstract Long getLong();
-	public abstract Double getDouble();
-	public abstract Date getDate();
+	public abstract Long    getLong();
+	public abstract Double  getDouble();
+	public abstract Date    getDate();
 	public String getAny() {
 		String res = this.getURI();
 		if (res==null) res = this.getNodeID();

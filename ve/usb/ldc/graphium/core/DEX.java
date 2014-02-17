@@ -124,6 +124,18 @@ public class DEX implements GraphDB {
 				return lit;
 			} else return null;
 		}
+		public String getType() {
+			val = g.getAttribute(node_id,AttrType);
+			if (!val.isNull()) {
+				return val.getString();
+			} else return null;
+		}
+		public String getLang() {
+			val = g.getAttribute(node_id,AttrLang);
+			if (!val.isNull()) {
+				return val.getString();
+			} else return null;
+		}
 		public Boolean getBoolean() {
 			val = g.getAttribute(node_id,AttrBool);
 			if (!val.isNull()) {

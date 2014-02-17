@@ -95,25 +95,23 @@ public class Neo4j implements GraphDB {
 				return lit;
 			} else return null;
 		}
+		public String getType() {
+			return (String)node_id.getProperty(Attr.Type,null);
+		}
+		public String getLang() {
+			return (String)node_id.getProperty(Attr.Lang,null);
+		}
 		public Boolean getBoolean() {
-			if (node_id.hasProperty(Attr.valBool)) {
-				return (Boolean)node_id.getProperty(Attr.valBool);
-			} else return null;
+			return (Boolean)node_id.getProperty(Attr.valBool,null);
 		}
 		public Long getLong() {
-			if (node_id.hasProperty(Attr.valInt)) {
-				return (Long)node_id.getProperty(Attr.valInt);
-			} else return null;
+			return (Long)node_id.getProperty(Attr.valInt,null);
 		}
 		public Double getDouble() {
-			if (node_id.hasProperty(Attr.valDouble)) {
-				return (Double)node_id.getProperty(Attr.valDouble);
-			} else return null;
+			return (Double)node_id.getProperty(Attr.valDouble,null);
 		}
 		public Date getDate() {
-			if (node_id.hasProperty(Attr.valDate)) {
-				return (new Date((Long)node_id.getProperty(Attr.valDate)));
-			} else return null;
+			return (new Date((Long)node_id.getProperty(Attr.valDate,null)));
 		}
 		public IteratorGraph getEdgesOut() {
 			return (new IteratorNeo4j(node_id.getRelationships
