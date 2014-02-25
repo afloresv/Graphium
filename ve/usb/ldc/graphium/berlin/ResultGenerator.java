@@ -47,7 +47,7 @@ public class ResultGenerator {
 		public void print(int lim) {
 			String tupleStr = elem[0].toString();
 			for (int i=1, t=lim ; i<t ; i++)
-				tupleStr += "\t"+elem[i].toString();
+				tupleStr += " "+elem[i].toString();
 			System.out.println(tupleStr);
 		}
 	}
