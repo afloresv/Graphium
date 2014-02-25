@@ -120,7 +120,7 @@ public class DEX implements GraphDB {
 				if (extra.isNull()) {
 					extra = g.getAttribute(node_id,AttrType);
 					if (!extra.isNull()) lit += "^^<" + extra.getString() + ">";
-				} lit += "@" + extra.getString();
+				} else lit += "@" + extra.getString();
 				return lit;
 			} else return null;
 		}

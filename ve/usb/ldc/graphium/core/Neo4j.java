@@ -91,7 +91,7 @@ public class Neo4j implements GraphDB {
 				if (extra==null) {
 					extra = node_id.getProperty(Attr.Type,null);
 					if (extra!=null) lit += "^^<" + (String)extra + ">";
-				} lit += "@" + (String)extra;
+				} else lit += "@" + (String)extra;
 				return lit;
 			} else return null;
 		}
