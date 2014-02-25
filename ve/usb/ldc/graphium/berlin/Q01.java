@@ -27,6 +27,7 @@ import ve.usb.ldc.graphium.core.*;
 public class Q01 extends BerlinQuery {
 
 	int[][] inst = {
+		{161,505,25,136},
 		{477,15422,123,54}
 	};
 
