@@ -107,7 +107,6 @@ public class Q01 extends BerlinQuery {
 
 			product = nProd.getAny();
 			for (Long value : setV) {
-				System.out.println("> "+value);
 				if (value>inst[ind][3])
 					for (String label : setL)
 						results.add(r.newResult(product,label));
