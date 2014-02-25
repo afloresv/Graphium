@@ -91,9 +91,8 @@ public class Q01 extends BerlinQuery {
 		Iterator<Vertex> itProd = sets[0].iterator();
 		String product, temp;
 		while (itProd.hasNext()) {
-			HashSet<String>
-				setL = new HashSet<String>(),
-				setV = new HashSet<String>();
+			HashSet<String> setL = new HashSet<String>();
+			HashSet<Long> setV = new HashSet<Long>();
 
 			nProd = itProd.next();
 			it = nProd.getEdgesOut();
@@ -103,16 +102,16 @@ public class Q01 extends BerlinQuery {
 				if (temp.equals(rdfs+"label"))
 					setL.add(rel.getEnd().getAny());
 				else if (temp.equals(bsbm+"productPropertyNumeric1"))
-					setV.add(rel.getEnd().getAny());
+					setV.add(rel.getEnd().getLong());
 			}
 
 			product = nProd.getAny();
-			for (String value : setV) { try {
+			for (Long value : setV) {
 				System.out.println("> "+value);
-				if (Integer.parseInt(value)>inst[ind][3])
+				if (value>inst[ind][3])
 					for (String label : setL)
 						results.add(r.newResult(product,label));
-			} catch (NumberFormatException nfe) {} }
+			}
 		}
 
 		// ORDER BY ?label
