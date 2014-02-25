@@ -61,6 +61,7 @@ public class Q01 extends BerlinQuery {
 				sets[0].add(rel.getStart());
 		}
 		it.close();
+		System.out.println("> "+sets[0].size());
 
 		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst[ind][1]);
 		if (nURI == null) return;
@@ -87,6 +88,7 @@ public class Q01 extends BerlinQuery {
 				sets[0].add(nProd);
 		}
 		it.close();
+		System.out.println("> "+sets[0].size());
 
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
 		Iterator<Vertex> itProd = sets[0].iterator();
