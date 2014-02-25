@@ -57,10 +57,8 @@ public class Q01 extends BerlinQuery {
 		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (rel.getURI().equals(rdf+"type")) {
+			if (rel.getURI().equals(rdf+"type"))
 				sets[0].add(rel.getStart());
-				System.out.println(rel.getStart().getURI()+" 1");
-			}
 		}
 		it.close();
 
@@ -70,11 +68,9 @@ public class Q01 extends BerlinQuery {
 		while (it.hasNext()) {
 			rel = it.next();
 			nProd = rel.getStart();
-			if (rel.getURI().equals(bsbm+"productFeature")) {
-				System.out.println(nProd.getURI()+" 1");
-				if (sets[0].contains(nProd))
-					sets[1].add(nProd);
-			}
+			if (rel.getURI().equals(bsbm+"productFeature")
+				&& sets[0].contains(nProd))
+				sets[1].add(nProd);
 		}
 		it.close();
 		sets[0].clear();
