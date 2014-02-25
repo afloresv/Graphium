@@ -172,6 +172,9 @@ public class DEX implements GraphDB {
 				return (this.node_id == ((VertexDEX)other).node_id);
 			return false;
 		}
+		public int hashCode() {
+			return (new Long(this.node_id)).hashCode();
+		}
 	}
 
 	public class EdgeDEX implements Edge {

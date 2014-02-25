@@ -122,10 +122,13 @@ public class Neo4j implements GraphDB {
 				(relType,Direction.INCOMING).iterator()));
 		}
 		@Override
-		public boolean equals(Object other){
+		public boolean equals(Object other) {
 			if (other instanceof VertexNeo4j)
 				return (this.node_id.equals(((VertexNeo4j)other).node_id));
 			return false;
+		}
+		public int hashCode() {
+			return this.node_id.hashCode();
 		}
 	}
 
