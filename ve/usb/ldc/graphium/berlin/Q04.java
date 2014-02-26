@@ -93,8 +93,8 @@ public class Q04 extends BerlinQuery {
 		while (itProd.hasNext()) {
 			HashSet<String>
 				setL = new HashSet<String>(),
-				setPT = new HashSet<String>(),
-				setP = new HashSet<String>();
+				setPT = new HashSet<String>();
+			HashSet<Long> setP = new HashSet<Long>();
 
 			nProd = itProd.next();
 			it = nProd.getEdgesOut();
@@ -106,17 +106,17 @@ public class Q04 extends BerlinQuery {
 				else if (relStr.equals(bsbm+"productPropertyTextual1"))
 					setPT.add(rel.getEnd().getAny());
 				else if (relStr.equals(bsbm+"productPropertyNumeric"+(off+1)))
-					setP.add(rel.getEnd().getAny());
+					setP.add(rel.getEnd().getLong());
 			}
 			it.close();
 
 			product = nProd.getAny();
-			for (String value : setP) { try {
-				if (Integer.parseInt(value)>inst[ind][3+2*off])
-					for (String label : setL)
-						for (String propertyTextual : setPT)
-							results.add(r.newResult(product,label,propertyTextual));
-			} catch (NumberFormatException nfe) {} }
+			for (Long value : setP) {
+				if (value>inst[ind][3+2*off])
+				for (String label : setL)
+					for (String propertyTextual : setPT)
+						results.add(r.newResult(product,label,propertyTextual));
+			}
 		}
 	}
 
