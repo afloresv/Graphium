@@ -86,6 +86,7 @@ public class Q01 extends BerlinQuery {
 				sets[0].add(nProd);
 		}
 		it.close();
+		sets[1].clear();
 
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
 		Iterator<Vertex> itProd = sets[0].iterator();
@@ -113,6 +114,7 @@ public class Q01 extends BerlinQuery {
 						results.add(r.newResult(product,label));
 			}
 		}
+		sets[0].clear();
 
 		// ORDER BY ?label
 		Collections.sort(results);
