@@ -28,6 +28,7 @@ public abstract class BerlinQuery {
 
 	GraphDB g;
 	ResultGenerator r;
+	private long startTime:
 
 	public BerlinQuery(String gdbm, String path) {
 		if (gdbm.equals("Neo4j"))
@@ -35,6 +36,7 @@ public abstract class BerlinQuery {
 		else if (gdbm.equals("DEX"))
 			g = new DEX(path);
 		else throw (new Error("Wrong GDBM (Neo4j or DEX)"));
+		startTime = System.currentTimeMillis();
 	}
 
 	// PREFIX
@@ -50,6 +52,8 @@ public abstract class BerlinQuery {
 	
 	public abstract void runQuery(int ind);
 	public void close() {
+		System.error.println("Time enlapsed " +
+			(System.currentTimeMillis()-startTime));
 		g.close();
 	}
 }
