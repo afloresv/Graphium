@@ -104,6 +104,7 @@ public class Q01 extends BerlinQuery {
 				else if (temp.equals(bsbm+"productPropertyNumeric1"))
 					setV.add(rel.getEnd().getLong());
 			}
+			it.close();
 
 			product = nProd.getAny();
 			for (Long value : setV) {
