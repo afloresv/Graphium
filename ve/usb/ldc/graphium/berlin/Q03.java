@@ -77,10 +77,10 @@ public class Q03 extends BerlinQuery {
 		Iterator<Vertex> itProd = sets[1].iterator();
 		String product, relStr;
 		while (itProd.hasNext()) {
-			HashSet<String>
-				setL = new HashSet<String>(),
-				setP1 = new HashSet<String>(),
-				setP3 = new HashSet<String>();
+			HashSet<String> setL = new HashSet<String>();
+			HashSet<Long>
+				setP1 = new HashSet<Long>(),
+				setP3 = new HashSet<Long>();
 
 			nProd = itProd.next();
 			it = nProd.getEdgesOut();
@@ -90,23 +90,21 @@ public class Q03 extends BerlinQuery {
 				if (relStr.equals(rdfs+"label"))
 					setL.add(rel.getEnd().getAny());
 				else if (relStr.equals(bsbm+"productPropertyNumeric1"))
-					setP1.add(rel.getEnd().getAny());
+					setP1.add(rel.getEnd().getLong());
 				else if (relStr.equals(bsbm+"productPropertyNumeric3"))
-					setP3.add(rel.getEnd().getAny());
+					setP3.add(rel.getEnd().getLong());
 			}
 			it.close();
 
 			product = nProd.getAny();
-			for (String p1 : setP1) { try {
-				if (Integer.parseInt(p1)>inst[ind][2]) {
-					for (String p3 : setP3) { try {
-						if (Integer.parseInt(p3)>inst[ind][3]) {
-							for (String label : setL)
-								results.add(r.newResult(product,label));
-						}
-					} catch (NumberFormatException nfe) {} }
+			for (Long p1 : setP1) {
+				if (p1>inst[ind][2])
+				for (Long p3 : setP3) {
+					if (p3>inst[ind][3])
+					for (String label : setL)
+						results.add(r.newResult(product,label));
 				}
-			} catch (NumberFormatException nfe) {} }
+			}
 		}
 
 		// ORDER BY ?label
