@@ -48,9 +48,9 @@ public class Q05 extends BerlinQuery {
 		IteratorGraph it;
 		String relStr, nodeStr, product;
 
-		HashSet<Integer>
-			setOP1 = new HashSet<Integer>(),
-			setOP2 = new HashSet<Integer>();
+		HashSet<Long>
+			setOP1 = new HashSet<Long>(),
+			setOP2 = new HashSet<Long>();
 		HashSet<Vertex>
 			setPF = new HashSet<Vertex>(),
 			setProd = new HashSet<Vertex>();
@@ -63,19 +63,16 @@ public class Q05 extends BerlinQuery {
 		while (it.hasNext()) {
 			rel = it.next();
 			relStr = rel.getURI();
-
-			try {
-				if (relStr.equals(bsbm+"productFeature")) {
-					// ?p bsbm:productFeature ?prodFeature .
-					setPF.add(rel.getEnd());
-				} else if (relStr.equals(bsbm+"productPropertyNumeric1")) {
-					// ?p bsbm:productPropertyNumeric1 ?origProperty1 .
-					setOP1.add(Integer.parseInt(rel.getEnd().getAny()));
-				} else if (relStr.equals(bsbm+"productPropertyNumeric2")) {
-					// ?p bsbm:productPropertyNumeric2 ?origProperty2 .
-					setOP2.add(Integer.parseInt(rel.getEnd().getAny()));
-				}
-			} catch (NumberFormatException nfe) {}
+			if (relStr.equals(bsbm+"productFeature")) {
+				// ?p bsbm:productFeature ?prodFeature .
+				setPF.add(rel.getEnd());
+			} else if (relStr.equals(bsbm+"productPropertyNumeric1")) {
+				// ?p bsbm:productPropertyNumeric1 ?origProperty1 .
+				setOP1.add(rel.getEnd().getLong());
+			} else if (relStr.equals(bsbm+"productPropertyNumeric2")) {
+				// ?p bsbm:productPropertyNumeric2 ?origProperty2 .
+				setOP2.add(rel.getEnd().getLong());
+			}
 		}
 		it.close();
 
@@ -97,28 +94,25 @@ public class Q05 extends BerlinQuery {
 		for (Vertex nodeProd : setProd) {
 			product = nodeProd.getAny();
 
-			HashSet<Integer>
-				setSP1 = new HashSet<Integer>(),
-				setSP2 = new HashSet<Integer>();
+			HashSet<Long>
+				setSP1 = new HashSet<Long>(),
+				setSP2 = new HashSet<Long>();
 			HashSet<String> setPL = new HashSet<String>();
 
 			it = nodeProd.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
 				relStr = rel.getURI();
-				nodeStr = rel.getEnd().getAny();
-				try {
-					if (relStr.equals(rdfs+"label")) {
-						// ?product rdfs:label ?productLabel .
-						setPL.add(nodeStr);
-					} else if (relStr.equals(bsbm+"productPropertyNumeric1")) {
-						// ?product bsbm:productPropertyNumeric1 ?simProperty1 .
-						setSP1.add(Integer.parseInt(nodeStr));
-					} else if (relStr.equals(bsbm+"productPropertyNumeric2")) {
-						// ?product bsbm:productPropertyNumeric2 ?simProperty2 .
-						setSP2.add(Integer.parseInt(nodeStr));
-					}
-				} catch (NumberFormatException nfe) {}
+				if (relStr.equals(rdfs+"label")) {
+					// ?product rdfs:label ?productLabel .
+					setPL.add(rel.getEnd().getAny());
+				} else if (relStr.equals(bsbm+"productPropertyNumeric1")) {
+					// ?product bsbm:productPropertyNumeric1 ?simProperty1 .
+					setSP1.add(rel.getEnd().getLong());
+				} else if (relStr.equals(bsbm+"productPropertyNumeric2")) {
+					// ?product bsbm:productPropertyNumeric2 ?simProperty2 .
+					setSP2.add(rel.getEnd().getLong());
+				}
 			}
 			it.close();
 
@@ -126,8 +120,8 @@ public class Q05 extends BerlinQuery {
 			// && ?simProperty1 > (?origProperty1 - 120))
 			boolean passFilter = false;
 			filter1:
-			for (Integer origProperty1 : setOP1) {
-				for (Integer simProperty1 : setSP1) {
+			for (Long origProperty1 : setOP1) {
+				for (Long simProperty1 : setSP1) {
 					if (simProperty1 < (origProperty1 + 170)
 						&& simProperty1 > (origProperty1 - 170))
 						passFilter = true;
@@ -140,8 +134,8 @@ public class Q05 extends BerlinQuery {
 			if (passFilter) {
 				passFilter = false;
 				filter2:
-				for (Integer origProperty2 : setOP2) {
-					for (Integer simProperty2 : setSP2) {
+				for (Long origProperty2 : setOP2) {
+					for (Long simProperty2 : setSP2) {
 						if (simProperty2 < (origProperty2 + 120)
 							&& simProperty2 > (origProperty2 - 120)) {
 							passFilter = true;
