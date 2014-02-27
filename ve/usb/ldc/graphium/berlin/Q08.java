@@ -150,7 +150,7 @@ public class Q08 extends BerlinQuery {
 		Collections.sort(results);
 
 		// DESC && LIMIT 20
-		for (int i=results.size(), j=0 ; i>=0 && j<20 ; i--, j++)
+		for (int i=results.size()-1, j=0 ; i>=0 && j<20 ; i--, j++)
 			results.get(i).print();
 	}
 }
