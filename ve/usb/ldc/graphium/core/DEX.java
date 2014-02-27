@@ -99,28 +99,28 @@ public class DEX implements GraphDB {
 		public boolean isURI()     { return node_type==TypeURI; }
 		public boolean isNodeID()  { return node_type==TypeNodeID; }
 		public boolean isLiteral() { return node_type==TypeLiteral; }
-		public String getURI() {
+		public URI getURI() {
 			if (this.isURI()) {
-				return ("<" + g.getAttribute(node_id,AttrURI).getString() + ">");
+				return (new URI(g.getAttribute(node_id,AttrURI).getString()));
 			} else return null;
 		}
-		public String getNodeID() {
+		public NodeID getNodeID() {
 			if (this.isNodeID()) {
-				return ("_:" + g.getAttribute(node_id,AttrNodeID).getString());
+				return (new NodeID(g.getAttribute(node_id,AttrNodeID).getString()));
 			} else return null;
 		}
-		public String getLiteral() {
+		public Literal getLiteral() {
 			if (this.isLiteral()) {
 				TextStream ts = g.getAttributeText(node_id,AttrLiteral);
 				char[] buff = new char[100000];
 				ts.read(buff,100000);
 				ts.close();
-				String lit = (new String(buff)).trim();
+				Literal lit = new Literal((new String(buff)).trim());
 				Value extra = g.getAttribute(node_id,AttrLang);
 				if (extra.isNull()) {
 					extra = g.getAttribute(node_id,AttrType);
-					if (!extra.isNull()) lit += "^^<" + extra.getString() + ">";
-				} else lit += "@" + extra.getString();
+					if (!extra.isNull()) lit.type = extra.getString();
+				} else lit.lang = extra.getString();
 				return lit;
 			} else return null;
 		}
@@ -182,8 +182,8 @@ public class DEX implements GraphDB {
 		public EdgeDEX(long _id) {
 			rel_id = _id;
 		}
-		public String getURI() {
-			return ("<" + g.getAttribute(rel_id,AttrPredicate).getString() + ">");
+		public URI getURI() {
+			return (new URI(g.getAttribute(rel_id,AttrPredicate).getString()));
 		}
 		public Vertex getStart() {
 			return (new VertexDEX(g.getEdgeData(rel_id).getTail()));

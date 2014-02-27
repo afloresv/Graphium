@@ -27,17 +27,17 @@ public abstract class Vertex {
 	public abstract boolean isURI();
 	public abstract boolean isNodeID();
 	public abstract boolean isLiteral();
-	public abstract String  getURI();
-	public abstract String  getNodeID();
-	public abstract String  getLiteral();
+	public abstract URI     getURI();
+	public abstract NodeID  getNodeID();
+	public abstract Literal getLiteral();
 	public abstract String  getLang();
 	public abstract String  getType();
 	public abstract Boolean getBoolean();
 	public abstract Long    getLong();
 	public abstract Double  getDouble();
 	public abstract Date    getDate();
-	public String getAny() {
-		String res = this.getURI();
+	public RDFobject getAny() {
+		RDFobject res = this.getURI();
 		if (res==null) res = this.getNodeID();
 		if (res==null) res = this.getLiteral();
 		return res;

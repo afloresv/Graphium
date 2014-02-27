@@ -74,24 +74,24 @@ public class Neo4j implements GraphDB {
 		public boolean isURI()     { return node_id.hasProperty(Attr.URI); }
 		public boolean isNodeID()  { return node_id.hasProperty(Attr.NodeID); }
 		public boolean isLiteral() { return node_id.hasProperty(Attr.Literal); }
-		public String getURI() {
+		public URI getURI() {
 			if (this.isURI()) {
-				return ("<" + (String)node_id.getProperty(Attr.URI) + ">");
+				return (new URI((String)node_id.getProperty(Attr.URI)));
 			} else return null;
 		}
-		public String getNodeID() {
+		public NodeID getNodeID() {
 			if (this.isNodeID()) {
-				return ("_:" + (String)node_id.getProperty(Attr.NodeID));
+				return (new NodeID((String)node_id.getProperty(Attr.NodeID)));
 			} else return null;
 		}
-		public String getLiteral() {
+		public Literal getLiteral() {
 			if (this.isLiteral()) {
-				String lit = (String)node_id.getProperty(Attr.Literal);
+				Literal lit = new Literal((String)node_id.getProperty(Attr.Literal));
 				Object extra = node_id.getProperty(Attr.Lang,null);
 				if (extra==null) {
 					extra = node_id.getProperty(Attr.Type,null);
-					if (extra!=null) lit += "^^<" + (String)extra + ">";
-				} else lit += "@" + (String)extra;
+					if (extra!=null) lit.type = (String)extra;
+				} else lit.lang = (String)extra;
 				return lit;
 			} else return null;
 		}
@@ -137,8 +137,8 @@ public class Neo4j implements GraphDB {
 		public EdgeNeo4j(Relationship _id) {
 			rel_id = _id;
 		}
-		public String getURI() {
-			return ("<" + (String)rel_id.getProperty(Attr.Predicate) + ">");
+		public URI getURI() {
+			return (new URI((String)rel_id.getProperty(Attr.Predicate)));
 		}
 		public Vertex getStart() {
 			return (new VertexNeo4j(rel_id.getStartNode()));

@@ -24,7 +24,7 @@ import java.io.*;
 
 public interface Edge {
 
-	public String getURI();
+	public URI    getURI();
 	public Vertex getStart();
 	public Vertex getEnd();
 
