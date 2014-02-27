@@ -52,36 +52,36 @@ public class Q01 extends BerlinQuery {
 		Edge rel;
 		IteratorGraph it;
 
-		nURI = g.getVertexURI(bsbminst+"ProductType"+inst[ind][0]);
+		nURI = g.getVertexURI(bsbminst+"ProductType"+inst[ind][0]+">");
 		if (nURI == null) return;
 		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
-			if (rel.getURI().equals(rdf+"type"))
+			if (rel.getURI().equals(rdf+"type>"))
 				sets[0].add(rel.getStart());
 		}
 		it.close();
 
-		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst[ind][1]);
+		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst[ind][1]+">");
 		if (nURI == null) return;
 		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
 			nProd = rel.getStart();
-			if (rel.getURI().equals(bsbm+"productFeature")
+			if (rel.getURI().equals(bsbm+"productFeature>")
 				&& sets[0].contains(nProd))
 				sets[1].add(nProd);
 		}
 		it.close();
 		sets[0].clear();
 
-		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst[ind][2]);
+		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst[ind][2]+">");
 		if (nURI == null) return;
 		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
 			nProd = rel.getStart();
-			if (rel.getURI().equals(bsbm+"productFeature")
+			if (rel.getURI().equals(bsbm+"productFeature>")
 				&& sets[1].contains(nProd))
 				sets[0].add(nProd);
 		}
@@ -100,9 +100,9 @@ public class Q01 extends BerlinQuery {
 			while (it.hasNext()) {
 				rel = it.next();
 				temp = rel.getURI();
-				if (temp.equals(rdfs+"label"))
+				if (temp.equals(rdfs+"label>"))
 					setL.add(rel.getEnd().getAny());
-				else if (temp.equals(bsbm+"productPropertyNumeric1"))
+				else if (temp.equals(bsbm+"productPropertyNumeric1>"))
 					setV.add(rel.getEnd().getLong());
 			}
 			it.close();
