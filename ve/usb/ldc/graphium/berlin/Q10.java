@@ -34,7 +34,7 @@ public class Q10 extends BerlinQuery {
 
 	public static void main(String[] args) {
 		BerlinQuery Q = new Q10(args[1],args[2]);
-		Q.runQuery(Integer.parseInt(args[0]));
+		Q.runExperiment(Integer.parseInt(args[0]));
 		Q.close();
 	}
 
