@@ -47,7 +47,7 @@ public class Q06 extends BerlinQuery {
 		Vertex bsbmProductNode;
 		Edge rel;
 		IteratorGraph it;
-		String relStr, product, label;
+		RDFobject relURI, product, label;
 		HashSet<Vertex> setProduct = new HashSet<Vertex>();
 
 		// bsbm:Product
@@ -56,9 +56,9 @@ public class Q06 extends BerlinQuery {
 		it = bsbmProductNode.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = rel.getURI();
+			relURI = rel.getURI();
 			// ?product rdf:type bsbm:Product .
-			if (relStr.equals(rdf+"type"))
+			if (relURI.equals(rdf+"type"))
 				setProduct.add(rel.getStart());
 		}
 		it.close();
@@ -72,7 +72,7 @@ public class Q06 extends BerlinQuery {
 				// ?product rdfs:label ?label .
 				// FILTER regex(?label, "string")
 				if (rel.getURI().equals(rdfs+"label")
-					&& label.matches(inst[ind]))
+					&& label.base.matches(inst[ind]))
 					(r.newResult(product,label)).print();
 			}
 			it.close();

@@ -48,9 +48,9 @@ public class Q07 extends BerlinQuery {
 		Vertex pNode;
 		Edge rel;
 		IteratorGraph it;
-		String relStr;
+		RDFobject relURI;
 
-		HashSet<String> setProductLabel = new HashSet<String>();
+		HashSet<RDFobject> setProductLabel = new HashSet<RDFobject>();
 		HashSet<Vertex>
 			setOffer = new HashSet<Vertex>(),
 			setReview = new HashSet<Vertex>();
@@ -71,11 +71,11 @@ public class Q07 extends BerlinQuery {
 		it = pNode.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = rel.getURI();
-			if (relStr.equals(bsbm+"product")) {
+			relURI = rel.getURI();
+			if (relURI.equals(bsbm+"product")) {
 				// ?offer bsbm:product ?product
 				setOffer.add(rel.getStart());
-			} else if (relStr.equals(bsbm+"reviewFor")) {
+			} else if (relURI.equals(bsbm+"reviewFor")) {
 				// ?review bsbm:reviewFor ?product
 				setReview.add(rel.getStart());
 			}
@@ -86,15 +86,17 @@ public class Q07 extends BerlinQuery {
 		for (Vertex oNode : setOffer)
 			findOffers(oNode);
 		if (optBlock1.size()==0)
-			optBlock1.add(r.newResult("","","",""));
+			optBlock1.add(r.newResult(new RDFobject(),
+				new RDFobject(),new RDFobject(),new RDFobject()));
 
 		optBlock2 = new ArrayList<ResultTuple>();
 		for (Vertex rNode : setReview)
 			findReview(rNode);
 		if (optBlock2.size()==0)
-			optBlock2.add(r.newResult("","","","","",""));
+			optBlock2.add(r.newResult(new RDFobject(),new RDFobject(),new RDFobject(),
+				new RDFobject(),new RDFobject(),new RDFobject()));
 
-		for (String productLabel : setProductLabel)
+		for (RDFobject productLabel : setProductLabel)
 		for (ResultTuple opt1 : optBlock1)
 		for (ResultTuple opt2 : optBlock2)
 			(r.newResult(productLabel,opt1.elem[0],opt1.elem[1],
@@ -107,10 +109,10 @@ public class Q07 extends BerlinQuery {
 	private void findOffers(Vertex oNode) {
 		Edge rel;
 		IteratorGraph it;
-		String relStr, offer = oNode.getAny();
+		RDFobject relURI, offer = oNode.getAny();
 		int filterDate = 0;
 
-		HashSet<String> setPrice = new HashSet<String>();
+		HashSet<RDFobject> setPrice = new HashSet<RDFobject>();
 		HashSet[] setVendor = new HashSet[2];
 		setVendor[0] = new HashSet<Vertex>();
 		setVendor[1] = new HashSet<Vertex>();
@@ -119,20 +121,20 @@ public class Q07 extends BerlinQuery {
 		it = oNode.getEdgesOut();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = rel.getURI();
-			if (relStr.equals(bsbm+"price")) {
+			relURI = rel.getURI();
+			if (relURI.equals(bsbm+"price")) {
 				// ?offer bsbm:price ?price
 				setPrice.add(rel.getEnd().getAny());
-			} else if (relStr.equals(bsbm+"validTo")) {
+			} else if (relURI.equals(bsbm+"validTo")) {
 				// ?offer bsbm:validTo ?date
 				// FILTER (?date > 2008Y06M20D )
 				dateV = rel.getEnd().getDate();
 				if (dateV!=null && dateF.compareTo(dateV)<0)
 					filterDate++;
-			} else if (relStr.equals(bsbm+"vendor")) {
+			} else if (relURI.equals(bsbm+"vendor")) {
 				// ?offer bsbm:vendor ?vendor
 				setVendor[0].add(rel.getEnd());
-			} else if (relStr.equals(dc+"publisher")) {
+			} else if (relURI.equals(dc+"publisher")) {
 				// ?offer dc:publisher ?vendor
 				setVendor[1].add(rel.getEnd());
 			}
@@ -146,7 +148,7 @@ public class Q07 extends BerlinQuery {
 		minInd = (setVendor[0].size() <= setVendor[1].size() ? 0 : 1);
 		maxInd = (minInd + 1) % 2;
 
-		String vendor;
+		RDFobject vendor;
 		Iterator<Vertex> itv = setVendor[minInd].iterator();
 		while (itv.hasNext()) {
 			Vertex vNode = itv.next();
@@ -154,17 +156,17 @@ public class Q07 extends BerlinQuery {
 				continue;
 			
 			vendor = vNode.getAny();
-			HashSet<String> setVendorTitle = new HashSet<String>();
+			HashSet<RDFobject> setVendorTitle = new HashSet<RDFobject>();
 
 			boolean found = false;
 			it = vNode.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = rel.getURI();
-				if (relStr.equals(rdfs+"label")) {
+				relURI = rel.getURI();
+				if (relURI.equals(rdfs+"label")) {
 					// ?vendor rdfs:label ?vendorTitle
 					setVendorTitle.add(rel.getEnd().getAny());
-				} else if (relStr.equals(bsbm+"country")) {
+				} else if (relURI.equals(bsbm+"country")) {
 					// ?vendor bsbm:country <http://downlode.org/rdf/iso-3166/countries#DE>
 					if (rel.getEnd().getAny().equals(
 						"http://downlode.org/rdf/iso-3166/countries#DE"))
@@ -173,8 +175,8 @@ public class Q07 extends BerlinQuery {
 			}
 			it.close();
 
-			for (String vendorTitle : setVendorTitle)
-			for (String price : setPrice)
+			for (RDFobject vendorTitle : setVendorTitle)
+			for (RDFobject price : setPrice)
 			for (int i=0 ; i<filterDate ; i++)
 				optBlock1.add(r.newResult(offer,price,vendor,vendorTitle));
 		}
@@ -183,47 +185,47 @@ public class Q07 extends BerlinQuery {
 	private void findReview(Vertex rNode) {
 		Edge rel;
 		IteratorGraph it;
-		String relStr, review = rNode.getAny();
+		RDFobject relURI, review = rNode.getAny();
 
 		HashSet<Vertex> setReviewer = new HashSet<Vertex>();
-		HashSet<String>
-			setRevTitle = new HashSet<String>(),
-			setRating1 = new HashSet<String>(),
-			setRating2 = new HashSet<String>();
+		HashSet<RDFobject>
+			setRevTitle = new HashSet<RDFobject>(),
+			setRating1 = new HashSet<RDFobject>(),
+			setRating2 = new HashSet<RDFobject>();
 
 		it = rNode.getEdgesOut();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = rel.getURI();
-			if (relStr.equals(rev+"reviewer")) {
+			relURI = rel.getURI();
+			if (relURI.equals(rev+"reviewer")) {
 				// ?review rev:reviewer ?reviewer
 				setReviewer.add(rel.getEnd());
-			} else if (relStr.equals(dc+"title")) {
+			} else if (relURI.equals(dc+"title")) {
 				// ?review dc:title ?revTitle
 				setRevTitle.add(rel.getEnd().getAny());
-			} else if (relStr.equals(bsbm+"rating1")) {
+			} else if (relURI.equals(bsbm+"rating1")) {
 				// OPTIONAL {?review bsbm:rating1 ?rating1 }
 				setRating1.add(rel.getEnd().getAny());
-			} else if (relStr.equals(bsbm+"rating2")) {
+			} else if (relURI.equals(bsbm+"rating2")) {
 				// OPTIONAL {?review bsbm:rating2 ?rating2 }
 				setRating2.add(rel.getEnd().getAny());
 			}
 		}
 		it.close();
 
-		if (setRating1.size()==0) setRating1.add("");
-		if (setRating2.size()==0) setRating2.add("");
+		if (setRating1.size()==0) setRating1.add(new RDFobject());
+		if (setRating2.size()==0) setRating2.add(new RDFobject());
 
 		for (Vertex rrNode : setReviewer) {
-			String reviewer = rrNode.getAny();
+			RDFobject reviewer = rrNode.getAny();
 			it = rrNode.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
 				if (rel.getURI().equals(foaf+"name")) {
 					// ?reviewer foaf:name ?revName
-					for (String revTitle : setRevTitle)
-					for (String rating1 : setRating1)
-					for (String rating2 : setRating2)
+					for (RDFobject revTitle : setRevTitle)
+					for (RDFobject rating1 : setRating1)
+					for (RDFobject rating2 : setRating2)
 						optBlock2.add(r.newResult(review,revTitle,
 						reviewer,rel.getEnd().getAny(),rating1,rating2));
 				}

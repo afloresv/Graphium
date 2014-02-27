@@ -46,16 +46,16 @@ public class Q12 extends BerlinQuery {
 		Vertex iNode;
 		Edge rel;
 		IteratorGraph it;
-		String relStr, nodeStr, vendorURI;
+		RDFobject relURI, nodeObj, vendorURI;
 
 		HashSet<Vertex>
 			setProductURI = new HashSet<Vertex>(),
 			setVendorURI = new HashSet<Vertex>();
-		HashSet<String>
-			setOfferURL = new HashSet<String>(),
-			setPrice = new HashSet<String>(),
-			setDeliveryDays = new HashSet<String>(),
-			setValidTo = new HashSet<String>();
+		HashSet<RDFobject>
+			setOfferURL = new HashSet<RDFobject>(),
+			setPrice = new HashSet<RDFobject>(),
+			setDeliveryDays = new HashSet<RDFobject>(),
+			setValidTo = new HashSet<RDFobject>();
 		ArrayList<ResultTuple> productTuples = new ArrayList<ResultTuple>();
 
 		// FILTER (?o = bsbminst:dataFromVendor117/Offer231837)
@@ -64,24 +64,23 @@ public class Q12 extends BerlinQuery {
 		it = iNode.getEdgesOut();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = rel.getURI();
-
-			if (relStr.equals(bsbm+"product")) {
+			relURI = rel.getURI();
+			if (relURI.equals(bsbm+"product")) {
 				// ?o bsbm:product ?productURI
 				setProductURI.add(rel.getEnd());
-			} else if (relStr.equals(bsbm+"vendor")) {
+			} else if (relURI.equals(bsbm+"vendor")) {
 				// ?o bsbm:vendor ?vendorURI
 				setVendorURI.add(rel.getEnd());
-			} else if (relStr.equals(bsbm+"offerWebpage")) {
+			} else if (relURI.equals(bsbm+"offerWebpage")) {
 				// ?o bsbm:offerWebpage ?offerURL
 				setOfferURL.add(rel.getEnd().getAny());
-			} else if (relStr.equals(bsbm+"price")) {
+			} else if (relURI.equals(bsbm+"price")) {
 				// ?o bsbm:price ?price
 				setPrice.add(rel.getEnd().getAny());
-			} else if (relStr.equals(bsbm+"deliveryDays")) {
+			} else if (relURI.equals(bsbm+"deliveryDays")) {
 				// ?o bsbm:deliveryDays ?deliveryDays
 				setDeliveryDays.add(rel.getEnd().getAny());
-			} else if (relStr.equals(bsbm+"validTo")) {
+			} else if (relURI.equals(bsbm+"validTo")) {
 				// ?o bsbm:validTo ?validTo
 				setValidTo.add(rel.getEnd().getAny());
 			}
@@ -89,14 +88,14 @@ public class Q12 extends BerlinQuery {
 		it.close();
 
 		for (Vertex puNode : setProductURI) {
-			nodeStr = puNode.getAny();
+			nodeObj = puNode.getAny();
 			it = puNode.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = rel.getURI();
-				if (relStr.equals(rdfs+"label")) {
+				relURI = rel.getURI();
+				if (relURI.equals(rdfs+"label")) {
 					// ?productURI rdfs:label ?productLabel
-					productTuples.add(r.newResult(nodeStr,rel.getEnd().getAny()));
+					productTuples.add(r.newResult(nodeObj,rel.getEnd().getAny()));
 				}
 			}
 			it.close();
@@ -105,18 +104,18 @@ public class Q12 extends BerlinQuery {
 		for (Vertex vuNode : setVendorURI) {
 
 			vendorURI = vuNode.getAny();
-			HashSet<String>
-				setVendorName = new HashSet<String>(),
-				setVendorHomePage = new HashSet<String>();
+			HashSet<RDFobject>
+				setVendorName = new HashSet<RDFobject>(),
+				setVendorHomePage = new HashSet<RDFobject>();
 
 			it = vuNode.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = rel.getURI();
-				if (relStr.equals(rdfs+"label")) {
+				relURI = rel.getURI();
+				if (relURI.equals(rdfs+"label")) {
 					// ?vendorURI rdfs:label ?vendorName
 					setVendorName.add(rel.getEnd().getAny());
-				} else if (relStr.equals(foaf+"homepage")) {
+				} else if (relURI.equals(foaf+"homepage")) {
 					// ?vendorURI foaf:homepage ?vendorHomePage
 					setVendorHomePage.add(rel.getEnd().getAny());
 				}
@@ -124,12 +123,12 @@ public class Q12 extends BerlinQuery {
 			it.close();
 
 			for (ResultTuple product : productTuples)
-			for (String vendorname : setVendorName)
-			for (String vendorhomepage : setVendorHomePage)
-			for (String offerURL : setOfferURL)
-			for (String price : setPrice)
-			for (String deliveryDays : setDeliveryDays)
-			for (String validTo : setValidTo)
+			for (RDFobject vendorname : setVendorName)
+			for (RDFobject vendorhomepage : setVendorHomePage)
+			for (RDFobject offerURL : setOfferURL)
+			for (RDFobject price : setPrice)
+			for (RDFobject deliveryDays : setDeliveryDays)
+			for (RDFobject validTo : setValidTo)
 				(r.newResult(product.elem[0],product.elem[1],vendorURI,vendorname,
 				vendorhomepage,offerURL,price,deliveryDays,validTo)).print();
 		}

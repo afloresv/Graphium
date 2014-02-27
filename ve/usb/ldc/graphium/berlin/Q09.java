@@ -46,8 +46,8 @@ public class Q09 extends BerlinQuery {
 		Vertex iNode;
 		Edge rel;
 		IteratorGraph it;
-		String relStr, x, reviewer,
-			otherStrI = bsbminst+"dataFromRatingSite"+inst[ind][0]+"/Review"+inst[ind][1];
+		RDFobject relURI, x, reviewer;
+		String otherStrI = bsbminst+"dataFromRatingSite"+inst[ind][0]+"/Review"+inst[ind][1];
 
 		HashSet<Vertex> setX = new HashSet<Vertex>();
 
@@ -57,8 +57,8 @@ public class Q09 extends BerlinQuery {
 		it = iNode.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = rel.getURI();
-			if (relStr.equals(rdf+"type"))
+			relURI = rel.getURI();
+			if (relURI.equals(rdf+"type"))
 				setX.add(rel.getStart());
 		}
 		it.close();
@@ -71,12 +71,12 @@ public class Q09 extends BerlinQuery {
 			it = xNode.getEdgesIn();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = rel.getURI();
-				if (relStr.equals(rev+"reviewer")) {
+				relURI = rel.getURI();
+				if (relURI.equals(rev+"reviewer")) {
 					// bsbminst:dataFromRatingSite8/Review75011 rev:reviewer ?x
 					if (rel.getStart().getAny().equals(otherStrI))
 						found = true;
-				} else if (relStr.equals(rev+"reviewer")) {
+				} else if (relURI.equals(rev+"reviewer")) {
 					// ?reviewer rev:reviewer ?x
 					setReviewer.add(rel.getStart());
 				}
@@ -87,22 +87,22 @@ public class Q09 extends BerlinQuery {
 
 			x = xNode.getAny();
 
-			HashSet<String>
-				setName = new HashSet<String>(),
-				setMbox = new HashSet<String>(),
-				setCountry = new HashSet<String>();
+			HashSet<RDFobject>
+				setName = new HashSet<RDFobject>(),
+				setMbox = new HashSet<RDFobject>(),
+				setCountry = new HashSet<RDFobject>();
 
 			it = xNode.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = rel.getURI();
-				if (relStr.equals(foaf+"name")) {
+				relURI = rel.getURI();
+				if (relURI.equals(foaf+"name")) {
 					// ?x foaf:name ?name
 					setName.add(rel.getEnd().getAny());
-				} else if (relStr.equals(foaf+"mbox_sha1sum")) {
+				} else if (relURI.equals(foaf+"mbox_sha1sum")) {
 					// ?x foaf:mbox_sha1sum ?mbox
 					setMbox.add(rel.getEnd().getAny());
-				} else if (relStr.equals(bsbm+"country")) {
+				} else if (relURI.equals(bsbm+"country")) {
 					// ?x bsbm:country ?country
 					setCountry.add(rel.getEnd().getAny());
 				}
@@ -112,18 +112,18 @@ public class Q09 extends BerlinQuery {
 			for (Vertex rNode : setReviewer) {
 				reviewer = rNode.getAny();
 
-				HashSet<String>
-					setProduct = new HashSet<String>(),
-					setTitle = new HashSet<String>();
+				HashSet<RDFobject>
+					setProduct = new HashSet<RDFobject>(),
+					setTitle = new HashSet<RDFobject>();
 
 				it = rNode.getEdgesOut();
 				while (it.hasNext()) {
 					rel = it.next();
-					relStr = rel.getURI();
-					if (relStr.equals(bsbm+"reviewFor")) {
+					relURI = rel.getURI();
+					if (relURI.equals(bsbm+"reviewFor")) {
 						// ?reviewer bsbm:reviewFor ?product
 						setProduct.add(rel.getEnd().getAny());
-					} else if (relStr.equals(dc+"title")) {
+					} else if (relURI.equals(dc+"title")) {
 						// ?reviewer dc:title ?title
 						setTitle.add(rel.getEnd().getAny());
 					}
@@ -131,11 +131,11 @@ public class Q09 extends BerlinQuery {
 				it.close();
 
 				// Print results
-				for (String name : setName)
-				for (String mbox : setMbox)
-				for (String country : setCountry)
-				for (String product : setProduct)
-				for (String title : setTitle)
+				for (RDFobject name : setName)
+				for (RDFobject mbox : setMbox)
+				for (RDFobject country : setCountry)
+				for (RDFobject product : setProduct)
+				for (RDFobject title : setTitle)
 					(r.newResult(x,name,mbox,country,reviewer,product,title)).print();
 			}
 		}

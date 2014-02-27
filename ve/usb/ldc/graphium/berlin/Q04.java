@@ -89,23 +89,23 @@ public class Q04 extends BerlinQuery {
 		it.close();
 
 		Iterator<Vertex> itProd = sets[0].iterator();
-		String product, relStr;
+		RDFobject product, relURI;
 		while (itProd.hasNext()) {
-			HashSet<String>
-				setL = new HashSet<String>(),
-				setPT = new HashSet<String>();
+			HashSet<RDFobject>
+				setL = new HashSet<RDFobject>(),
+				setPT = new HashSet<RDFobject>();
 			HashSet<Long> setP = new HashSet<Long>();
 
 			nProd = itProd.next();
 			it = nProd.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = rel.getURI();
-				if (relStr.equals(rdfs+"label"))
+				relURI = rel.getURI();
+				if (relURI.equals(rdfs+"label"))
 					setL.add(rel.getEnd().getAny());
-				else if (relStr.equals(bsbm+"productPropertyTextual1"))
+				else if (relURI.equals(bsbm+"productPropertyTextual1"))
 					setPT.add(rel.getEnd().getAny());
-				else if (relStr.equals(bsbm+"productPropertyNumeric"+(off+1)))
+				else if (relURI.equals(bsbm+"productPropertyNumeric"+(off+1)))
 					setP.add(rel.getEnd().getLong());
 			}
 			it.close();
@@ -113,8 +113,8 @@ public class Q04 extends BerlinQuery {
 			product = nProd.getAny();
 			for (Long value : setP) {
 				if (value>inst[ind][3+2*off])
-				for (String label : setL)
-					for (String propertyTextual : setPT)
+				for (RDFobject label : setL)
+					for (RDFobject propertyTextual : setPT)
 						results.add(r.newResult(product,label,propertyTextual));
 			}
 		}

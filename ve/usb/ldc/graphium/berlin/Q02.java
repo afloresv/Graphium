@@ -44,38 +44,38 @@ public class Q02 extends BerlinQuery {
 		Vertex xNode, vNode;
 		Edge rel;
 		IteratorGraph it, it2;
-		String relStr, nodeStr;
+		RDFobject relURI, nodeObj;
 
-		HashSet<String>
-			laS = new HashSet<String>(),
-			coS = new HashSet<String>(),
-			prS = new HashSet<String>(),
-			pF = new HashSet<String>(),
-			pPT1 = new HashSet<String>(),
-			pPT2 = new HashSet<String>(),
-			pPT3 = new HashSet<String>(),
-			pPN1 = new HashSet<String>(),
-			pPN2 = new HashSet<String>(),
-			pPT4 = new HashSet<String>(),
-			pPT5 = new HashSet<String>(),
-			pPN4 = new HashSet<String>();
+		HashSet<RDFobject>
+			laS = new HashSet<RDFobject>(),
+			coS = new HashSet<RDFobject>(),
+			prS = new HashSet<RDFobject>(),
+			pF = new HashSet<RDFobject>(),
+			pPT1 = new HashSet<RDFobject>(),
+			pPT2 = new HashSet<RDFobject>(),
+			pPT3 = new HashSet<RDFobject>(),
+			pPN1 = new HashSet<RDFobject>(),
+			pPN2 = new HashSet<RDFobject>(),
+			pPT4 = new HashSet<RDFobject>(),
+			pPT5 = new HashSet<RDFobject>(),
+			pPN4 = new HashSet<RDFobject>();
 
 		xNode = g.getVertexURI(bsbminst+"dataFromProducer458/Product"+inst[ind]);
 		if (xNode == null) return;
 		it = xNode.getEdgesOut();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = rel.getURI();
+			relURI = rel.getURI();
 			vNode = rel.getEnd();
-			nodeStr = vNode.getAny();
+			nodeObj = vNode.getAny();
 
-			if (relStr.equals(rdfs+"label")) {
+			if (relURI.equals(rdfs+"label")) {
 				// ?x rdfs:label ?label .
-				laS.add(nodeStr);
-			} else if (relStr.equals(rdfs+"comment")) {
+				laS.add(nodeObj);
+			} else if (relURI.equals(rdfs+"comment")) {
 				// ?x rdfs:comment ?comment .
-				coS.add(nodeStr);
-			} else if (relStr.equals(bsbm+"producer")) {
+				coS.add(nodeObj);
+			} else if (relURI.equals(bsbm+"producer")) {
 				// ?x bsbm:producer ?p .
 				// ?p rdfs:label ?producer .
 				// ?x dc:publisher ?p .
@@ -98,7 +98,7 @@ public class Q02 extends BerlinQuery {
 					}
 				}
 				it2.close();
-			} else if (relStr.equals(bsbm+"productFeature")) {
+			} else if (relURI.equals(bsbm+"productFeature")) {
 				// ?x bsbm:productFeature ?f .
 				// ?f rdfs:label ?productFeature .
 				it2 = vNode.getEdgesOut();
@@ -110,51 +110,51 @@ public class Q02 extends BerlinQuery {
 					}
 				}
 				it2.close();
-			} else if (relStr.equals(bsbm+"productPropertyTextual1")) {
+			} else if (relURI.equals(bsbm+"productPropertyTextual1")) {
 				// ?x bsbm:productPropertyTextual1 ?propertyTextual1 .
-				pPT1.add(nodeStr);
-			} else if (relStr.equals(bsbm+"productPropertyTextual2")) {
+				pPT1.add(nodeObj);
+			} else if (relURI.equals(bsbm+"productPropertyTextual2")) {
 				// ?x bsbm:productPropertyTextual2 ?propertyTextual2 .
-				pPT2.add(nodeStr);
-			} else if (relStr.equals(bsbm+"productPropertyTextual3")) {
+				pPT2.add(nodeObj);
+			} else if (relURI.equals(bsbm+"productPropertyTextual3")) {
 				// ?x bsbm:productPropertyTextual3 ?propertyTextual3 .
-				pPT3.add(nodeStr);
-			} else if (relStr.equals(bsbm+"productPropertyNumeric1")) {
+				pPT3.add(nodeObj);
+			} else if (relURI.equals(bsbm+"productPropertyNumeric1")) {
 				// ?x bsbm:productPropertyNumeric1 ?propertyNumeric1 .
-				pPN1.add(nodeStr);
-			} else if (relStr.equals(bsbm+"productPropertyNumeric2")) {
+				pPN1.add(nodeObj);
+			} else if (relURI.equals(bsbm+"productPropertyNumeric2")) {
 				// ?x bsbm:productPropertyNumeric2 ?propertyNumeric2 .
-				pPN2.add(nodeStr);
-			} else if (relStr.equals(bsbm+"productPropertyTextual4")) {
+				pPN2.add(nodeObj);
+			} else if (relURI.equals(bsbm+"productPropertyTextual4")) {
 				// OPTIONAL { ?x bsbm:productPropertyTextual4 ?propertyTextual4 }
-				pPT4.add(nodeStr);
-			} else if (relStr.equals(bsbm+"productPropertyTextual5")) {
+				pPT4.add(nodeObj);
+			} else if (relURI.equals(bsbm+"productPropertyTextual5")) {
 				// OPTIONAL { ?x bsbm:productPropertyTextual5 ?propertyTextual5 }
-				pPT5.add(nodeStr);
-			} else if (relStr.equals(bsbm+"productPropertyNumeric4")) {
+				pPT5.add(nodeObj);
+			} else if (relURI.equals(bsbm+"productPropertyNumeric4")) {
 				// OPTIONAL { ?x bsbm:productPropertyNumeric4 ?propertyNumeric4 }
-				pPN4.add(nodeStr);
+				pPN4.add(nodeObj);
 			}
 		}
 		it.close();
 
 		// Results
-		if (pPT4.size()==0) pPT4.add("");
-		if (pPT5.size()==0) pPT5.add("");
-		if (pPN4.size()==0) pPN4.add("");
+		if (pPT4.size()==0) pPT4.add(new RDFobject());
+		if (pPT5.size()==0) pPT5.add(new RDFobject());
+		if (pPN4.size()==0) pPN4.add(new RDFobject());
 
-		for (String label : laS)
-		for (String comment : coS)
-		for (String producer : prS)
-		for (String productFeature : pF)
-		for (String propertyTextual1 : pPT1)
-		for (String propertyTextual2 : pPT2)
-		for (String propertyTextual3 : pPT3)
-		for (String propertyNumeric1 : pPN1)
-		for (String propertyNumeric2 : pPN2)
-		for (String propertyTextual4 : pPT4)
-		for (String propertyTextual5 : pPT5)
-		for (String propertyNumeric4 : pPN4)
+		for (RDFobject label : laS)
+		for (RDFobject comment : coS)
+		for (RDFobject producer : prS)
+		for (RDFobject productFeature : pF)
+		for (RDFobject propertyTextual1 : pPT1)
+		for (RDFobject propertyTextual2 : pPT2)
+		for (RDFobject propertyTextual3 : pPT3)
+		for (RDFobject propertyNumeric1 : pPN1)
+		for (RDFobject propertyNumeric2 : pPN2)
+		for (RDFobject propertyTextual4 : pPT4)
+		for (RDFobject propertyTextual5 : pPT5)
+		for (RDFobject propertyNumeric4 : pPN4)
 			(r.newResult(label,comment,producer,productFeature,propertyTextual1,
 				propertyTextual2,propertyTextual3,propertyNumeric1,propertyNumeric2,
 				propertyTextual4,propertyTextual5,propertyNumeric4)).print();

@@ -90,9 +90,9 @@ public class Q01 extends BerlinQuery {
 
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
 		Iterator<Vertex> itProd = sets[0].iterator();
-		String product, temp;
+		RDFobject product, temp;
 		while (itProd.hasNext()) {
-			HashSet<String> setL = new HashSet<String>();
+			HashSet<RDFobject> setL = new HashSet<RDFobject>();
 			HashSet<Long> setV = new HashSet<Long>();
 
 			nProd = itProd.next();
@@ -110,7 +110,7 @@ public class Q01 extends BerlinQuery {
 			product = nProd.getAny();
 			for (Long value : setV) {
 				if (value>inst[ind][3])
-					for (String label : setL)
+					for (RDFobject label : setL)
 						results.add(r.newResult(product,label));
 			}
 		}

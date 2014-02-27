@@ -48,7 +48,7 @@ public class Q10 extends BerlinQuery {
 		Vertex pNode;
 		Edge rel;
 		IteratorGraph it;
-		String relStr;
+		RDFobject relURI;
 
 		HashSet<Vertex> setPrice = new HashSet<Vertex>();
 		HashSet<Vertex> setOffer = new HashSet<Vertex>();
@@ -67,7 +67,7 @@ public class Q10 extends BerlinQuery {
 
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
 
-		String offer;
+		RDFobject offer;
 		for (Vertex oNode : setOffer) {
 			boolean foundDate = false,
 				foundDeliveryDays = false;
@@ -81,26 +81,24 @@ public class Q10 extends BerlinQuery {
 			it = oNode.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = rel.getURI();
-				if (relStr.equals(bsbm+"price")) {
+				relURI = rel.getURI();
+				if (relURI.equals(bsbm+"price")) {
 					// ?offer bsbm:price ?price
 					setPrice.add(rel.getEnd());
-				} else if (relStr.equals(bsbm+"validTo")) {
+				} else if (relURI.equals(bsbm+"validTo")) {
 					// ?offer bsbm:validTo ?date
 					dateV = rel.getEnd().getDate();
 					if (dateV!=null && dateF.compareTo(dateV)<0)
 						foundDate = true;
-				} else if (relStr.equals(bsbm+"deliveryDays")) {
+				} else if (relURI.equals(bsbm+"deliveryDays")) {
 					// ?offer bsbm:deliveryDays ?deliveryDays
 					// FILTER (?deliveryDays <= 3)
-					try {
-						if (Integer.parseInt(rel.getEnd().getAny()) <= 3)
-							foundDeliveryDays = true;
-					} catch (NumberFormatException nfe) {}
-				} else if (relStr.equals(bsbm+"vendor")) {
+					if (rel.getEnd().getLong() <= 3)
+						foundDeliveryDays = true;
+				} else if (relURI.equals(bsbm+"vendor")) {
 					// ?offer bsbm:vendor ?vendor .
 					setVendor[0].add(rel.getEnd());
-				} else if (relStr.equals(dc+"publisher")) {
+				} else if (relURI.equals(dc+"publisher")) {
 					// ?offer dc:publisher ?vendor .
 					setVendor[1].add(rel.getEnd());
 				}

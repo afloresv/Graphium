@@ -75,9 +75,9 @@ public class Q03 extends BerlinQuery {
 
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();
 		Iterator<Vertex> itProd = sets[1].iterator();
-		String product, relStr;
+		RDFobject product, relURI;
 		while (itProd.hasNext()) {
-			HashSet<String> setL = new HashSet<String>();
+			HashSet<RDFobject> setL = new HashSet<RDFobject>();
 			HashSet<Long>
 				setP1 = new HashSet<Long>(),
 				setP3 = new HashSet<Long>();
@@ -86,12 +86,12 @@ public class Q03 extends BerlinQuery {
 			it = nProd.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = rel.getURI();
-				if (relStr.equals(rdfs+"label"))
+				relURI = rel.getURI();
+				if (relURI.equals(rdfs+"label"))
 					setL.add(rel.getEnd().getAny());
-				else if (relStr.equals(bsbm+"productPropertyNumeric1"))
+				else if (relURI.equals(bsbm+"productPropertyNumeric1"))
 					setP1.add(rel.getEnd().getLong());
-				else if (relStr.equals(bsbm+"productPropertyNumeric3"))
+				else if (relURI.equals(bsbm+"productPropertyNumeric3"))
 					setP3.add(rel.getEnd().getLong());
 			}
 			it.close();
@@ -101,7 +101,7 @@ public class Q03 extends BerlinQuery {
 				if (p1>inst[ind][2])
 				for (Long p3 : setP3) {
 					if (p3>inst[ind][3])
-					for (String label : setL)
+					for (RDFobject label : setL)
 						results.add(r.newResult(product,label));
 				}
 			}

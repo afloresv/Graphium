@@ -46,7 +46,7 @@ public class Q05 extends BerlinQuery {
 		Vertex pNode, vNode;
 		Edge rel;
 		IteratorGraph it;
-		String relStr, nodeStr, product;
+		RDFobject relURI, product;
 
 		HashSet<Long>
 			setOP1 = new HashSet<Long>(),
@@ -62,14 +62,14 @@ public class Q05 extends BerlinQuery {
 		it = pNode.getEdgesOut();
 		while (it.hasNext()) {
 			rel = it.next();
-			relStr = rel.getURI();
-			if (relStr.equals(bsbm+"productFeature")) {
+			relURI = rel.getURI();
+			if (relURI.equals(bsbm+"productFeature")) {
 				// ?p bsbm:productFeature ?prodFeature .
 				setPF.add(rel.getEnd());
-			} else if (relStr.equals(bsbm+"productPropertyNumeric1")) {
+			} else if (relURI.equals(bsbm+"productPropertyNumeric1")) {
 				// ?p bsbm:productPropertyNumeric1 ?origProperty1 .
 				setOP1.add(rel.getEnd().getLong());
-			} else if (relStr.equals(bsbm+"productPropertyNumeric2")) {
+			} else if (relURI.equals(bsbm+"productPropertyNumeric2")) {
 				// ?p bsbm:productPropertyNumeric2 ?origProperty2 .
 				setOP2.add(rel.getEnd().getLong());
 			}
@@ -97,19 +97,19 @@ public class Q05 extends BerlinQuery {
 			HashSet<Long>
 				setSP1 = new HashSet<Long>(),
 				setSP2 = new HashSet<Long>();
-			HashSet<String> setPL = new HashSet<String>();
+			HashSet<RDFobject> setPL = new HashSet<RDFobject>();
 
 			it = nodeProd.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				relStr = rel.getURI();
-				if (relStr.equals(rdfs+"label")) {
+				relURI = rel.getURI();
+				if (relURI.equals(rdfs+"label")) {
 					// ?product rdfs:label ?productLabel .
 					setPL.add(rel.getEnd().getAny());
-				} else if (relStr.equals(bsbm+"productPropertyNumeric1")) {
+				} else if (relURI.equals(bsbm+"productPropertyNumeric1")) {
 					// ?product bsbm:productPropertyNumeric1 ?simProperty1 .
 					setSP1.add(rel.getEnd().getLong());
-				} else if (relStr.equals(bsbm+"productPropertyNumeric2")) {
+				} else if (relURI.equals(bsbm+"productPropertyNumeric2")) {
 					// ?product bsbm:productPropertyNumeric2 ?simProperty2 .
 					setSP2.add(rel.getEnd().getLong());
 				}
@@ -146,7 +146,7 @@ public class Q05 extends BerlinQuery {
 			}
 
 			if (passFilter)
-				for (String productLabel : setPL)
+				for (RDFobject productLabel : setPL)
 					results.add(r.newResult(product,productLabel));
 		}
 
