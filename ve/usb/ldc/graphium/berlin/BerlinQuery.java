@@ -41,14 +41,14 @@ public abstract class BerlinQuery {
 		// Cold Cache
 		long startTime = System.currentTimeMillis();
 		this.runQuery(ind);
-		System.err.println("Cold Cache " +
-			(System.currentTimeMillis()-startTime));
+		System.err.println("Time (Cold-Cache) " +
+			(System.currentTimeMillis()-startTime) + " ms");
 		
 		// Warm Cache
 		startTime = System.currentTimeMillis();
 		this.runQuery(ind);
-		System.err.println("Warm Cache " +
-			(System.currentTimeMillis()-startTime));
+		System.err.println("Time (Warm-Cache) " +
+			(System.currentTimeMillis()-startTime) + " ms");
 
 		this.close();
 	}
