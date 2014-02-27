@@ -29,9 +29,9 @@ public class Literal extends RDFobject {
 	}
 	@Override
 	public String toString() {
-		String temp =  "\"" + base + "\"";
+		String temp = base;
 		if      (lang != null) temp += "@"  + lang;
-		else if (type != null) temp += "^^" + type;
+		else if (type != null) temp += "^^<" + type + ">";
 		return temp;
 	}
 	@Override
