@@ -183,7 +183,7 @@ public class DEX implements GraphDB {
 			rel_id = _id;
 		}
 		public String getURI() {
-			return g.getAttribute(rel_id,AttrPredicate).getString();
+			return ("<" + g.getAttribute(rel_id,AttrPredicate).getString() + ">");
 		}
 		public Vertex getStart() {
 			return (new VertexDEX(g.getEdgeData(rel_id).getTail()));

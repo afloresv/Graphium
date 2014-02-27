@@ -138,7 +138,7 @@ public class Neo4j implements GraphDB {
 			rel_id = _id;
 		}
 		public String getURI() {
-			return (String)rel_id.getProperty(Attr.Predicate);
+			return ("<" + (String)rel_id.getProperty(Attr.Predicate) + ">");
 		}
 		public Vertex getStart() {
 			return (new VertexNeo4j(rel_id.getStartNode()));
