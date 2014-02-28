@@ -4,9 +4,6 @@ DEX="lib/dexjava.jar"
 LIBS="./:$NEO:$DEX"
 FLAGS="-Xms4240m -Xmx4240m -XX:PermSize=4240m -XX:MaxPermSize=4240m -XX:-UseGCOverheadLimit "
 
-
-
-
 for i in {0..19}
 do
 	java $FLAGS -classpath $LIBS ve.usb.ldc.graphium.berlin.$1 $i $2 $3 > log/$2-10M-$1-$i.log
