@@ -5,7 +5,7 @@ LIBS="./:$NEO:$DEX"
 FLAGS="-Xms4240m -Xmx4240m -XX:PermSize=4240m -XX:MaxPermSize=4240m -XX:-UseGCOverheadLimit "
 
 mkdir -p log
-echo "" > log/$2-10M-$1.log
+echo "$2 $1 10M" > log/$2-10M-$1.log
 
 for i in {0..19}
 do
@@ -13,4 +13,5 @@ do
 	echo "-------------------------" >> log/$2-10M-$1.log
 	sort log/$2-10M-$1-$i.log >> log/$2-10M-$1.log
 	rm log/$2-10M-$1-$i.log
+	sleep 2
 done
