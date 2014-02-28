@@ -27,8 +27,26 @@ import ve.usb.ldc.graphium.core.*;
 public class Q06 extends BerlinQuery {
 
 	String[] inst = {
+		"adequateness",
+		"agileness",
 		"ambilateral",
-		"iterant"
+		"archduchesses",
+		"basicity",
+		"bereavements",
+		"catnapers",
+		"chittering",
+		"coffing",
+		"ginny",
+		"greco",
+		"haltering",
+		"iterant",
+		"leftisms",
+		"ostium",
+		"purchased",
+		"snubby",
+		"spacemen",
+		"spinocerebellar",
+		"splashdown"
 	};
 
 	public static void main(String[] args) {
