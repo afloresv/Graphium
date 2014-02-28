@@ -9,5 +9,5 @@ FLAGS="-Xms4240m -Xmx4240m -XX:PermSize=4240m -XX:MaxPermSize=4240m -XX:-UseGCOv
 
 for i in {0..19}
 do
-	java $FLAGS -classpath $LIBS ve.usb.ldc.graphium.berlin.$1 $i $2 $3 > log/$1-$2-10M.log
+	java $FLAGS -classpath $LIBS ve.usb.ldc.graphium.berlin.$1 $i $2 $3 > log/$2-10M-$1-$i.log
 done
