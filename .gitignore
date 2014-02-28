@@ -6,6 +6,7 @@
 ##################
 tests/
 tools/
+log/
 
 # Other Files #
 ###############
