@@ -75,25 +75,13 @@ public class Neo4j implements GraphDB {
 		public boolean isNodeID()  { return node_id.hasProperty(Attr.NodeID); }
 		public boolean isLiteral() { return node_id.hasProperty(Attr.Literal); }
 		public URI getURI() {
-			if (this.isURI()) {
-				return (new URI((String)node_id.getProperty(Attr.URI)));
-			} else return null;
+			return (new URI((String)node_id.getProperty(Attr.URI,null)));
 		}
 		public NodeID getNodeID() {
-			if (this.isNodeID()) {
-				return (new NodeID((String)node_id.getProperty(Attr.NodeID)));
-			} else return null;
+			return (new NodeID((String)node_id.getProperty(Attr.NodeID,null)));
 		}
-		public Literal getLiteral() {
-			if (this.isLiteral()) {
-				Literal lit = new Literal((String)node_id.getProperty(Attr.Literal));
-				Object extra = node_id.getProperty(Attr.Lang,null);
-				if (extra==null) {
-					extra = node_id.getProperty(Attr.Type,null);
-					if (extra!=null) lit.type = (String)extra;
-				} else lit.lang = (String)extra;
-				return lit;
-			} else return null;
+		public String getStr() {
+			return ((String)node_id.getProperty(Attr.Literal,null));
 		}
 		public String getType() {
 			return (String)node_id.getProperty(Attr.Type,null);

@@ -109,19 +109,13 @@ public class DEX implements GraphDB {
 				return (new NodeID(g.getAttribute(node_id,AttrNodeID).getString()));
 			} else return null;
 		}
-		public Literal getLiteral() {
+		public String getStr() {
 			if (this.isLiteral()) {
 				TextStream ts = g.getAttributeText(node_id,AttrLiteral);
 				char[] buff = new char[100000];
 				ts.read(buff,100000);
 				ts.close();
-				Literal lit = new Literal((new String(buff)).trim());
-				Value extra = g.getAttribute(node_id,AttrLang);
-				if (extra.isNull()) {
-					extra = g.getAttribute(node_id,AttrType);
-					if (!extra.isNull()) lit.type = extra.getString();
-				} else lit.lang = extra.getString();
-				return lit;
+				return (new String(buff)).trim();
 			} else return null;
 		}
 		public String getType() {

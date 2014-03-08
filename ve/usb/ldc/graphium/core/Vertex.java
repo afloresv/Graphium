@@ -29,7 +29,23 @@ public abstract class Vertex {
 	public abstract boolean isLiteral();
 	public abstract URI     getURI();
 	public abstract NodeID  getNodeID();
-	public abstract Literal getLiteral();
+	public Literal getLiteral() {
+		String str = this.getStr();
+		if (str == null) return null;
+		Literal lit = new Literal(str);
+		String extra = this.getLang();
+		if (extra==null) {
+			extra = this.getType();
+			if (extra!=null) lit.type = extra;
+		} else lit.lang = extra;
+		return lit;
+	}
+	public abstract String getStr();
+	public String getString() {
+		String str = this.getStr();
+		if (str == null) return null;
+		return str.substring(1,str.length()-1);
+	}
 	public abstract String  getLang();
 	public abstract String  getType();
 	public abstract Boolean getBoolean();
