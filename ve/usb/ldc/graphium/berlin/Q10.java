@@ -147,8 +147,12 @@ public class Q10 extends BerlinQuery {
 			}
 
 			if (foundVendor)
-			for (Vertex price : setPrice)
-				results.add(r.newResult(offer,price.getLiteral(),price.getDouble()));
+			for (Vertex price : setPrice) {
+				try {
+					Double val = new Double(price.getString());
+					results.add(r.newResult(offer,price.getLiteral(),val));
+				} catch (NumberFormatException e) {}
+			}
 		}
 
 		// #ORDER BY xsd:double(str(?price))
