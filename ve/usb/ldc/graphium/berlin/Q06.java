@@ -68,7 +68,7 @@ public class Q06 extends BerlinQuery {
 				Vertex vLabel = rel.getEnd();
 				label = vLabel.getLiteral();
 				if (label==null) continue;
-				strLabel = vLabel.getString();
+				strLabel = label.base.substring(1,label.base.length()-1);
 				// ?product rdfs:label ?label .
 				// FILTER regex(?label, "string")
 				if (rel.getURI().equals(rdfs+"label")
