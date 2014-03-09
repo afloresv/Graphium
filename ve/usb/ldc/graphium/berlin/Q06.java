@@ -44,6 +44,7 @@ public class Q06 extends BerlinQuery {
 		Edge rel;
 		IteratorGraph it;
 		RDFobject relURI, product, label;
+		String strLabel;
 		HashSet<Vertex> setProduct = new HashSet<Vertex>();
 
 		// bsbm:Product
@@ -65,13 +66,13 @@ public class Q06 extends BerlinQuery {
 			while (it.hasNext()) {
 				rel = it.next();
 				Vertex vLabel = rel.getEnd();
-				if (!vLabel.isLiteral())
-					continue;
-				label = vLabel.getString();
+				label = vLabel.getLiteral();
+				if (label==null) continue;
+				strLabel = vLabel.getString();
 				// ?product rdfs:label ?label .
 				// FILTER regex(?label, "string")
 				if (rel.getURI().equals(rdfs+"label")
-					&& label.base.matches(inst.getStr()))
+					&& strLabel.matches(inst.getStr()))
 					(r.newResult(product,label)).print();
 			}
 			it.close();
