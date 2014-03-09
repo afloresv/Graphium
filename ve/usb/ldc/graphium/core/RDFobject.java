@@ -33,8 +33,8 @@ public class RDFobject implements Comparable<RDFobject> {
 	public int hashCode() {
 		return this.base.hashCode();
 	}
-    @Override
-    public int compareTo(RDFobject other) {
-        return this.base.compareTo(other.base);
-    }
+	@Override
+	public int compareTo(RDFobject other) {
+		return this.base.compareTo(other.base);
+	}
 }
