@@ -24,11 +24,11 @@ import java.io.*;
 
 import ve.usb.ldc.graphium.core.*;
 
-public class InstanceGenerator {
+public class InstanceReader {
 	private int query;
 	private int val[];
 	private String valQ06;
-	public InstanceGenerator(int size, String gdbm, String graph, int _query, int inst) {
+	public InstanceReader(int size, String gdbm, String graph, int _query, int inst) {
 		val = new int[size];
 		query = _query;
 		try {
