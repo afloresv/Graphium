@@ -75,13 +75,19 @@ public class Neo4j implements GraphDB {
 		public boolean isNodeID()  { return node_id.hasProperty(Attr.NodeID); }
 		public boolean isLiteral() { return node_id.hasProperty(Attr.Literal); }
 		public URI getURI() {
-			return (new URI((String)node_id.getProperty(Attr.URI,null)));
+			Object prop = node_id.getProperty(Attr.URI,null);
+			if (prop == null) return null;
+			return (new URI((String)prop));
 		}
 		public NodeID getNodeID() {
-			return (new NodeID((String)node_id.getProperty(Attr.NodeID,null)));
+			Object prop = node_id.getProperty(Attr.NodeID,null);
+			if (prop == null) return null;
+			return (new NodeID((String)prop));
 		}
 		public String getStr() {
-			return ((String)node_id.getProperty(Attr.Literal,null));
+			Object prop = node_id.getProperty(Attr.Literal,null);
+			if (prop == null) return null;
+			return (String)prop;
 		}
 		public String getType() {
 			return (String)node_id.getProperty(Attr.Type,null);
@@ -99,7 +105,9 @@ public class Neo4j implements GraphDB {
 			return (Double)node_id.getProperty(Attr.valDouble,null);
 		}
 		public Date getDate() {
-			return (new Date((Long)node_id.getProperty(Attr.valDate,null)));
+			Object prop = node_id.getProperty(Attr.valDate,null);
+			if (prop == null) return null;
+			return (new Date((Long)prop));
 		}
 		public IteratorGraph getEdgesOut() {
 			return (new IteratorNeo4j(node_id.getRelationships
