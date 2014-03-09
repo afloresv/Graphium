@@ -45,6 +45,7 @@ public class InstanceReader {
 			}
 		} catch (FileNotFoundException e) {
 			System.err.println("File not found: ../" + gdbm + "DB/" + graph + "/bsbm.inst");
+			System.exit(1);
 		}
 	}
 	public int get(int i) {
