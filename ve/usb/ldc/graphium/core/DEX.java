@@ -119,36 +119,42 @@ public class DEX implements GraphDB {
 			} else return null;
 		}
 		public String getType() {
+			if (!this.isLiteral()) return null;
 			val = g.getAttribute(node_id,AttrType);
 			if (!val.isNull()) {
 				return val.getString();
 			} else return null;
 		}
 		public String getLang() {
+			if (!this.isLiteral()) return null;
 			val = g.getAttribute(node_id,AttrLang);
 			if (!val.isNull()) {
 				return val.getString();
 			} else return null;
 		}
 		public Boolean getBoolean() {
+			if (!this.isLiteral()) return null;
 			val = g.getAttribute(node_id,AttrBool);
 			if (!val.isNull()) {
 				return val.getBoolean();
 			} else return null;
 		}
 		public Long getLong() {
+			if (!this.isLiteral()) return null;
 			val = g.getAttribute(node_id,AttrInt);
 			if (!val.isNull()) {
 				return val.getLong();
 			} else return null;
 		}
 		public Double getDouble() {
+			if (!this.isLiteral()) return null;
 			val = g.getAttribute(node_id,AttrDouble);
 			if (!val.isNull()) {
 				return val.getDouble();
 			} else return null;
 		}
 		public Date getDate() {
+			if (!this.isLiteral()) return null;
 			val = g.getAttribute(node_id,AttrDate);
 			if (!val.isNull()) {
 				return val.getTimestampAsDate();
