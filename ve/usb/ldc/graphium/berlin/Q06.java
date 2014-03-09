@@ -64,7 +64,10 @@ public class Q06 extends BerlinQuery {
 			it = productNode.getEdgesOut();
 			while (it.hasNext()) {
 				rel = it.next();
-				label = rel.getEnd().getAny();
+				Vertex vLabel = rel.getEnd();
+				if (!vLabel.isLiteral())
+					continue;
+				label = vLabel.getString();
 				// ?product rdfs:label ?label .
 				// FILTER regex(?label, "string")
 				if (rel.getURI().equals(rdfs+"label")
