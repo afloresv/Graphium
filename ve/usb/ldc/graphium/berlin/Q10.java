@@ -69,7 +69,6 @@ public class Q10 extends BerlinQuery {
 		IteratorGraph it;
 		RDFobject relURI;
 
-		HashSet<Vertex> setPrice = new HashSet<Vertex>();
 		HashSet<Vertex> setOffer = new HashSet<Vertex>();
 
 		pNode = g.getVertexURI(bsbminst+"dataFromProducer"
@@ -95,6 +94,7 @@ public class Q10 extends BerlinQuery {
 			HashSet[] setVendor = new HashSet[2];
 			setVendor[0] = new HashSet<Vertex>();
 			setVendor[1] = new HashSet<Vertex>();
+			HashSet<Vertex> setPrice = new HashSet<Vertex>();
 			Date dateV;
 
 			it = oNode.getEdgesOut();
@@ -134,6 +134,7 @@ public class Q10 extends BerlinQuery {
 			Iterator<Vertex> itv = setVendor[minInd].iterator();
 			while (itv.hasNext() && !foundVendor) {
 				Vertex vNode = itv.next();
+				if (!setVendor[maxInd].contains(vNode)) continue;
 				it = vNode.getEdgesOut();
 				while (it.hasNext() && !foundVendor) {
 					rel = it.next();
