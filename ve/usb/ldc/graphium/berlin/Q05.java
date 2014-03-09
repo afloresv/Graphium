@@ -26,32 +26,10 @@ import ve.usb.ldc.graphium.core.*;
 
 public class Q05 extends BerlinQuery {
 
-	int[][] inst = {
-		{1,33},
-		{147,7132},
-		{150,7282},
-		{166,8006},
-		{206,10015},
-		{210,10171},
-		{235,11431},
-		{243,11900},
-		{301,14756},
-		{331,16102},
-		{395,19491},
-		{408,20183},
-		{426,20993},
-		{53,2493},
-		{534,26387},
-		{548,27013},
-		{564,27792},
-		{60,2793},
-		{65,3094},
-		{99,4663}
-	};
-
 	public static void main(String[] args) {
-		BerlinQuery Q = new Q05(args[1],args[2]);
-		Q.runExperiment(Integer.parseInt(args[0]));
+		BerlinQuery Q = new Q05(args[1],"../" + args[1] + "DB/" + args[2]);
+		Q.inst = new InstanceReader(2,args[1],args[2],5,Integer.parseInt(args[0]));
+		Q.runExperiment();
 		Q.close();
 	}
 
@@ -59,7 +37,7 @@ public class Q05 extends BerlinQuery {
 		super(gdbm,path);
 	}
 
-	public void runQuery(int ind) {
+	public void runQuery() {
 
 		r = new ResultGenerator(1);
 		Vertex pNode, vNode;
@@ -76,7 +54,7 @@ public class Q05 extends BerlinQuery {
 
 		// FILTER (?p = bsbminst:dataFromProducer408/Product20183)
 		pNode = g.getVertexURI(bsbminst+"dataFromProducer"
-			+inst[ind][0]+"/Product"+inst[ind][1]);
+			+inst.get(0)+"/Product"+inst.get(1));
 		if (pNode == null) return;
 		it = pNode.getEdgesOut();
 		while (it.hasNext()) {

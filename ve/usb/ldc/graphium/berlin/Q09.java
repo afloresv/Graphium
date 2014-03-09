@@ -26,32 +26,10 @@ import ve.usb.ldc.graphium.core.*;
 
 public class Q09 extends BerlinQuery {
 
-	int[][] inst = {
-		{11,103708},
-		{11,105222},
-		{13,120761},
-		{13,120933},
-		{15,148676},
-		{16,158882},
-		{16,162537},
-		{17,180739},
-		{20,209767},
-		{21,212078},
-		{21,214898},
-		{22,223357},
-		{25,254604},
-		{25,256518},
-		{27,275096},
-		{4,27793},
-		{5,47059},
-		{7,59077},
-		{7,63110},
-		{8,75011}
-	};
-
 	public static void main(String[] args) {
-		BerlinQuery Q = new Q09(args[1],args[2]);
-		Q.runExperiment(Integer.parseInt(args[0]));
+		BerlinQuery Q = new Q09(args[1],"../" + args[1] + "DB/" + args[2]);
+		Q.inst = new InstanceReader(2,args[1],args[2],9,Integer.parseInt(args[0]));
+		Q.runExperiment();
 		Q.close();
 	}
 
@@ -59,14 +37,14 @@ public class Q09 extends BerlinQuery {
 		super(gdbm,path);
 	}
 
-	public void runQuery(int ind) {
+	public void runQuery() {
 
 		r = new ResultGenerator();
 		Vertex iNode;
 		Edge rel;
 		IteratorGraph it;
 		RDFobject relURI, x, reviewer;
-		String otherStrI = bsbminst+"dataFromRatingSite"+inst[ind][0]+"/Review"+inst[ind][1];
+		String otherStrI = bsbminst+"dataFromRatingSite"+inst.get(0)+"/Review"+inst.get(1);
 
 		HashSet<Vertex> setX = new HashSet<Vertex>();
 

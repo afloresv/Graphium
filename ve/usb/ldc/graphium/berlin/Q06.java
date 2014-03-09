@@ -26,32 +26,10 @@ import ve.usb.ldc.graphium.core.*;
 
 public class Q06 extends BerlinQuery {
 
-	String[] inst = {
-		"adequateness",
-		"agileness",
-		"ambilateral",
-		"archduchesses",
-		"basicity",
-		"bereavements",
-		"catnapers",
-		"chittering",
-		"coffing",
-		"ginny",
-		"greco",
-		"haltering",
-		"iterant",
-		"leftisms",
-		"ostium",
-		"purchased",
-		"snubby",
-		"spacemen",
-		"spinocerebellar",
-		"splashdown"
-	};
-
 	public static void main(String[] args) {
-		BerlinQuery Q = new Q06(args[1],args[2]);
-		Q.runExperiment(Integer.parseInt(args[0]));
+		BerlinQuery Q = new Q06(args[1],"../" + args[1] + "DB/" + args[2]);
+		Q.inst = new InstanceReader(1,args[1],args[2],6,Integer.parseInt(args[0]));
+		Q.runExperiment();
 		Q.close();
 	}
 
@@ -59,7 +37,7 @@ public class Q06 extends BerlinQuery {
 		super(gdbm,path);
 	}
 
-	public void runQuery(int ind) {
+	public void runQuery() {
 
 		r = new ResultGenerator();
 		Vertex bsbmProductNode;
@@ -90,7 +68,7 @@ public class Q06 extends BerlinQuery {
 				// ?product rdfs:label ?label .
 				// FILTER regex(?label, "string")
 				if (rel.getURI().equals(rdfs+"label")
-					&& label.base.matches(inst[ind]))
+					&& label.base.matches(inst.getStr()))
 					(r.newResult(product,label)).print();
 			}
 			it.close();

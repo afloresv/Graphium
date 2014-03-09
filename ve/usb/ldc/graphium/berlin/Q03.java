@@ -26,32 +26,10 @@ import ve.usb.ldc.graphium.core.*;
 
 public class Q03 extends BerlinQuery {
 
-	int[][] inst = {
-		{108,3,270,234,3369},
-		{125,20,269,203,3914},
-		{139,4338,132,159,26},
-		{239,7610,189,183,7608},
-		{240,7647,228,156,7616},
-		{252,53,96,458,44},
-		{274,972,176,293,8794},
-		{295,9433,375,61,72},
-		{310,1124,233,169,9936},
-		{353,1292,294,215,1279},
-		{369,1334,334,178,1349},
-		{384,1409,365,322,1420},
-		{391,1440,390,197,1445},
-		{421,13600,481,63,1576},
-		{426,1610,89,73,13766},
-		{436,110,396,225,1620},
-		{501,1928,326,381,118},
-		{540,17546,217,274,168},
-		{577,18769,57,498,18783},
-		{584,149,32,1,171}
-	};
-
 	public static void main(String[] args) {
-		BerlinQuery Q = new Q03(args[1],args[2]);
-		Q.runExperiment(Integer.parseInt(args[0]));
+		BerlinQuery Q = new Q03(args[1],"../" + args[1] + "DB/" + args[2]);
+		Q.inst = new InstanceReader(5,args[1],args[2],3,Integer.parseInt(args[0]));
+		Q.runExperiment();
 		Q.close();
 	}
 
@@ -59,7 +37,7 @@ public class Q03 extends BerlinQuery {
 		super(gdbm,path);
 	}
 
-	public void runQuery(int ind) {
+	public void runQuery() {
 
 		r = new ResultGenerator(1);
 		HashSet[] sets = new HashSet[2];
@@ -70,7 +48,7 @@ public class Q03 extends BerlinQuery {
 		Edge rel;
 		IteratorGraph it;
 
-		nURI = g.getVertexURI(bsbminst+"ProductType"+inst[ind][0]);
+		nURI = g.getVertexURI(bsbminst+"ProductType"+inst.get(0));
 		if (nURI == null) return;
 		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
@@ -80,7 +58,7 @@ public class Q03 extends BerlinQuery {
 		}
 		it.close();
 
-		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst[ind][1]);
+		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst.get(1));
 		if (nURI == null) return;
 		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
@@ -117,9 +95,9 @@ public class Q03 extends BerlinQuery {
 
 			product = nProd.getAny();
 			for (Long p1 : setP1) {
-				if (p1>inst[ind][2])
+				if (p1>inst.get(2))
 				for (Long p3 : setP3) {
-					if (p3>inst[ind][3])
+					if (p3>inst.get(3))
 					for (RDFobject label : setL)
 						results.add(r.newResult(product,label));
 				}

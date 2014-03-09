@@ -26,34 +26,13 @@ import ve.usb.ldc.graphium.core.*;
 
 public class Q10 extends BerlinQuery {
 
-	int[][] inst = {
-		{100,4733},
-		{134,6436},
-		{145,6934},
-		{146,7028},
-		{20,904},
-		{200,9703},
-		{275,13489},
-		{278,13608},
-		{34,1545},
-		{345,16767},
-		{346,16808},
-		{397,19550},
-		{406,20069},
-		{428,21095},
-		{45,2134},
-		{486,23914},
-		{522,25773},
-		{535,26403},
-		{76,3573},
-		{82,3859}
-	};
 	// 2008Y06M20D
 	Date dateF = (new GregorianCalendar(2008,5,20)).getTime();
 
 	public static void main(String[] args) {
-		BerlinQuery Q = new Q10(args[1],args[2]);
-		Q.runExperiment(Integer.parseInt(args[0]));
+		BerlinQuery Q = new Q10(args[1],"../" + args[1] + "DB/" + args[2]);
+		Q.inst = new InstanceReader(2,args[1],args[2],10,Integer.parseInt(args[0]));
+		Q.runExperiment();
 		Q.close();
 	}
 
@@ -61,7 +40,7 @@ public class Q10 extends BerlinQuery {
 		super(gdbm,path);
 	}
 
-	public void runQuery(int ind) {
+	public void runQuery() {
 		
 		r = new ResultGenerator(2);
 		Vertex pNode;
@@ -72,7 +51,7 @@ public class Q10 extends BerlinQuery {
 		HashSet<Vertex> setOffer = new HashSet<Vertex>();
 
 		pNode = g.getVertexURI(bsbminst+"dataFromProducer"
-			+inst[ind][0]+"/Product"+inst[ind][1]);
+			+inst.get(0)+"/Product"+inst.get(1));
 		it = pNode.getEdgesIn();
 		while (it.hasNext()) {
 			rel = it.next();

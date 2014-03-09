@@ -26,32 +26,10 @@ import ve.usb.ldc.graphium.core.*;
 
 public class Q04 extends BerlinQuery {
 
-	int[][] inst = {
-		{128,14,3,250,408,35},
-		{138,462,451,283,23,52},
-		{168,28,5336,278,5323,53},
-		{186,5912,636,438,5909,201},
-		{247,855,864,144,7905,18},
-		{252,897,8047,137,47,93},
-		{256,8204,8194,43,8198,122},
-		{270,955,8664,322,65,212},
-		{279,8949,1005,416,8968,144},
-		{287,1053,1025,466,9203,289},
-		{296,1073,1071,80,1068,253},
-		{433,14007,1615,142,110,81},
-		{434,104,113,28,1625,121},
-		{435,14067,113,128,14067,463},
-		{470,137,133,54,1796,293},
-		{497,16106,1885,168,127,139},
-		{520,126,16909,168,143,325},
-		{544,2080,17667,119,2076,437},
-		{556,18110,2136,37,2123,206},
-		{87,2648,9,22,2657,89}
-	};
-
 	public static void main(String[] args) {
-		BerlinQuery Q = new Q04(args[1],args[2]);
-		Q.runExperiment(Integer.parseInt(args[0]));
+		BerlinQuery Q = new Q04(args[1],"../" + args[1] + "DB/" + args[2]);
+		Q.inst = new InstanceReader(6,args[1],args[2],4,Integer.parseInt(args[0]));
+		Q.runExperiment();
 		Q.close();
 	}
 
@@ -61,7 +39,7 @@ public class Q04 extends BerlinQuery {
 	
 	ArrayList<ResultTuple> results;
 
-	public void runQuery(int ind, int off) {
+	public void runQuery(int off) {
 
 		r = new ResultGenerator(1);
 		HashSet[] sets = new HashSet[2];
@@ -72,7 +50,7 @@ public class Q04 extends BerlinQuery {
 		Edge rel;
 		IteratorGraph it;
 
-		nURI = g.getVertexURI(bsbminst+"ProductType"+inst[ind][0]);
+		nURI = g.getVertexURI(bsbminst+"ProductType"+inst.get(0));
 		if (nURI == null) return;
 		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
@@ -82,7 +60,7 @@ public class Q04 extends BerlinQuery {
 		}
 		it.close();
 
-		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst[ind][1]);
+		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst.get(1));
 		if (nURI == null) return;
 		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
@@ -95,7 +73,7 @@ public class Q04 extends BerlinQuery {
 		it.close();
 		sets[0].clear();
 
-		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst[ind][2+off*2]);
+		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst.get(2+off*2));
 		if (nURI == null) return;
 		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
@@ -131,7 +109,7 @@ public class Q04 extends BerlinQuery {
 
 			product = nProd.getAny();
 			for (Long value : setP) {
-				if (value>inst[ind][3+2*off])
+				if (value>inst.get(3+2*off))
 				for (RDFobject label : setL)
 					for (RDFobject propertyTextual : setPT)
 						results.add(r.newResult(product,label,propertyTextual));
@@ -139,11 +117,11 @@ public class Q04 extends BerlinQuery {
 		}
 	}
 
-	public void runQuery(int ind) {
+	public void runQuery() {
 
 		results = new ArrayList<ResultTuple>();
-		runQuery(ind,0);
-		runQuery(ind,1);
+		runQuery(0);
+		runQuery(1);
 
 		// ORDER BY ?label
 		Collections.sort(results);

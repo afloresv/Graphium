@@ -26,32 +26,10 @@ import ve.usb.ldc.graphium.core.*;
 
 public class Q12 extends BerlinQuery {
 
-	int[][] inst = {
-		{100,202535},
-		{116,231045},
-		{117,231837},
-		{120,238615},
-		{127,252335},
-		{147,293214},
-		{193,380350},
-		{200,392864},
-		{225,440428},
-		{236,462404},
-		{246,484876},
-		{260,510993},
-		{264,518388},
-		{27,49554},
-		{43,88649},
-		{53,109456},
-		{59,121773},
-		{65,134591},
-		{92,187177},
-		{92,188492}
-	};
-
 	public static void main(String[] args) {
-		BerlinQuery Q = new Q12(args[1],args[2]);
-		Q.runExperiment(Integer.parseInt(args[0]));
+		BerlinQuery Q = new Q12(args[1],"../" + args[1] + "DB/" + args[2]);
+		Q.inst = new InstanceReader(2,args[1],args[2],12,Integer.parseInt(args[0]));
+		Q.runExperiment();
 		Q.close();
 	}
 
@@ -59,7 +37,7 @@ public class Q12 extends BerlinQuery {
 		super(gdbm,path);
 	}
 
-	public void runQuery(int ind) {
+	public void runQuery() {
 
 		r = new ResultGenerator();
 		Vertex iNode;
@@ -78,7 +56,7 @@ public class Q12 extends BerlinQuery {
 		ArrayList<ResultTuple> productTuples = new ArrayList<ResultTuple>();
 
 		// FILTER (?o = bsbminst:dataFromVendor117/Offer231837)
-		iNode = g.getVertexURI(bsbminst+"dataFromVendor"+inst[ind][0]+"/Offer"+inst[ind][1]);
+		iNode = g.getVertexURI(bsbminst+"dataFromVendor"+inst.get(0)+"/Offer"+inst.get(1));
 		if (iNode == null) return;
 		it = iNode.getEdgesOut();
 		while (it.hasNext()) {

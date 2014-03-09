@@ -26,32 +26,10 @@ import ve.usb.ldc.graphium.core.*;
 
 public class Q01 extends BerlinQuery {
 
-	int[][] inst = {
-		{132,423,1,9},
-		{140,4364,4369,336},
-		{152,477,483,380},
-		{153,4796,485,468},
-		{161,505,25,136},
-		{202,6417,722,456},
-		{277,1001,8895,140},
-		{303,9690,67,192},
-		{327,64,70,433},
-		{347,82,87,403},
-		{354,11348,1319,252},
-		{411,111,112,32},
-		{446,14398,14394,495},
-		{453,1684,1705,298},
-		{463,14952,14939,201},
-		{477,15422,123,54},
-		{487,15751,124,190},
-		{500,135,128,451},
-		{547,167,17776,437},
-		{99,3088,3086,219}
-	};
-
 	public static void main(String[] args) {
-		BerlinQuery Q = new Q01(args[1],args[2]);
-		Q.runExperiment(Integer.parseInt(args[0]));
+		BerlinQuery Q = new Q01(args[1],"../" + args[1] + "DB/" + args[2]);
+		Q.inst = new InstanceReader(4,args[1],args[2],1,Integer.parseInt(args[0]));
+		Q.runExperiment();
 		Q.close();
 	}
 
@@ -59,7 +37,7 @@ public class Q01 extends BerlinQuery {
 		super(gdbm,path);
 	}
 
-	public void runQuery(int ind) {
+	public void runQuery() {
 
 		r = new ResultGenerator(1);
 		HashSet[] sets = new HashSet[2];
@@ -70,7 +48,7 @@ public class Q01 extends BerlinQuery {
 		Edge rel;
 		IteratorGraph it;
 
-		nURI = g.getVertexURI(bsbminst+"ProductType"+inst[ind][0]);
+		nURI = g.getVertexURI(bsbminst+"ProductType"+inst.get(0));
 		if (nURI == null) return;
 		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
@@ -80,7 +58,7 @@ public class Q01 extends BerlinQuery {
 		}
 		it.close();
 
-		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst[ind][1]);
+		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst.get(1));
 		if (nURI == null) return;
 		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
@@ -93,7 +71,7 @@ public class Q01 extends BerlinQuery {
 		it.close();
 		sets[0].clear();
 
-		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst[ind][2]);
+		nURI = g.getVertexURI(bsbminst+"ProductFeature"+inst.get(2));
 		if (nURI == null) return;
 		it = nURI.getEdgesIn();
 		while (it.hasNext()) {
@@ -127,7 +105,7 @@ public class Q01 extends BerlinQuery {
 
 			product = nProd.getAny();
 			for (Long value : setV) {
-				if (value>inst[ind][3])
+				if (value>inst.get(3))
 					for (RDFobject label : setL)
 						results.add(r.newResult(product,label));
 			}

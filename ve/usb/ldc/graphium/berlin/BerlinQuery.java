@@ -28,6 +28,7 @@ public abstract class BerlinQuery {
 
 	GraphDB g;
 	ResultGenerator r;
+	InstanceReader inst;
 
 	public BerlinQuery(String gdbm, String path) {
 		if (gdbm.equals("Neo4j"))
@@ -37,15 +38,15 @@ public abstract class BerlinQuery {
 		else throw (new Error("Wrong GDBM (Neo4j or DEX)"));
 	}
 
-	public void runExperiment(int ind) {
+	public void runExperiment() {
 		// Cold Cache
 		long startTime = System.currentTimeMillis();
-		this.runQuery(ind);
+		this.runQuery();
 		System.err.print((System.currentTimeMillis()-startTime) + "\t");
 		
 		// Warm Cache
 		startTime = System.currentTimeMillis();
-		this.runQuery(ind);
+		this.runQuery();
 		System.err.println(System.currentTimeMillis()-startTime);
 
 		this.close();
@@ -62,7 +63,7 @@ public abstract class BerlinQuery {
 	public final String foaf = "http://xmlns.com/foaf/0.1/";
 	public final String xsd = "http://www.w3.org/2001/XMLSchema#";
 
-	public abstract void runQuery(int ind);
+	public abstract void runQuery();
 	public void close() {
 		g.close();
 	}

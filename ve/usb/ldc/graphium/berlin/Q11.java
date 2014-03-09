@@ -26,32 +26,10 @@ import ve.usb.ldc.graphium.core.*;
 
 public class Q11 extends BerlinQuery {
 
-	int[][] inst = {
-		{105,215012},
-		{11,19598},
-		{110,222223},
-		{116,231288},
-		{135,271113},
-		{147,292716},
-		{154,304525},
-		{163,325194},
-		{186,367755},
-		{191,378601},
-		{2,4797},
-		{212,415958},
-		{215,423241},
-		{233,456633},
-		{235,460901},
-		{255,501132},
-		{266,523863},
-		{266,524999},
-		{276,542606},
-		{28,52436}
-	};
-
 	public static void main(String[] args) {
-		BerlinQuery Q = new Q11(args[1],args[2]);
-		Q.runExperiment(Integer.parseInt(args[0]));
+		BerlinQuery Q = new Q11(args[1],"../" + args[1] + "DB/" + args[2]);
+		Q.inst = new InstanceReader(2,args[1],args[2],11,Integer.parseInt(args[0]));
+		Q.runExperiment();
 		Q.close();
 	}
 
@@ -59,14 +37,14 @@ public class Q11 extends BerlinQuery {
 		super(gdbm,path);
 	}
 
-	public void runQuery(int ind) {
+	public void runQuery() {
 
 		r = new ResultGenerator();
 		Vertex iNode;
 		Edge rel;
 		IteratorGraph it;
 
-		iNode = g.getVertexURI(bsbminst+"dataFromVendor"+inst[ind][0]+"/Offer"+inst[ind][1]);
+		iNode = g.getVertexURI(bsbminst+"dataFromVendor"+inst.get(0)+"/Offer"+inst.get(1));
 		if (iNode == null) return;
 		it = iNode.getEdgesOut();
 		while (it.hasNext()) {
