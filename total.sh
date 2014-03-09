@@ -2,7 +2,7 @@
 
 for i in {1..12}
 do
-	q=`printf "%02d" $i`
+	q=`printf "Q%02d" $i`
 	echo "Running $q"
 	./berlin.sh $q $1 Neo4j
 	./berlin.sh $q $1 DEX
