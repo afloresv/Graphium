@@ -5,14 +5,14 @@ LIBS="./:$NEO:$DEX"
 FLAGS="-Xms4240m -Xmx4240m -XX:PermSize=4240m -XX:MaxPermSize=4240m -XX:-UseGCOverheadLimit "
 
 mkdir -p log
-echo "$2 $1 10M" > log/$2-10M-$1.log
-touch log/$2-10M-$1.time
+echo "$3 $1 $2" > log/$3-$1-$2.log
+touch log/$3-$1-$2.time
 
 for i in {0..19}
 do
-	java $FLAGS -classpath $LIBS ve.usb.ldc.graphium.berlin.$1 $i $2 $3 > log/$2-10M-$1-$i.log 2>> log/$2-10M-$1.time
-	echo "-------------------------" >> log/$2-10M-$1.log
-	sort log/$2-10M-$1-$i.log >> log/$2-10M-$1.log
-	rm log/$2-10M-$1-$i.log
+	java $FLAGS -classpath $LIBS ve.usb.ldc.graphium.berlin.$1 $i $3 Berlin$2 > log/$3-$1-$2-$i.log 2>> log/$3-$1-$2.time
+	echo "-------------------------" >> log/$3-$1-$2.log
+	sort log/$3-$1-$2-$i.log >> log/$3-$1-$2.log
+	rm log/$3-$1-$2-$i.log
 	sleep 2
 done
