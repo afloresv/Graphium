@@ -29,7 +29,7 @@ public class LoadGraph {
 		// Checking arguments
 		if (args.length != 3) {
 			System.err.println("Tree arguments needed to CREATE:"
-				+" <GDBM (DEX or Neo4j)> <.nt file> <DB location>");
+				+" <GDBM (Sparksee or Neo4j)> <.nt file> <DB location>");
 			return;
 		}
 
@@ -37,11 +37,11 @@ public class LoadGraph {
 		LoadNT loadProcess;
 		if (args[0].equals("Neo4j"))
 			loadProcess = new LoadNeo4j(args[2]);
-		else if (args[0].equals("DEX"))
-			loadProcess = new LoadDEX(args[2]);
+		else if (args[0].equals("Sparksee"))
+			loadProcess = new LoadSparksee(args[2]);
 		else {
 			System.err.println("The GDBM argument (first one)"
-				+" must be \"DEX\" or \"Neo4j\".");
+				+" must be \"Sparksee\" or \"Neo4j\".");
 			return;
 		}
 

@@ -32,10 +32,10 @@ public abstract class BerlinQuery {
 
 	public BerlinQuery(String gdbm, String path) {
 		if (gdbm.equals("Neo4j"))
-			g = new Neo4j(path);
-		else if (gdbm.equals("DEX"))
-			g = new DEX(path);
-		else throw (new Error("Wrong GDBM (Neo4j or DEX)"));
+			g = new Neo4jRDF(path);
+		else if (gdbm.equals("Sparksee"))
+			g = new SparkseeRDF(path);
+		else throw (new Error("Wrong GDBM (Neo4j or Sparksee)"));
 	}
 
 	public void runExperiment() {
