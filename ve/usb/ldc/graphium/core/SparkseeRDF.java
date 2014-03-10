@@ -34,7 +34,7 @@ public class SparkseeRDF implements GraphDB {
 	public int TypeURI, TypeNodeID, TypeLiteral, TypeEdge;
 	public int AttrURI, AttrNodeID, AttrLiteral, AttrPredicate,
 		AttrLang, AttrType, AttrBool, AttrInt, AttrDouble, AttrDate;
-	public static String licence = "Q4GTF-H9X01-EJTM2-9MM89";
+	public static String licence = "GP5JB-C09HF-MN7AX-VCQ01";
 	public static Value val = new Value();
 
 	public SparkseeRDF(String path) {
