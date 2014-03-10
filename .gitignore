@@ -10,5 +10,5 @@ log/
 
 # Other Files #
 ###############
-dex.log
+*.log
 *.swp
