@@ -41,7 +41,7 @@ public class SparkseeRDF implements GraphDB {
 		try {
 			cfg = new SparkseeConfig();
 			cfg.setLicense(licence);
-			cfg.SetCacheMaxSize(10240);
+			cfg.setCacheMaxSize(10240);
 			sparksee = new Sparksee(cfg);
 			db = sparksee.open(path+"/SparkseeDB.gdb", true);
 			sess = db.newSession();
