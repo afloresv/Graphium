@@ -54,8 +54,11 @@ public abstract class Vertex {
 	public abstract Date    getDate();
 	public RDFobject getAny() {
 		RDFobject res = this.getURI();
-		if (res==null) res = this.getNodeID();
-		if (res==null) res = this.getLiteral();
+		if (res==null) {
+			res = this.getLiteral();
+			if (res==null)
+				res = this.getNodeID();
+		}
 		return res;
 	}
 	public abstract IteratorGraph getEdgesOut();
