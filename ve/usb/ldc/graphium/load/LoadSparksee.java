@@ -43,9 +43,10 @@ public class LoadSparksee extends LoadNT {
 		try {
 			cfg = new SparkseeConfig();
 			cfg.setLicense(SparkseeRDF.licence);
+			cfg.SetCacheMaxSize(10240);
 			sparksee = new Sparksee(cfg);
 			(new File(pathDB)).mkdirs();
-			db = sparksee.create(pathDB+"/SparkseeDB.gdb", "SparkseeBD");
+			db = sparksee.create(pathDB+"/SparkseeDB.gdb","SparkseeBD");
 			sess = db.newSession();
 			g = sess.getGraph();
 			E = 0;
