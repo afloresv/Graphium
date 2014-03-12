@@ -71,7 +71,7 @@ public class Q09 extends BerlinQuery {
 				relURI = rel.getURI();
 				if (relURI.equals(rev+"reviewer")) {
 					// bsbminst:dataFromRatingSite8/Review75011 rev:reviewer ?x
-					if (rel.getStart().getAny().equals(otherStrI))
+					if (otherStrI.equals(rel.getStart().getURI()))
 						found = true;
 				} else if (relURI.equals(rev+"reviewer")) {
 					// ?reviewer rev:reviewer ?x
