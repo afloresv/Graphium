@@ -27,7 +27,7 @@ import ve.usb.ldc.graphium.core.*;
 public class AdjacentX extends BerlinQuery {
 
 	public static void main(String[] args) {
-		BerlinQuery Q = new AdjacentX(args[0],"../" + args[1] + "DB/" + args[1]);
+		BerlinQuery Q = new AdjacentX(args[0],"../" + args[0] + "DB/" + args[1]);
 		Q.runExperiment();
 		Q.close();
 	}
