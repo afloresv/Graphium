@@ -27,7 +27,7 @@ import ve.usb.ldc.graphium.core.*;
 public class Adjacent extends BerlinQuery {
 
 	public static void main(String[] args) {
-		BerlinQuery Q = new Adjacent(args[1],"../" + args[1] + "DB/" + args[2]);
+		BerlinQuery Q = new Adjacent(args[0],"../" + args[1] + "DB/" + args[1]);
 		Q.runExperiment();
 		Q.close();
 	}
@@ -47,7 +47,7 @@ public class Adjacent extends BerlinQuery {
 		it = srcNode.getEdgesIn();
 		while (it.hasNext()) {
 			// ?product ?p bsbm:Product .
-			r.newResult(it.next().getEnd().getAny()).print();
+			r.newResult(it.next().getStart().getAny()).print();
 		}
 		it.close();
 	}

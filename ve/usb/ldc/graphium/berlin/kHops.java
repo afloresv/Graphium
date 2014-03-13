@@ -30,7 +30,7 @@ public class kHops extends BerlinQuery {
 
 	public static void main(String[] args) {
 		kHops Q = new kHops(args[1],"../" + args[1] + "DB/" + args[2]);
-		Q.k = Integer.parseInt(args[3]);
+		Q.k = Integer.parseInt(args[0]);
 		Q.runExperiment();
 		Q.close();
 	}
@@ -58,7 +58,7 @@ public class kHops extends BerlinQuery {
 			while (hopN.hasNext()) {
 				it = hopN.next().getEdgesIn();
 				while (it.hasNext())
-					set[j].add(it.next().getEnd());
+					set[j].add(it.next().getStart());
 				it.close();
 			}
 			set[i].clear();
