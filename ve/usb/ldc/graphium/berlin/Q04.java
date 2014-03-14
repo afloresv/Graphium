@@ -48,7 +48,7 @@ public class Q04 extends BerlinQuery {
 
 		Vertex nURI, nProd;
 		Edge rel;
-		IteratorGraph it;
+		GraphIterator<Edge> it;
 
 		nURI = g.getVertexURI(bsbminst+"ProductType"+inst.get(0));
 		if (nURI == null) return;

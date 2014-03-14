@@ -42,7 +42,7 @@ public class Q11 extends BerlinQuery {
 		r = new ResultGenerator();
 		Vertex iNode;
 		Edge rel;
-		IteratorGraph it;
+		GraphIterator<Edge> it;
 
 		iNode = g.getVertexURI(bsbminst+"dataFromVendor"+inst.get(0)+"/Offer"+inst.get(1));
 		if (iNode == null) return;

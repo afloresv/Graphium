@@ -42,7 +42,7 @@ public class kHops extends BerlinQuery {
 	public void runQuery() {
 
 		r = new ResultGenerator();
-		IteratorGraph it;
+		GraphIterator<Edge> it;
 		Vertex srcNode = g.getVertexURI(bsbm+"Product");
 		if (srcNode == null) return;
 

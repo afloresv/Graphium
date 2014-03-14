@@ -45,7 +45,7 @@ public class Q07 extends BerlinQuery {
 		r = new ResultGenerator();
 		Vertex pNode;
 		Edge rel;
-		IteratorGraph it;
+		GraphIterator<Edge> it;
 		RDFobject relURI;
 
 		HashSet<RDFobject> setProductLabel = new HashSet<RDFobject>();
@@ -106,7 +106,7 @@ public class Q07 extends BerlinQuery {
 
 	private void findOffers(Vertex oNode) {
 		Edge rel;
-		IteratorGraph it;
+		GraphIterator<Edge> it;
 		RDFobject relURI, offer = oNode.getAny();
 		int filterDate = 0;
 
@@ -182,7 +182,7 @@ public class Q07 extends BerlinQuery {
 
 	private void findReview(Vertex rNode) {
 		Edge rel;
-		IteratorGraph it;
+		GraphIterator<Edge> it;
 		RDFobject relURI, review = rNode.getAny();
 
 		HashSet<Vertex> setReviewer = new HashSet<Vertex>();

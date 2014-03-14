@@ -161,11 +161,11 @@ public class SparkseeRDF implements GraphDB {
 				return val.getTimestampAsDate();
 			} else return null;
 		}
-		public IteratorGraph getEdgesOut() {
-			return (new IteratorSparksee(g.explode(node_id,TypeEdge,EdgesDirection.Outgoing)));
+		public GraphIterator<Edge> getEdgesOut() {
+			return (new IterEdgeSparksee(g.explode(node_id,TypeEdge,EdgesDirection.Outgoing)));
 		}
-		public IteratorGraph getEdgesIn() {
-			return (new IteratorSparksee(g.explode(node_id,TypeEdge,EdgesDirection.Ingoing)));
+		public GraphIterator<Edge> getEdgesIn() {
+			return (new IterEdgeSparksee(g.explode(node_id,TypeEdge,EdgesDirection.Ingoing)));
 		}
 		@Override
 		public boolean equals(Object other){
@@ -194,20 +194,30 @@ public class SparkseeRDF implements GraphDB {
 		}
 	}
 
-	public class IteratorSparksee implements IteratorGraph {
+	public class IterVertexSparksee implements GraphIterator<Vertex> {
 		Objects obj;
 		ObjectsIterator it;
-		public IteratorSparksee(Objects _o) {
+		public IterVertexSparksee(Objects _o) {
 			obj = _o;
 			it = obj.iterator();
 		}
-		public boolean hasNext() {
-			return it.hasNext();
+		public boolean hasNext() { return it.hasNext(); }
+		public Vertex next() { return (new VertexSparksee(it.next())); }
+		public void close() {
+			it.close();
+			obj.close();
 		}
-		public Edge next() {
-			return (new EdgeSparksee(it.next()));
+	}
+
+	public class IterEdgeSparksee implements GraphIterator<Edge> {
+		Objects obj;
+		ObjectsIterator it;
+		public IterEdgeSparksee(Objects _o) {
+			obj = _o;
+			it = obj.iterator();
 		}
-		public void remove() {}
+		public boolean hasNext() { return it.hasNext(); }
+		public Edge next() { return (new EdgeSparksee(it.next())); }
 		public void close() {
 			it.close();
 			obj.close();

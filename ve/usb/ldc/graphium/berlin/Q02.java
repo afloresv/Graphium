@@ -42,7 +42,7 @@ public class Q02 extends BerlinQuery {
 		r = new ResultGenerator();
 		Vertex xNode, vNode;
 		Edge rel;
-		IteratorGraph it, it2;
+		GraphIterator<Edge> it, it2;
 		RDFobject relURI, nodeObj;
 
 		HashSet<RDFobject>

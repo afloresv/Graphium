@@ -45,7 +45,7 @@ public class Q10 extends BerlinQuery {
 		r = new ResultGenerator(2);
 		Vertex pNode;
 		Edge rel;
-		IteratorGraph it;
+		GraphIterator<Edge> it;
 		RDFobject relURI;
 
 		HashSet<Vertex> setOffer = new HashSet<Vertex>();

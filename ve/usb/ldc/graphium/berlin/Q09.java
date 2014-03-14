@@ -42,7 +42,7 @@ public class Q09 extends BerlinQuery {
 		r = new ResultGenerator();
 		Vertex iNode;
 		Edge rel;
-		IteratorGraph it;
+		GraphIterator<Edge> it;
 		RDFobject relURI, x, reviewer;
 		String otherStrI = bsbminst+"dataFromRatingSite"+inst.get(0)+"/Review"+inst.get(1);
 

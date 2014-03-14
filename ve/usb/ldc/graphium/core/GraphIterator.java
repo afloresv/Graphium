@@ -22,9 +22,8 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public interface IteratorGraph {
+public interface GraphIterator<T> {
 	public boolean hasNext();
-	public Edge next();
-	public void remove();
+	public T next();
 	public void close();
 }

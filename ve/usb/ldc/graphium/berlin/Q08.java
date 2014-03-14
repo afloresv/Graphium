@@ -42,7 +42,7 @@ public class Q08 extends BerlinQuery {
 		r = new ResultGenerator(2);
 		Vertex iNode;
 		Edge rel;
-		IteratorGraph it;
+		GraphIterator<Edge> it;
 		RDFobject relURI, reviewer;
 
 		ArrayList<ResultTuple> results = new ArrayList<ResultTuple>();

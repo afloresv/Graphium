@@ -41,7 +41,7 @@ public class AdjacentX extends BerlinQuery {
 		r = new ResultGenerator();
 		Vertex srcNode;
 		Edge rel;
-		IteratorGraph it;
+		GraphIterator<Edge> it;
 
 		srcNode = g.getVertexURI(bsbm+"Product");
 		if (srcNode == null) return;

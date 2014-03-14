@@ -28,9 +28,6 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.graphdb.factory.*;
 import org.neo4j.graphdb.traversal.*;
-import org.neo4j.unsafe.batchinsert.*;
-import org.neo4j.index.lucene.unsafe.batchinsert.LuceneBatchInserterIndexProvider;
-import org.neo4j.cypher.javacompat.*;
 import org.neo4j.tooling.*;
 import org.neo4j.kernel.*;
 import org.neo4j.helpers.collection.*;
@@ -111,12 +108,12 @@ public class Neo4jRDF implements GraphDB {
 			if (prop == null) return null;
 			return (new Date((Long)prop));
 		}
-		public IteratorGraph getEdgesOut() {
-			return (new IteratorNeo4j(node_id.getRelationships
+		public GraphIterator<Edge> getEdgesOut() {
+			return (new IterEdgeNeo4j(node_id.getRelationships
 				(relType,Direction.OUTGOING).iterator()));
 		}
-		public IteratorGraph getEdgesIn() {
-			return (new IteratorNeo4j(node_id.getRelationships
+		public GraphIterator<Edge> getEdgesIn() {
+			return (new IterEdgeNeo4j(node_id.getRelationships
 				(relType,Direction.INCOMING).iterator()));
 		}
 		@Override
@@ -146,18 +143,19 @@ public class Neo4jRDF implements GraphDB {
 		}
 	}
 
-	public class IteratorNeo4j implements IteratorGraph {
+	public class IterVertexNeo4j implements GraphIterator<Vertex> {
+		Iterator<Node> it;
+		public IterVertexNeo4j(Iterator<Node> _it) { it = _it; }
+		public boolean hasNext() { return it.hasNext(); }
+		public Vertex next() { return (new VertexNeo4j(it.next())); }
+		public void close() {}
+	}
+
+	public class IterEdgeNeo4j implements GraphIterator<Edge> {
 		Iterator<Relationship> it;
-		public IteratorNeo4j(Iterator<Relationship> _it) {
-			it = _it;
-		}
-		public boolean hasNext() {
-			return it.hasNext();
-		}
-		public Edge next() {
-			return (new EdgeNeo4j(it.next()));
-		}
-		public void remove() {}
+		public IterEdgeNeo4j(Iterator<Relationship> _it) { it = _it; }
+		public boolean hasNext() { return it.hasNext(); }
+		public Edge next() { return (new EdgeNeo4j(it.next())); }
 		public void close() {}
 	}
 }

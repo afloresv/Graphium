@@ -42,7 +42,7 @@ public class Q06 extends BerlinQuery {
 		r = new ResultGenerator();
 		Vertex bsbmProductNode;
 		Edge rel;
-		IteratorGraph it;
+		GraphIterator<Edge> it;
 		RDFobject relURI, product, label;
 		String strLabel;
 		HashSet<Vertex> setProduct = new HashSet<Vertex>();
