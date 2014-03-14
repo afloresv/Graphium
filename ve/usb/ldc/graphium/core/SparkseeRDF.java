@@ -24,7 +24,7 @@ import java.io.*;
 
 import com.sparsity.sparksee.gdb.*;
 
-public class SparkseeRDF implements GraphDB {
+public class SparkseeRDF implements GraphRDF {
 
 	public SparkseeConfig cfg;
 	public Sparksee sparksee;
@@ -78,17 +78,41 @@ public class SparkseeRDF implements GraphDB {
 		}
 	}
 
+	public Vertex getVertexURI(String str) {
+		long id = g.findObject(AttrURI,val.setString(str));
+		if (id==Objects.InvalidOID) return null;
+		return (new VertexSparksee(id));
+	}
+
+	public Vertex getVertexNodeID(String str) {
+		long id = g.findObject(AttrNodeID,val.setString(str));
+		if (id==Objects.InvalidOID) return null;
+		return (new VertexSparksee(id));
+	}
+
+	public GraphIterator<Vertex> getAllVertex() {
+		// URI's
+		Objects allObj = g.select(TypeURI), tempObj;
+		// NodeID's
+		tempObj = g.select(TypeNodeID);
+		allObj.union(tempObj);
+		tempObj.close();
+		// Literals
+		tempObj = g.select(TypeLiteral);
+		allObj.union(tempObj);
+		tempObj.close();
+		return (new IterVertexSparksee(allObj));
+	}
+
 	public void close() {
 		sess.close();
 		db.close();
 		sparksee.close();
 	}
 
-	public Vertex getVertexURI(String strURI) {
-		long id = g.findObject(AttrURI,val.setString(strURI));
-		if (id==Objects.InvalidOID) return null;
-		return (new VertexSparksee(id));
-	}
+	// +----------------+
+	// | Useful classes |
+	// +----------------+
 
 	public class VertexSparksee extends Vertex {
 		private long node_id;

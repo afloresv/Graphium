@@ -22,8 +22,10 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public interface GraphDB {
+public interface GraphRDF {
 
-	public Vertex getVertexURI(String strURI);
+	public Vertex getVertexURI(String str);
+	public Vertex getVertexNodeID(String str);
+	public GraphIterator<Vertex> getAllVertex();
 	public void close();
 }

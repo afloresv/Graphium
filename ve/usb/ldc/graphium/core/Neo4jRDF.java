@@ -32,7 +32,7 @@ import org.neo4j.tooling.*;
 import org.neo4j.kernel.*;
 import org.neo4j.helpers.collection.*;
 
-public class Neo4jRDF implements GraphDB {
+public class Neo4jRDF implements GraphRDF {
 
 	public GraphDatabaseService graphDB;
 	public GlobalGraphOperations globalOP;
@@ -55,15 +55,31 @@ public class Neo4jRDF implements GraphDB {
 		relType = globalOP.getAllRelationshipTypes().iterator().next();
 	}
 
-	public Vertex getVertexURI(String strURI) {
-		Node id = indexURI.get(Attr.URI,strURI).getSingle();
+	public Vertex getVertexURI(String str) {
+		Node id = indexURI.get(Attr.URI,str).getSingle();
 		if (id==null) return null;
 		return (new VertexNeo4j(id));
+	}
+
+	public Vertex getVertexNodeID(String str) {
+		Node id = indexNodeID.get(Attr.NodeID,str).getSingle();
+		if (id==null) return null;
+		return (new VertexNeo4j(id));
+	}
+
+	public GraphIterator<Vertex> getAllVertex() {
+		Iterator<Node> itAll = globalOP.getAllNodes().iterator();
+		itAll.next();
+		return (new IterVertexNeo4j(itAll));
 	}
 
 	public void close() {
 		graphDB.shutdown();
 	}
+
+	// +----------------+
+	// | Useful classes |
+	// +----------------+
 
 	public class VertexNeo4j extends Vertex {
 		private Node node_id;

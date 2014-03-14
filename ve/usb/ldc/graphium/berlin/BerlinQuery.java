@@ -26,7 +26,7 @@ import ve.usb.ldc.graphium.core.*;
 
 public abstract class BerlinQuery {
 
-	GraphDB g;
+	GraphRDF g;
 	ResultGenerator r;
 	InstanceReader inst;
 
