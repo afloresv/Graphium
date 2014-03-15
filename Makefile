@@ -4,12 +4,22 @@ SPARKSEE = lib/sparkseejava.jar
 LIBS = "./:$(NEO):$(SPARKSEE)"
 FLAGS = -source 6 -nowarn -cp $(LIBS)
 
-compile:
+compile: clean core load berlin analysis
+
+core:
 	javac $(FLAGS) ve/usb/ldc/graphium/core/*.java
+
+load:
 	javac $(FLAGS) ve/usb/ldc/graphium/load/*.java
+
+berlin:
 	javac $(FLAGS) ve/usb/ldc/graphium/berlin/*.java
+
+analysis:
+	javac $(FLAGS) ve/usb/ldc/graphium/analysis/*.java
 
 clean:
 	rm -f ve/usb/ldc/graphium/core/*.class
 	rm -f ve/usb/ldc/graphium/load/*.class
 	rm -f ve/usb/ldc/graphium/berlin/*.class
+	rm -f ve/usb/ldc/graphium/analysis/*.class
