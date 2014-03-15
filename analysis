@@ -4,4 +4,4 @@ SPARKSEE="lib/sparkseejava.jar"
 LIBS="./:$NEO:$SPARKSEE"
 FLAGS="-Xms2g -Xmx2g -XX:PermSize=2g -XX:MaxPermSize=2g -XX:-UseGCOverheadLimit "
 
-java $FLAGS -classpath $LIBS ve.usb.ldc.graphium.berlin.analysis.run $@
+java $FLAGS -classpath $LIBS ve.usb.ldc.graphium.analysis.run $@
