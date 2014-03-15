@@ -39,6 +39,7 @@ public class run {
 		else throw (new Error("Wrong GDBM (Neo4j or Sparksee)"));
 
 		Vertex ver;
+		Edge rel;
 		GraphIterator<Edge> ite;
 		GraphIterator<Vertex> itv;
 		int n_URI = 0,
