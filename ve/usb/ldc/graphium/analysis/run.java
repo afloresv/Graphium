@@ -86,8 +86,8 @@ public class run {
 
 		for (int i=0 ; i<101 ; i++) {
 			for (int j=0 ; j<100 ; j++)
-				System.out.print(iom[i][j] + " ");
-			System.out.println(iom[i][100]);
+				System.err.print(iom[i][j] + ",");
+			System.err.println(iom[i][100]);
 		}
 	}
 }
