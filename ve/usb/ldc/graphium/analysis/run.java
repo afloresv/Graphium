@@ -39,8 +39,12 @@ public class run {
 		else throw (new Error("Wrong GDBM (Neo4j or Sparksee)"));
 
 		Vertex ver;
+		GraphIterator<Edge> ite;
 		GraphIterator<Vertex> itv;
-		int n_URI = 0, n_NodeID = 0, n_Literal = 0;
+		int n_URI = 0,
+			n_NodeID = 0,
+			n_Literal = 0,
+			n_Edges = 0;
 
 		itv = g.getAllVertex();
 		while (itv.hasNext()) {
@@ -48,12 +52,21 @@ public class run {
 			if      (ver.isURI())     n_URI++;
 			else if (ver.isLiteral()) n_Literal++;
 			else if (ver.isNodeID())  n_NodeID++;
+
+			ite = ver.getEdgesOut();
+			while (ite.hasNext()) {
+				rel = ite.next();
+				n_Edges++;
+			}
+			ite.close();
 		}
 		itv.close();
 
-		System.out.println("URI: " + n_URI);
-		System.out.println("NodeID: " + n_NodeID);
-		System.out.println("Literal: " + n_Literal);
+		System.out.format("Vertices %14d%n",n_URI + n_NodeID + n_Literal);
+		System.out.format("| URI     %13d%n",n_URI);
+		System.out.format("| NodeID  %13d%n",n_NodeID);
+		System.out.format("| Literal %13d%n",n_Literal);
+		System.out.format("Edges %13d%n",n_Edges);
 
 		g.close();
 	}
