@@ -27,6 +27,7 @@ import ve.usb.ldc.graphium.core.*;
 public class run {
 
 	public static GraphRDF g;
+	public static int[][] iom = new int[101][101];
 
 	public static void main(String[] args) {
 
@@ -49,7 +50,10 @@ public class run {
 
 		itv = g.getAllVertex();
 		while (itv.hasNext()) {
+
 			ver = itv.next();
+			int countIn = 0, countOut = 0;
+
 			if      (ver.isURI())     n_URI++;
 			else if (ver.isLiteral()) n_Literal++;
 			else if (ver.isNodeID())  n_NodeID++;
@@ -57,18 +61,33 @@ public class run {
 			ite = ver.getEdgesOut();
 			while (ite.hasNext()) {
 				rel = ite.next();
-				n_Edges++;
+				countOut++;
 			}
 			ite.close();
+
+			ite = ver.getEdgesIn();
+			while (ite.hasNext()) {
+				rel = ite.next();
+				countIn++;
+			}
+			ite.close();
+
+			iom[(countIn<100 ? countIn : 100)][(countOut<100 ? countOut : 100)]++;
 		}
 		itv.close();
+
+		g.close();
 
 		System.out.format("Vertices %14d%n",n_URI + n_NodeID + n_Literal);
 		System.out.format("| URI     %13d%n",n_URI);
 		System.out.format("| NodeID  %13d%n",n_NodeID);
 		System.out.format("| Literal %13d%n",n_Literal);
-		System.out.format("Edges %13d%n",n_Edges);
+		System.out.format("Edges    %14d%n",n_Edges);
 
-		g.close();
+		for (int i=0 ; i<101 ; i++) {
+			for (int j=0 ; j<100 ; j++)
+				System.out.print(iom[i][j] + " ");
+			System.out.println(iom[i][100]);
+		}
 	}
 }
