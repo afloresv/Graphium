@@ -27,7 +27,7 @@ import ve.usb.ldc.graphium.core.*;
 public class run {
 
 	public static GraphRDF g;
-	public static int[][] iom = new int[101][101];
+	public static int[][] iom = new int[51][51];
 
 	public static void main(String[] args) {
 
@@ -64,6 +64,7 @@ public class run {
 				countOut++;
 			}
 			ite.close();
+			n_Edges += countOut;
 
 			ite = ver.getEdgesIn();
 			while (ite.hasNext()) {
@@ -72,7 +73,7 @@ public class run {
 			}
 			ite.close();
 
-			iom[(countIn<100 ? countIn : 100)][(countOut<100 ? countOut : 100)]++;
+			iom[(countIn<50 ? countIn : 50)][(countOut<50 ? countOut : 50)]++;
 		}
 		itv.close();
 
@@ -84,10 +85,10 @@ public class run {
 		System.out.format("| Literal %13d%n",n_Literal);
 		System.out.format("Edges    %14d%n",n_Edges);
 
-		for (int i=0 ; i<101 ; i++) {
-			for (int j=0 ; j<100 ; j++)
+		for (int i=0 ; i<51 ; i++) {
+			for (int j=0 ; j<50 ; j++)
 				System.err.print(iom[i][j] + ",");
-			System.err.println(iom[i][100]);
+			System.err.println(iom[i][50]);
 		}
 	}
 }
