@@ -99,8 +99,8 @@ public class run {
 		System.out.format("| NodeID  %13d%n",n_NodeID);
 		System.out.format("| Literal %13d%n",n_Literal);
 		System.out.format("Edges    %14d%n",n_Edges);
-		System.out.format("| Diff predicates %5d%n",n_Edges);
-		System.out.format("Density  %12.2f%n",n_Edges/(n_vertices*n_vertices));
+		System.out.format("| Diff predicates %5d%n",predicates.size());
+		System.out.format("Density  %12.2f%n",(double)n_Edges/(n_vertices*n_vertices));
 		System.out.format("Upper bound Max. Clique %d%n",clique_s);
 
 		for (int i=0 ; i<51 ; i++) {
