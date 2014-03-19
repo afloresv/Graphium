@@ -27,7 +27,9 @@ import ve.usb.ldc.graphium.core.*;
 public class run {
 
 	public static GraphRDF g;
-	public static int[][] iom = new int[51][51];
+	public static int[][] ioDegree = new int[51][51];
+	public static int[] starSize = new int[51];
+	public static int[] acumDegree = new int[1000];
 
 	public static void main(String[] args) {
 
@@ -48,6 +50,8 @@ public class run {
 			n_Literal = 0,
 			n_Edges = 0;
 
+		HashSet<URI> predicates = new HashSet<URI>();
+
 		itv = g.getAllVertex();
 		while (itv.hasNext()) {
 
@@ -61,10 +65,10 @@ public class run {
 			ite = ver.getEdgesOut();
 			while (ite.hasNext()) {
 				rel = ite.next();
+				predicates.add(rel.getURI());
 				countOut++;
 			}
 			ite.close();
-			n_Edges += countOut;
 
 			ite = ver.getEdgesIn();
 			while (ite.hasNext()) {
@@ -73,22 +77,36 @@ public class run {
 			}
 			ite.close();
 
-			iom[(countIn<50 ? countIn : 50)][(countOut<50 ? countOut : 50)]++;
+			n_Edges += countOut;
+			starSize[Math.min(countOut,50)]++;
+			acumDegree[Math.min(countIn+countOut,1000)]++;
+			ioDegree[Math.min(countIn,50)][Math.min(countOut,50)]++;
 		}
 		itv.close();
 
 		g.close();
 
-		System.out.format("Vertices %14d%n",n_URI + n_NodeID + n_Literal);
+		int clique_s;
+		for (clique_s=998 ; clique_s>=0 ; clique_s--) {
+			acumDegree[clique_s] += acumDegree[clique_s+1];
+			if (clique_s < acumDegree[clique_s])
+				break;
+		}
+
+		int n_vertices = n_URI + n_NodeID + n_Literal;
+		System.out.format("Vertices %14d%n",n_vertices);
 		System.out.format("| URI     %13d%n",n_URI);
 		System.out.format("| NodeID  %13d%n",n_NodeID);
 		System.out.format("| Literal %13d%n",n_Literal);
 		System.out.format("Edges    %14d%n",n_Edges);
+		System.out.format("| Diff predicates %5d%n",n_Edges);
+		System.out.format("Density  %12.2f%n",n_Edges/(n_vertices*n_vertices));
+		System.out.format("Upper bound Max. Clique %d%n",clique_s);
 
 		for (int i=0 ; i<51 ; i++) {
 			for (int j=0 ; j<50 ; j++)
-				System.err.print(iom[i][j] + ",");
-			System.err.println(iom[i][50]);
+				System.err.print(ioDegree[i][j] + ",");
+			System.err.println(ioDegree[i][50]);
 		}
 	}
 }
