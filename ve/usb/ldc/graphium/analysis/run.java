@@ -79,7 +79,7 @@ public class run {
 
 			n_Edges += countOut;
 			starSize[Math.min(countOut,50)]++;
-			acumDegree[Math.min(countIn+countOut,1000)]++;
+			acumDegree[Math.min(countIn+countOut,999)]++;
 			ioDegree[Math.min(countIn,50)][Math.min(countOut,50)]++;
 		}
 		itv.close();
