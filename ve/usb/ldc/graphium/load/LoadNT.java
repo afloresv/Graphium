@@ -64,7 +64,9 @@ public abstract class LoadNT {
 				} else throw (new Error("Parsing Error."));
 			}
 		} catch (FileNotFoundException fnfe) {
-			System.out.println(fnfe.getMessage());
+			System.err.println("Error: " + fnfe.getMessage());
+			close();
+			System.exit(1);
 		} finally {
 			close();
 		}

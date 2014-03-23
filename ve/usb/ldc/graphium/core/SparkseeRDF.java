@@ -69,12 +69,13 @@ public class SparkseeRDF implements GraphRDF {
 			if (!itEdge.hasNext()) {
 				System.err.println("Error: No edge type found.");
 				this.close();
-				return;
+				System.exit(1);
 			}
 			TypeEdge = itEdge.nextType();
 			AttrPredicate = g.findAttribute(TypeEdge, Attr.Predicate);
 		} catch (FileNotFoundException e) {
 			System.err.println("Error: " + e.getMessage());
+			System.exit(1);
 		}
 	}
 

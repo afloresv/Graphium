@@ -33,6 +33,13 @@ public class run {
 
 	public static void main(String[] args) {
 
+		// Checking arguments
+		if (args.length != 2) {
+			System.err.println("Two arguments needed to analize an RDF graph:"
+				+" <GDBM (Sparksee or Neo4j)> <DB location>");
+			System.exit(0);
+		}
+
 		String gdbm = args[0],
 			path = args[1];
 		if (gdbm.equals("Neo4j"))
@@ -115,7 +122,7 @@ public class run {
 		System.out.format("out-h-index=%d%n",outHindex);
 		System.out.format("mutual-edge=%d%n",n_mutual);
 
-		System.out.format("oi-degree%n");
+		System.out.format("io-degree%n");
 		for (int i=50 ; i>=0 ; i--) {
 			for (int j=0 ; j<50 ; j++)
 				System.out.print(ioDegree[i][j] + ",");

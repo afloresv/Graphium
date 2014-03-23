@@ -30,22 +30,18 @@ public class LoadGraph {
 		if (args.length != 3) {
 			System.err.println("Tree arguments needed to CREATE:"
 				+" <GDBM (Sparksee or Neo4j)> <.nt file> <DB location>");
-			return;
+			System.exit(1);
 		}
 
 		// Load Process Init
-		LoadNT loadProcess;
 		if (args[0].equals("Neo4j"))
-			loadProcess = new LoadNeo4j(args[2]);
+			(new LoadNeo4j(args[2])).start(args[1]);
 		else if (args[0].equals("Sparksee"))
-			loadProcess = new LoadSparksee(args[2]);
+			(new LoadSparksee(args[2])).start(args[1]);
 		else {
 			System.err.println("The GDBM argument (first one)"
 				+" must be \"Sparksee\" or \"Neo4j\".");
-			return;
+			System.exit(1);
 		}
-
-		// Start Load Process
-		loadProcess.start(args[1]);
 	}
 }
