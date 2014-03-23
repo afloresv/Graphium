@@ -48,9 +48,11 @@ public class run {
 		int n_URI = 0,
 			n_NodeID = 0,
 			n_Literal = 0,
-			n_Edges = 0;
+			n_Edges = 0,
+			n_mutual = 0;
 
 		HashSet<URI> predicates = new HashSet<URI>();
+		HashSet<Vertex> adj = new HashSet<Vertex>();
 
 		itv = g.getAllVertex();
 		while (itv.hasNext()) {
@@ -62,11 +64,14 @@ public class run {
 			else if (ver.isLiteral()) n_Literal++;
 			else if (ver.isNodeID())  n_NodeID++;
 
+			adj.clear();
+
 			ite = ver.getEdgesOut();
 			while (ite.hasNext()) {
 				rel = ite.next();
 				predicates.add(rel.getURI());
 				countOut++;
+				adj.add(rel.getEnd());
 			}
 			ite.close();
 
@@ -74,6 +79,8 @@ public class run {
 			while (ite.hasNext()) {
 				rel = ite.next();
 				countIn++;
+				if (adj.contains(rel.getStart()))
+					n_mutual++;
 			}
 			ite.close();
 
@@ -106,6 +113,7 @@ public class run {
 		System.out.format("predicate=%d%n",predicates.size());
 		System.out.format("in-h-index=%d%n",inHindex);
 		System.out.format("out-h-index=%d%n",outHindex);
+		System.out.format("mutual-edge=%d%n",n_mutual);
 
 		System.out.format("oi-degree%n");
 		for (int i=50 ; i>=0 ; i--) {
