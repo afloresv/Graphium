@@ -37,7 +37,7 @@ public class run {
 		if (args.length != 2) {
 			System.err.println("Two arguments needed to analize an RDF graph:"
 				+" <GDBM (Sparksee or Neo4j)> <DB location>");
-			System.exit(0);
+			System.exit(1);
 		}
 
 		String gdbm = args[0],
