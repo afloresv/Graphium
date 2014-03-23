@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.analysis;
+package ve.usb.ldc.graphium.chrysalis;
 
 import java.util.*;
 import java.lang.*;
@@ -28,8 +28,8 @@ public class run {
 
 	public static GraphRDF g;
 	public static int[][] ioDegree = new int[51][51];
-	public static int[] starSize = new int[51];
-	public static int[] acumDegree = new int[1000];
+	public static int[] inDegree  = new int[10000];
+	public static int[] outDegree = new int[10000];
 
 	public static void main(String[] args) {
 
@@ -78,35 +78,40 @@ public class run {
 			ite.close();
 
 			n_Edges += countOut;
-			starSize[Math.min(countOut,50)]++;
-			acumDegree[Math.min(countIn+countOut,999)]++;
 			ioDegree[Math.min(countIn,50)][Math.min(countOut,50)]++;
+			outDegree[Math.min(countOut,9999)]++;
+			inDegree [Math.min(countIn ,9999)]++;
 		}
 		itv.close();
 
 		g.close();
 
-		int clique_s;
-		for (clique_s=998 ; clique_s>=0 ; clique_s--) {
-			acumDegree[clique_s] += acumDegree[clique_s+1];
-			if (clique_s < acumDegree[clique_s])
-				break;
+		int inHindex = -1, outHindex = -1, acumIn = 0, acumOut = 0;
+		for (int i=9999 ; i>=0 && (inHindex<0 || outHindex<0) ; i--) {
+			if (inHindex<0) {
+				acumIn += inDegree[i];
+				if (acumIn>=i) inHindex = i;
+			}
+			if (outHindex<0) {
+				acumOut += outDegree[i];
+				if (acumOut>=i) outHindex = i;
+			}
 		}
 
 		int n_vertices = n_URI + n_NodeID + n_Literal;
-		System.out.format("Vertices %14d%n",n_vertices);
-		System.out.format("| URI     %13d%n",n_URI);
-		System.out.format("| NodeID  %13d%n",n_NodeID);
-		System.out.format("| Literal %13d%n",n_Literal);
-		System.out.format("Edges    %14d%n",n_Edges);
-		System.out.format("| Diff predicates %5d%n",predicates.size());
-		System.out.format("Density  %12.2f%n",(double)n_Edges/(n_vertices*n_vertices));
-		System.out.format("Upper bound Max. Clique %d%n",clique_s);
+		System.out.format("uri=%d%n",n_URI);
+		System.out.format("nodeid=%d%n",n_NodeID);
+		System.out.format("literal=%d%n",n_Literal);
+		System.out.format("edge=%d%n",n_Edges);
+		System.out.format("predicate=%d%n",predicates.size());
+		System.out.format("in-h-index=%d%n",inHindex);
+		System.out.format("out-h-index=%d%n",outHindex);
 
-		for (int i=0 ; i<51 ; i++) {
+		System.out.format("oi-degree%n");
+		for (int i=50 ; i>=0 ; i--) {
 			for (int j=0 ; j<50 ; j++)
-				System.err.print(ioDegree[i][j] + ",");
-			System.err.println(ioDegree[i][50]);
+				System.out.print(ioDegree[i][j] + ",");
+			System.out.println(ioDegree[i][50]);
 		}
 	}
 }

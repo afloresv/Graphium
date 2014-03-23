@@ -8,10 +8,10 @@ compile: clean
 	javac $(FLAGS) ve/usb/ldc/graphium/core/*.java
 	javac $(FLAGS) ve/usb/ldc/graphium/load/*.java
 	javac $(FLAGS) ve/usb/ldc/graphium/berlin/*.java
-	javac $(FLAGS) ve/usb/ldc/graphium/analysis/*.java
+	javac $(FLAGS) ve/usb/ldc/graphium/chrysalis/*.java
 
 clean:
 	rm -f ve/usb/ldc/graphium/core/*.class
 	rm -f ve/usb/ldc/graphium/load/*.class
 	rm -f ve/usb/ldc/graphium/berlin/*.class
-	rm -f ve/usb/ldc/graphium/analysis/*.class
+	rm -f ve/usb/ldc/graphium/chrysalis/*.class
