@@ -25,10 +25,10 @@ import java.io.*;
 public abstract class Vertex {
 
 	public abstract boolean isURI();
-	public abstract boolean isNodeID();
+	public abstract boolean isBlankNode();
 	public abstract boolean isLiteral();
 	public abstract URI     getURI();
-	public abstract NodeID  getNodeID();
+	public abstract BlankNode  getBlankNode();
 	public Literal getLiteral() {
 		String str = this.getStr();
 		if (str == null) return null;
@@ -57,7 +57,7 @@ public abstract class Vertex {
 		if (res==null) {
 			res = this.getLiteral();
 			if (res==null)
-				res = this.getNodeID();
+				res = this.getBlankNode();
 		}
 		return res;
 	}

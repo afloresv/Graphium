@@ -31,8 +31,8 @@ public class SparkseeRDF implements GraphRDF {
 	public Database db;
 	public Session sess;
 	public com.sparsity.sparksee.gdb.Graph g;
-	public int TypeURI, TypeNodeID, TypeLiteral, TypeEdge;
-	public int AttrURI, AttrNodeID, AttrLiteral, AttrPredicate,
+	public int TypeURI, TypeBlankNode, TypeLiteral, TypeEdge;
+	public int AttrURI, AttrBlankNode, AttrLiteral, AttrPredicate,
 		AttrLang, AttrType, AttrBool, AttrInt, AttrDouble, AttrDate;
 	public static String licence = "GP5JB-C09HF-MN7AX-VCQ01";
 	public static Value val = new Value();
@@ -51,9 +51,9 @@ public class SparkseeRDF implements GraphRDF {
 			TypeURI = g.findType(Attr.URI);
 			AttrURI = g.findAttribute(TypeURI, Attr.URI);
 
-			// NodeID Nodes
-			TypeNodeID = g.findType(Attr.NodeID);
-			AttrNodeID = g.findAttribute(TypeNodeID, Attr.NodeID);
+			// BlankNode Nodes
+			TypeBlankNode = g.findType(Attr.BlankNode);
+			AttrBlankNode = g.findAttribute(TypeBlankNode, Attr.BlankNode);
 
 			// Literal Nodes
 			TypeLiteral = g.findType(Attr.Literal);
@@ -85,8 +85,8 @@ public class SparkseeRDF implements GraphRDF {
 		return (new VertexSparksee(id));
 	}
 
-	public Vertex getVertexNodeID(String str) {
-		long id = g.findObject(AttrNodeID,val.setString(str));
+	public Vertex getVertexBlankNode(String str) {
+		long id = g.findObject(AttrBlankNode,val.setString(str));
 		if (id==Objects.InvalidOID) return null;
 		return (new VertexSparksee(id));
 	}
@@ -94,8 +94,8 @@ public class SparkseeRDF implements GraphRDF {
 	public GraphIterator<Vertex> getAllVertex() {
 		// URI's
 		Objects allObj = g.select(TypeURI), tempObj;
-		// NodeID's
-		tempObj = g.select(TypeNodeID);
+		// BlankNode's
+		tempObj = g.select(TypeBlankNode);
 		allObj.union(tempObj);
 		tempObj.close();
 		// Literals
@@ -122,17 +122,17 @@ public class SparkseeRDF implements GraphRDF {
 			node_id = _id;
 			node_type = g.getObjectType(node_id);
 		}
-		public boolean isURI()     { return node_type==TypeURI; }
-		public boolean isNodeID()  { return node_type==TypeNodeID; }
-		public boolean isLiteral() { return node_type==TypeLiteral; }
+		public boolean isURI()       { return node_type==TypeURI; }
+		public boolean isBlankNode() { return node_type==TypeBlankNode; }
+		public boolean isLiteral()   { return node_type==TypeLiteral; }
 		public URI getURI() {
 			if (this.isURI()) {
 				return (new URI(g.getAttribute(node_id,AttrURI).getString()));
 			} else return null;
 		}
-		public NodeID getNodeID() {
-			if (this.isNodeID()) {
-				return (new NodeID(g.getAttribute(node_id,AttrNodeID).getString()));
+		public BlankNode getBlankNode() {
+			if (this.isBlankNode()) {
+				return (new BlankNode(g.getAttribute(node_id,AttrBlankNode).getString()));
 			} else return null;
 		}
 		public String getStr() {

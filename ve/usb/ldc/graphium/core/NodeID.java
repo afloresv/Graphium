@@ -22,8 +22,8 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public class NodeID extends RDFobject {
-	public NodeID(String b) {
+public class BlankNode extends RDFobject {
+	public BlankNode(String b) {
 		this.base = b;
 	}
 	@Override
@@ -32,8 +32,8 @@ public class NodeID extends RDFobject {
 	}
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof NodeID)
-			return this.base.equals(((NodeID)other).base);
+		if (other instanceof BlankNode)
+			return this.base.equals(((BlankNode)other).base);
 		return false;
 	}
 }

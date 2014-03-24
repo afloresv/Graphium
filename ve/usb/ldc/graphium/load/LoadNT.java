@@ -44,7 +44,7 @@ public abstract class LoadNT {
 				subS = in.next();
 				if (subS.charAt(0)=='#')
 					continue;
-				else if (tryURI(subS) || tryNodeID(subS))
+				else if (tryURI(subS) || tryBlankNode(subS))
 					subN = lastN;
 				else throw (new Error("Parsing Error."));
 
@@ -53,7 +53,7 @@ public abstract class LoadNT {
 
 				// Object
 				if (trimObj(in.nextLine())
-					&& (tryURI(objS) || tryNodeID(objS) || tryLiteral(objS)))
+					&& (tryURI(objS) || tryBlankNode(objS) || tryLiteral(objS)))
 						objN = lastN;
 				else throw (new Error("Parsing Error."));
 
@@ -92,7 +92,7 @@ public abstract class LoadNT {
 		return true;
 	}
 
-	public boolean tryNodeID (String str) {
+	public boolean tryBlankNode (String str) {
 		int len = str.length();
 		if (len<3 || str.charAt(0)!='_' || str.charAt(1)!=':')
 			return false;

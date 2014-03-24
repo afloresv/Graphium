@@ -25,7 +25,7 @@ import java.io.*;
 public interface GraphRDF {
 
 	public Vertex getVertexURI(String str);
-	public Vertex getVertexNodeID(String str);
+	public Vertex getVertexBlankNode(String str);
 	public GraphIterator<Vertex> getAllVertex();
 	public void close();
 }

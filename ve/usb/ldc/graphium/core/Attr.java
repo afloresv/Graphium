@@ -24,7 +24,7 @@ import java.io.*;
 
 public final class Attr {
 	public static final String URI       = "URI";
-	public static final String NodeID    = "NodeID";
+	public static final String BlankNode = "BlankNode";
 	public static final String Literal   = "Literal";
 	public static final String Lang      = "Lang";
 	public static final String Type      = "Type";

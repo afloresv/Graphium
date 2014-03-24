@@ -37,7 +37,7 @@ public class Neo4jRDF implements GraphRDF {
 	public GraphDatabaseService graphDB;
 	public GlobalGraphOperations globalOP;
 	public IndexManager indexManager;
-	public Index<Node> indexURI, indexNodeID;
+	public Index<Node> indexURI, indexBlankNode;
 	public RelationshipType relType;
 
 	public Neo4jRDF(String path) {
@@ -49,9 +49,9 @@ public class Neo4jRDF implements GraphRDF {
 			setConfig(GraphDatabaseSettings.relationship_auto_indexing, "true").
 			newGraphDatabase();
 		globalOP = GlobalGraphOperations.at(graphDB);
-		indexManager = graphDB.index();
-		indexURI    = indexManager.forNodes(Attr.URI);
-		indexNodeID = indexManager.forNodes(Attr.NodeID);
+		indexManager   = graphDB.index();
+		indexURI       = indexManager.forNodes(Attr.URI);
+		indexBlankNode = indexManager.forNodes(Attr.BlankNode);
 		relType = globalOP.getAllRelationshipTypes().iterator().next();
 	}
 
@@ -61,8 +61,8 @@ public class Neo4jRDF implements GraphRDF {
 		return (new VertexNeo4j(id));
 	}
 
-	public Vertex getVertexNodeID(String str) {
-		Node id = indexNodeID.get(Attr.NodeID,str).getSingle();
+	public Vertex getVertexBlankNode(String str) {
+		Node id = indexBlankNode.get(Attr.BlankNode,str).getSingle();
 		if (id==null) return null;
 		return (new VertexNeo4j(id));
 	}
@@ -86,18 +86,18 @@ public class Neo4jRDF implements GraphRDF {
 		public VertexNeo4j(Node _id) {
 			node_id = _id;
 		}
-		public boolean isURI()     { return node_id.hasProperty(Attr.URI); }
-		public boolean isNodeID()  { return node_id.hasProperty(Attr.NodeID); }
-		public boolean isLiteral() { return node_id.hasProperty(Attr.Literal); }
+		public boolean isURI()       { return node_id.hasProperty(Attr.URI); }
+		public boolean isBlankNode() { return node_id.hasProperty(Attr.BlankNode); }
+		public boolean isLiteral()   { return node_id.hasProperty(Attr.Literal); }
 		public URI getURI() {
 			Object prop = node_id.getProperty(Attr.URI,null);
 			if (prop == null) return null;
 			return (new URI((String)prop));
 		}
-		public NodeID getNodeID() {
-			Object prop = node_id.getProperty(Attr.NodeID,null);
+		public BlankNode getBlankNode() {
+			Object prop = node_id.getProperty(Attr.BlankNode,null);
 			if (prop == null) return null;
-			return (new NodeID((String)prop));
+			return (new BlankNode((String)prop));
 		}
 		public String getStr() {
 			Object prop = node_id.getProperty(Attr.Literal,null);

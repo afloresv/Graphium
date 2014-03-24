@@ -49,7 +49,7 @@ public class LoadNeo4j extends LoadNT {
 	public LoadNeo4j(String pathDB) {
 
 		AttrStr[0] = Attr.URI;
-		AttrStr[1] = Attr.NodeID;
+		AttrStr[1] = Attr.BlankNode;
 		AttrStr[2] = Attr.Literal;
 		AttrStr[3] = Attr.Lang;
 		AttrStr[4] = Attr.Type;

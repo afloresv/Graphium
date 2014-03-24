@@ -57,9 +57,9 @@ public class LoadSparksee extends LoadNT {
 			AttrType[0] = g.newAttribute(NodeType[0], Attr.URI,
 				DataType.String, AttributeKind.Unique);
 
-			// NodeID Nodes
-			NodeType[1] = g.newNodeType(Attr.NodeID);
-			AttrType[1] = g.newAttribute(NodeType[1], Attr.NodeID,
+			// BlankNode Nodes
+			NodeType[1] = g.newNodeType(Attr.BlankNode);
+			AttrType[1] = g.newAttribute(NodeType[1], Attr.BlankNode,
 				DataType.String, AttributeKind.Unique);
 
 			// Literal Nodes

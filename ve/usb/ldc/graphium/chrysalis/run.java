@@ -53,7 +53,7 @@ public class run {
 		GraphIterator<Edge> ite;
 		GraphIterator<Vertex> itv;
 		int n_URI = 0,
-			n_NodeID = 0,
+			n_BlankNode = 0,
 			n_Literal = 0,
 			n_Edges = 0,
 			n_mutual = 0;
@@ -69,7 +69,7 @@ public class run {
 
 			if      (ver.isURI())     n_URI++;
 			else if (ver.isLiteral()) n_Literal++;
-			else if (ver.isNodeID())  n_NodeID++;
+			else if (ver.isBlankNode())  n_BlankNode++;
 
 			adj.clear();
 
@@ -112,9 +112,9 @@ public class run {
 			}
 		}
 
-		int n_vertices = n_URI + n_NodeID + n_Literal;
+		int n_vertices = n_URI + n_BlankNode + n_Literal;
 		System.out.format("uri=%d%n",n_URI);
-		System.out.format("nodeid=%d%n",n_NodeID);
+		System.out.format("blanknode=%d%n",n_BlankNode);
 		System.out.format("literal=%d%n",n_Literal);
 		System.out.format("edge=%d%n",n_Edges);
 		System.out.format("predicate=%d%n",predicates.size());
