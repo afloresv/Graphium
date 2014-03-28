@@ -48,7 +48,7 @@ public class run {
 			g = new SparkseeRDF(path);
 		else throw (new Error("Wrong GDBM (Neo4j or Sparksee)"));
 
-		Vertex ver;
+		Vertex ver, temp;
 		Edge rel;
 		GraphIterator<Edge> ite;
 		GraphIterator<Vertex> itv;
@@ -59,7 +59,8 @@ public class run {
 			n_mutual = 0;
 
 		HashSet<URI> predicates = new HashSet<URI>();
-		HashSet<Vertex> adj = new HashSet<Vertex>();
+		HashSet<Vertex> adj1 = new HashSet<Vertex>();
+		HashSet<Vertex> adj2 = new HashSet<Vertex>();
 
 		itv = g.getAllVertex();
 		while (itv.hasNext()) {
@@ -71,14 +72,15 @@ public class run {
 			else if (ver.isLiteral()) n_Literal++;
 			else if (ver.isBlankNode())  n_BlankNode++;
 
-			adj.clear();
+			adj1.clear();
+			adj2.clear();
 
 			ite = ver.getEdgesOut();
 			while (ite.hasNext()) {
 				rel = ite.next();
 				predicates.add(rel.getURI());
 				countOut++;
-				adj.add(rel.getEnd());
+				adj1.add(rel.getEnd());
 			}
 			ite.close();
 
@@ -86,11 +88,13 @@ public class run {
 			while (ite.hasNext()) {
 				rel = ite.next();
 				countIn++;
-				if (adj.contains(rel.getStart()))
-					n_mutual++;
+				temp = rel.getStart();
+				if (adj1.contains(temp))
+					adj2.add(temp);
 			}
 			ite.close();
 
+			n_mutual += adj2.size();
 			n_Edges += countOut;
 			ioDegree[Math.min(countIn,50)][Math.min(countOut,50)]++;
 			outDegree[Math.min(countOut,9999)]++;
