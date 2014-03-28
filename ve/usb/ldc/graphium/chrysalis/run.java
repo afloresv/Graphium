@@ -80,7 +80,9 @@ public class run {
 				rel = ite.next();
 				predicates.add(rel.getURI());
 				countOut++;
-				adj1.add(rel.getEnd());
+				temp = rel.getEnd();
+				if (!ver.equals(temp))
+					adj1.add(temp);
 			}
 			ite.close();
 
@@ -124,7 +126,7 @@ public class run {
 		System.out.format("predicate=%d%n",predicates.size());
 		System.out.format("in-h-index=%d%n",inHindex);
 		System.out.format("out-h-index=%d%n",outHindex);
-		System.out.format("mutual-edge=%d%n",n_mutual);
+		System.out.format("mutual-edge=%d%n",n_mutual/2);
 
 		System.out.format("io-degree%n");
 		for (int i=50 ; i>=0 ; i--) {
