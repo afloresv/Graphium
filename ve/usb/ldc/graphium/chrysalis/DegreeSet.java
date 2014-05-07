@@ -31,22 +31,16 @@ public class DegreeSet {
 	public static void main(String[] args) {
 
 		// Checking arguments
-		if (args.length != 4) {
-			System.err.println("Four arguments needed to analize an RDF graph:\n"
-				+"<GDBM (Sparksee or Neo4j)> <DB location> <edge direction (in out)> <degree threshold>");
+		if (args.length != 3) {
+			System.err.println("Tree arguments needed to analize an RDF graph:\n"
+				+"<DB location> <edge direction (in out)> <degree threshold>");
 			System.exit(1);
 		}
 
-		int degree = Integer.parseInt(args[3]);
-		boolean in = args[2].equals("in");
+		int degree = Integer.parseInt(args[2]);
+		boolean in = args[1].equals("in");
 
-		String gdbm = args[0],
-			path = args[1];
-		if (gdbm.equals("Neo4j"))
-			g = new Neo4jRDF(path);
-		else if (gdbm.equals("Sparksee"))
-			g = new SparkseeRDF(path);
-		else throw (new Error("Wrong GDBM (Neo4j or Sparksee)"));
+		g = GraphiumLoader.open(args[0]);
 
 		Vertex ver;
 		Edge rel;

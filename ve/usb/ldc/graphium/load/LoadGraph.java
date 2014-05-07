@@ -43,5 +43,16 @@ public class LoadGraph {
 				+" must be \"Sparksee\" or \"Neo4j\".");
 			System.exit(1);
 		}
+
+		// Graphium information
+		try {
+			PrintWriter gInfo;
+			gInfo = new PrintWriter(new FileWriter(args[2]+"graphium.info"));
+			gInfo.println(args[0]);
+			gInfo.close();
+		} catch (Exception e) {
+			System.err.println("FileNotFoundException: " + e.getMessage());
+			System.exit(1);
+		}
 	}
 }

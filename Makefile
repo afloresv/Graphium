@@ -4,14 +4,16 @@ SPARKSEE = lib/sparkseejava.jar
 LIBS = "./:$(NEO):$(SPARKSEE)"
 FLAGS = -source 6 -nowarn -cp $(LIBS)
 
-compile: clean
-	javac $(FLAGS) ve/usb/ldc/graphium/core/*.java
-	javac $(FLAGS) ve/usb/ldc/graphium/load/*.java
-	javac $(FLAGS) ve/usb/ldc/graphium/berlin/*.java
-	javac $(FLAGS) ve/usb/ldc/graphium/chrysalis/*.java
+all: load core chrysalis-demo
 
-clean:
-	rm -f ve/usb/ldc/graphium/core/*.class
+load:
 	rm -f ve/usb/ldc/graphium/load/*.class
-	rm -f ve/usb/ldc/graphium/berlin/*.class
+	javac $(FLAGS) ve/usb/ldc/graphium/load/*.java
+
+core:
+	rm -f ve/usb/ldc/graphium/core/*.class
+	javac $(FLAGS) ve/usb/ldc/graphium/core/*.java
+
+chrysalis-demo:
 	rm -f ve/usb/ldc/graphium/chrysalis/*.class
+	javac $(FLAGS) ve/usb/ldc/graphium/chrysalis/*.java

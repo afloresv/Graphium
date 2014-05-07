@@ -16,17 +16,27 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.berlin;
+package ve.usb.ldc.graphium.core;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-import ve.usb.ldc.graphium.core.*;
-
-public abstract class ResultTuple implements Comparable<ResultTuple> {
-	public Comparable[] elem;
-	public abstract int compareTo(ResultTuple other);
-	public abstract void print();
-	public abstract void print(int lim);
+public final class GraphiumLoader {
+	public static final GraphRDF open(String path) {
+		GraphRDF g = null;
+		try {
+			Scanner gInfo = new Scanner(new File(path+"graphium.info"));
+			String gdbm = gInfo.next();
+			if (gdbm.equals("Neo4j"))
+				g = new Neo4jRDF(path);
+			else if (gdbm.equals("Sparksee"))
+				g = new SparkseeRDF(path);
+			else throw (new Error("There is something wrong with the DB configuration."));
+		} catch (Exception e) {
+			System.err.println("FileNotFoundException: " + e.getMessage());
+			System.exit(1);
+		}
+		return g;
+	}
 }

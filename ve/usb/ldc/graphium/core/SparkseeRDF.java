@@ -34,14 +34,12 @@ public class SparkseeRDF implements GraphRDF {
 	public int TypeURI, TypeBlankNode, TypeLiteral, TypeEdge;
 	public int AttrURI, AttrBlankNode, AttrLiteral, AttrPredicate,
 		AttrLang, AttrType, AttrBool, AttrInt, AttrDouble, AttrDate;
-	public static String licence = "GP5JB-C09HF-MN7AX-VCQ01";
-	public static Value val = new Value();
+	public Value val = new Value();
 
 	public SparkseeRDF(String path) {
 		try {
+			SparkseeProperties.load("conf/sparksee.cfg");
 			cfg = new SparkseeConfig();
-			cfg.setLicense(licence);
-			cfg.setCacheMaxSize(10240);
 			sparksee = new Sparksee(cfg);
 			db = sparksee.open(path+"/SparkseeDB.gdb", true);
 			sess = db.newSession();

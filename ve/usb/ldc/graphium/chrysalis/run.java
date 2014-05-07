@@ -34,19 +34,13 @@ public class run {
 	public static void main(String[] args) {
 
 		// Checking arguments
-		if (args.length != 2) {
-			System.err.println("Two arguments needed to analize an RDF graph:"
-				+" <GDBM (Sparksee or Neo4j)> <DB location>");
+		if (args.length != 1) {
+			System.err.println("One argument needed to analize an RDF graph:"
+				+" <DB location>");
 			System.exit(1);
 		}
 
-		String gdbm = args[0],
-			path = args[1];
-		if (gdbm.equals("Neo4j"))
-			g = new Neo4jRDF(path);
-		else if (gdbm.equals("Sparksee"))
-			g = new SparkseeRDF(path);
-		else throw (new Error("Wrong GDBM (Neo4j or Sparksee)"));
+		g = GraphiumLoader.open(args[0]);
 
 		Vertex ver, temp;
 		Edge rel;

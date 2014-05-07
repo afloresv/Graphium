@@ -43,10 +43,7 @@ public class Neo4jRDF implements GraphRDF {
 	public Neo4jRDF(String path) {
 		graphDB = new GraphDatabaseFactory().
 			newEmbeddedDatabaseBuilder(path).
-			setConfig(GraphDatabaseSettings.nodestore_mapped_memory_size, "4G").
-			setConfig(GraphDatabaseSettings.relationshipstore_mapped_memory_size, "6G").
-			setConfig(GraphDatabaseSettings.node_auto_indexing, "true").
-			setConfig(GraphDatabaseSettings.relationship_auto_indexing, "true").
+			loadPropertiesFromFile("conf/neo4j.properties").
 			newGraphDatabase();
 		globalOP = GlobalGraphOperations.at(graphDB);
 		indexManager   = graphDB.index();
