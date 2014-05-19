@@ -17,3 +17,7 @@ core:
 chrysalis-demo:
 	rm -f ve/usb/ldc/graphium/chrysalis/*.class
 	javac $(FLAGS) ve/usb/ldc/graphium/chrysalis/*.java
+
+testing:
+	rm -f test/*.class
+	javac $(FLAGS) test/*.java
