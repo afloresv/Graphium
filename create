@@ -12,4 +12,3 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 echo " Done."
-echo " Now use ./chrysalis to analize this graph."
