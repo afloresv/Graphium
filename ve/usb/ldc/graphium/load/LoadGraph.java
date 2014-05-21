@@ -33,11 +33,15 @@ public class LoadGraph {
 			System.exit(1);
 		}
 
+		String path = args[2];
+		if (path.charAt(path.length()-1) != '/')
+			path += "/";
+
 		// Load Process Init
 		if (args[0].equals("Neo4j"))
-			(new LoadNeo4j(args[2])).start(args[1]);
+			(new LoadNeo4j(path)).start(args[1]);
 		else if (args[0].equals("Sparksee"))
-			(new LoadSparksee(args[2])).start(args[1]);
+			(new LoadSparksee(path)).start(args[1]);
 		else {
 			System.err.println("The GDBM argument (first one)"
 				+" must be \"Sparksee\" or \"Neo4j\".");
@@ -47,7 +51,7 @@ public class LoadGraph {
 		// Graphium information
 		try {
 			PrintWriter gInfo;
-			gInfo = new PrintWriter(new FileWriter(args[2]+"graphium.info"));
+			gInfo = new PrintWriter(new FileWriter(path+"graphium.info"));
 			gInfo.println(args[0]);
 			gInfo.close();
 		} catch (Exception e) {

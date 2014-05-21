@@ -26,6 +26,7 @@ public final class GraphiumLoader {
 	public static final GraphRDF open(String path) {
 		GraphRDF g = null;
 		try {
+			if (path.charAt(path.length()-1) != '/') path += "/";
 			Scanner gInfo = new Scanner(new File(path+"graphium.info"));
 			String gdbm = gInfo.next();
 			if (gdbm.equals("Neo4j"))
