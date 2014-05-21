@@ -1,3 +1,18 @@
 #!/bin/bash
 source lib/lib.sh
-java $FLAGS -classpath $LIBS ve.usb.ldc.graphium.chrysalis.run $@
+echo " +-----------------------------+"
+echo " |      Graphium Chrysalis     |"
+echo " | © Universidad Simon Bolivar |"
+echo " +-----------------------------+"
+echo -n " Analizing..."
+mkdir -p log
+java $FLAGS -classpath $LIBS ve.usb.ldc.graphium.chrysalis.run $@ > chrysalis.log 2>> log/Graphium.log
+if [ $? -ne 0 ]; then
+	echo ""
+	echo " Something went wrong... Check log/Graphium.log"
+	exit 1
+fi
+echo " Done."
+echo " Data saved in 'chrysalis.log'"
+echo " Go to graphium.ldc.usb.ve/chrysalis/ to visualize this results."
+echo " Thanks!"
