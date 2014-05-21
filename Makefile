@@ -4,7 +4,7 @@ SPARKSEE = lib/sparkseejava.jar
 LIBS = "./:$(NEO):$(SPARKSEE)"
 FLAGS = -source 6 -nowarn -cp $(LIBS)
 
-all: load core chrysalis-demo
+all: load core traverse chrysalis-demo
 
 load:
 	rm -f ve/usb/ldc/graphium/load/*.class
@@ -13,6 +13,10 @@ load:
 core:
 	rm -f ve/usb/ldc/graphium/core/*.class
 	javac $(FLAGS) ve/usb/ldc/graphium/core/*.java
+
+traverse:
+	rm -f ve/usb/ldc/graphium/traverse/*.class
+	javac $(FLAGS) ve/usb/ldc/graphium/traverse/*.java
 
 chrysalis-demo:
 	rm -f ve/usb/ldc/graphium/chrysalis/*.class
