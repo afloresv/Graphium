@@ -32,7 +32,7 @@ import org.neo4j.tooling.*;
 import org.neo4j.kernel.*;
 import org.neo4j.helpers.collection.*;
 
-public class Neo4jRDF implements GraphRDF {
+public class Neo4jRDF implements Graphium {
 
 	public GraphDatabaseService graphDB;
 	public GlobalGraphOperations globalOP;

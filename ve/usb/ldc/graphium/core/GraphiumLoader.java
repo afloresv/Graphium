@@ -23,8 +23,8 @@ import java.lang.*;
 import java.io.*;
 
 public final class GraphiumLoader {
-	public static final GraphRDF open(String path) {
-		GraphRDF g = null;
+	public static final Graphium open(String path) {
+		Graphium g = null;
 		try {
 			if (path.charAt(path.length()-1) != '/') path += "/";
 			Scanner gInfo = new Scanner(new File(path+"graphium.info"));

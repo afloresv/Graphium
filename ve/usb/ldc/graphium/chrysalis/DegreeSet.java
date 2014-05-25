@@ -26,7 +26,7 @@ import ve.usb.ldc.graphium.core.*;
 
 public class DegreeSet {
 
-	public static GraphRDF g;
+	public static Graphium g;
 
 	public static void main(String[] args) {
 

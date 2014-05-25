@@ -26,7 +26,7 @@ import ve.usb.ldc.graphium.core.*;
 
 public class run {
 
-	public static GraphRDF g;
+	public static Graphium g;
 	public static int[][] ioDegree = new int[51][51];
 	public static int[] inDegree  = new int[10000];
 	public static int[] outDegree = new int[10000];

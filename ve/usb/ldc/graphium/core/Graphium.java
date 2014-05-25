@@ -22,7 +22,7 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public interface GraphRDF {
+public interface Graphium {
 
 	public Vertex getVertexURI(String str);
 	public Vertex getVertexBlankNode(String str);

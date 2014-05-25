@@ -24,7 +24,7 @@ import java.io.*;
 
 import com.sparsity.sparksee.gdb.*;
 
-public class SparkseeRDF implements GraphRDF {
+public class SparkseeRDF implements Graphium {
 
 	public SparkseeConfig cfg;
 	public Sparksee sparksee;
