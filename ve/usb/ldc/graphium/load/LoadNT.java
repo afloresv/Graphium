@@ -33,35 +33,43 @@ public abstract class LoadNT {
 		try {
 			Scanner sc = new Scanner(new File(nt_file));
 			String line,subS,preS;
-			long subN = 0, objN = 0;
+			long subN = 0, objN = 0, lineNumber = 0;
 			
 			while (sc.hasNextLine()) {
 
-				line = sc.nextLine();
-				Scanner in = new Scanner(line);
+				lineNumber++;
+				line = sc.nextLine().trim();
+				int l=0, r, tam=line.length();
+				for (r=l ; r<tam ; r++)
+					if (line.charAt(r)=='>') break;
+				if (r==tam) throw (new Error("Parsing Error at line "+lineNumber+"."));
 
 				// Subject
-				subS = in.next();
+				subS = line.substring(l,++r);
 				if (subS.charAt(0)=='#')
 					continue;
 				else if (tryURI(subS) || tryBlankNode(subS))
 					subN = lastN;
-				else throw (new Error("Parsing Error."));
+				else throw (new Error("Parsing Error at line "+lineNumber+"."));
 
 				// Predicate
-				preS = in.next();
+				l = r;
+				for (r=l ; r<tam ; r++)
+					if (line.charAt(r)=='>') break;
+				if (r==tam) throw (new Error("Parsing Error at line "+lineNumber+"."));
+				preS = line.substring(l,++r).trim();
 
 				// Object
-				if (trimObj(in.nextLine())
+				if (trimObj(line.substring(r))
 					&& (tryURI(objS) || tryBlankNode(objS) || tryLiteral(objS)))
 						objN = lastN;
-				else throw (new Error("Parsing Error."));
+				else throw (new Error("Parsing Error at line "+lineNumber+"."));
 
 				// Relationship
 				if (tryURI(preS,false)) {
 					addRelationship(subN,objN,lastURI);
 					//System.out.println(subS+" "+preS+" "+objS);
-				} else throw (new Error("Parsing Error."));
+				} else throw (new Error("Parsing Error at line "+lineNumber+"."));
 			}
 		} catch (FileNotFoundException fnfe) {
 			System.err.println("Error: " + fnfe.getMessage());
