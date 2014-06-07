@@ -30,12 +30,16 @@ public final class GraphiumLoader {
 			Scanner gInfo = new Scanner(new File(path+"graphium.info"));
 			String gdbm = gInfo.next();
 			if (gdbm.equals("Neo4j"))
-				g = new Neo4jRDF(path);
+				g = new Neo4jRDF(path,gInfo.nextInt(),gInfo.nextInt());
 			else if (gdbm.equals("Sparksee"))
-				g = new SparkseeRDF(path);
-			else throw (new Error("There is something wrong with the DB configuration."));
+				g = new SparkseeRDF(path,gInfo.nextInt(),gInfo.nextInt());
+			else {
+				gInfo.close();
+				throw (new Error("There is something wrong with the DB configuration."));
+			}
+			gInfo.close();
 		} catch (Exception e) {
-			System.err.println("FileNotFoundException: " + e.getMessage());
+			System.err.println("FileNotFoundException: " + e.toString());
 			System.exit(1);
 		}
 		return g;

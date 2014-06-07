@@ -22,10 +22,13 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public interface Graphium {
-
-	public Vertex getVertexURI(String str);
-	public Vertex getVertexBlankNode(String str);
-	public GraphIterator<Vertex> getAllVertex();
-	public void close();
+public abstract class Graphium {
+	
+	protected int V, E;
+	public int V() { return V; }
+	public int E() { return E; }
+	public abstract Vertex getVertexURI(String str);
+	public abstract Vertex getVertexBlankNode(String str);
+	public abstract GraphIterator<Vertex> getAllVertex();
+	public abstract void close();
 }

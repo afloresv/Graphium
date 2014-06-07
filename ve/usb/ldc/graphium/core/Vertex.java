@@ -63,5 +63,6 @@ public abstract class Vertex {
 	}
 	public abstract GraphIterator<Edge> getEdgesOut();
 	public abstract GraphIterator<Edge> getEdgesIn();
-
+	public abstract int getOutDegree();
+	public abstract int getInDegree();
 }

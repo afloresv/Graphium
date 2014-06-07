@@ -38,11 +38,18 @@ public class LoadGraph {
 			path += "/";
 
 		// Load Process Init
-		if (args[0].equals("Neo4j"))
-			(new LoadNeo4j(path)).start(args[1]);
-		else if (args[0].equals("Sparksee"))
-			(new LoadSparksee(path)).start(args[1]);
-		else {
+		int V=0, E=0;
+		if (args[0].equals("Neo4j")) {
+			LoadNeo4j load = new LoadNeo4j(path);
+			load.start(args[1]);
+			V = load.V;
+			E = load.E;
+		} else if (args[0].equals("Sparksee")) {
+			LoadSparksee load = new LoadSparksee(path);
+			load.start(args[1]);
+			V = load.V;
+			E = load.E;
+		} else {
 			System.err.println("The GDBM argument (first one)"
 				+" must be \"Sparksee\" or \"Neo4j\".");
 			System.exit(1);
@@ -53,6 +60,7 @@ public class LoadGraph {
 			PrintWriter gInfo;
 			gInfo = new PrintWriter(new FileWriter(path+"graphium.info"));
 			gInfo.println(args[0]);
+			gInfo.println(V + " " + E);
 			gInfo.close();
 		} catch (Exception e) {
 			System.err.println("FileNotFoundException: " + e.getMessage());

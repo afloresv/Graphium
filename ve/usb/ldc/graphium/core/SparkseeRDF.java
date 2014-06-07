@@ -18,25 +18,27 @@
 
 package ve.usb.ldc.graphium.core;
 
-import java.util.*;
+import java.util.Date;
 import java.lang.*;
 import java.io.*;
 
 import com.sparsity.sparksee.gdb.*;
 
-public class SparkseeRDF implements Graphium {
+public class SparkseeRDF extends Graphium {
 
-	public SparkseeConfig cfg;
-	public Sparksee sparksee;
-	public Database db;
-	public Session sess;
-	public com.sparsity.sparksee.gdb.Graph g;
-	public int TypeURI, TypeBlankNode, TypeLiteral, TypeEdge;
-	public int AttrURI, AttrBlankNode, AttrLiteral, AttrPredicate,
+	private SparkseeConfig cfg;
+	private Sparksee sparksee;
+	private Database db;
+	private Session sess;
+	private com.sparsity.sparksee.gdb.Graph g;
+	private int TypeURI, TypeBlankNode, TypeLiteral, TypeEdge;
+	private int AttrURI, AttrBlankNode, AttrLiteral, AttrPredicate,
 		AttrLang, AttrType, AttrBool, AttrInt, AttrDouble, AttrDate;
-	public Value val = new Value();
+	private Value val = new Value();
 
-	public SparkseeRDF(String path) {
+	public SparkseeRDF(String path, int _V, int _E) {
+		V = _V;
+		E = _E;
 		try {
 			SparkseeProperties.load("conf/sparksee.cfg");
 			cfg = new SparkseeConfig();
@@ -189,6 +191,12 @@ public class SparkseeRDF implements Graphium {
 		}
 		public GraphIterator<Edge> getEdgesIn() {
 			return (new IterEdgeSparksee(g.explode(node_id,TypeEdge,EdgesDirection.Ingoing)));
+		}
+		public int getOutDegree() {
+			return (int)g.degree(node_id,TypeEdge,EdgesDirection.Outgoing);
+		}
+		public int getInDegree() {
+			return (int)g.degree(node_id,TypeEdge,EdgesDirection.Ingoing);
 		}
 		@Override
 		public boolean equals(Object other){

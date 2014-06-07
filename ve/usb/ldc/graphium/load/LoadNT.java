@@ -28,6 +28,7 @@ public abstract class LoadNT {
 	public String objS, lastURI;
 	public static final String xsd = "http://www.w3.org/2001/XMLSchema#";
 	public long lastN;
+	public int V=0, E=0;
 
 	public void start (String nt_file) {
 		try {
@@ -120,10 +121,13 @@ public abstract class LoadNT {
 		
 		if (str.charAt(0)!='\"')
 			return false;
-		int len = str.length(), i;
+		int len = str.length(), i, backSlash=0;
 		for (i=1 ; i<len ; i++) {
-			if (str.charAt(i)=='\"' && str.charAt(i-1)!='\\')
+			if (str.charAt(i)=='\"' && backSlash%2==0)
 				break;
+			else if (str.charAt(i)=='\\')
+				backSlash++;
+			else backSlash=0;
 		}
 		if (i==len) return false;
 		else if (i==len-1) {

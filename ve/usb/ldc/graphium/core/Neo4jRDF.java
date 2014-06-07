@@ -32,19 +32,23 @@ import org.neo4j.tooling.*;
 import org.neo4j.kernel.*;
 import org.neo4j.helpers.collection.*;
 
-public class Neo4jRDF implements Graphium {
+public class Neo4jRDF extends Graphium {
 
-	public GraphDatabaseService graphDB;
-	public GlobalGraphOperations globalOP;
-	public IndexManager indexManager;
-	public Index<Node> indexURI, indexBlankNode;
-	public RelationshipType relType;
+	private GraphDatabaseService graphDB;
+	private GlobalGraphOperations globalOP;
+	private IndexManager indexManager;
+	private Index<Node> indexURI, indexBlankNode;
+	private RelationshipType relType;
+	private Transaction tx;
 
-	public Neo4jRDF(String path) {
+	public Neo4jRDF(String path, int _V, int _E) {
+		V = _V;
+		E = _E;
 		graphDB = new GraphDatabaseFactory().
 			newEmbeddedDatabaseBuilder(path).
 			loadPropertiesFromFile("conf/neo4j.properties").
 			newGraphDatabase();
+		tx = graphDB.beginTx();
 		globalOP = GlobalGraphOperations.at(graphDB);
 		indexManager   = graphDB.index();
 		indexURI       = indexManager.forNodes(Attr.URI);
@@ -66,11 +70,12 @@ public class Neo4jRDF implements Graphium {
 
 	public GraphIterator<Vertex> getAllVertex() {
 		Iterator<Node> itAll = globalOP.getAllNodes().iterator();
-		itAll.next();
 		return (new IterVertexNeo4j(itAll));
 	}
 
 	public void close() {
+		tx.success();
+		tx.close();
 		graphDB.shutdown();
 	}
 
@@ -128,6 +133,12 @@ public class Neo4jRDF implements Graphium {
 		public GraphIterator<Edge> getEdgesIn() {
 			return (new IterEdgeNeo4j(node_id.getRelationships
 				(relType,Direction.INCOMING).iterator()));
+		}
+		public int getOutDegree() {
+			return node_id.getDegree(Direction.OUTGOING);
+		}
+		public int getInDegree() {
+			return node_id.getDegree(Direction.INCOMING);
 		}
 		@Override
 		public boolean equals(Object other) {

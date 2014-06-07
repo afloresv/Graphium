@@ -74,6 +74,7 @@ public class LoadNeo4j extends LoadNT {
 		case 2:
 			pMap = MapUtil.map(AttrStr[indexType],value);
 			newNode = inserter.createNode(pMap);
+			V++;
 			break;
 		default:
 			IndexHits<Long> hitSearch =
@@ -82,6 +83,7 @@ public class LoadNeo4j extends LoadNT {
 				pMap = MapUtil.map(AttrStr[indexType],value);
 				newNode = inserter.createNode(pMap);
 				indexNode[indexType].add(newNode,pMap);
+				V++;
 			} else newNode = hitSearch.getSingle();
 			break;
 		}
@@ -99,6 +101,7 @@ public class LoadNeo4j extends LoadNT {
 	public void addRelationship(long src, long dst, String URI) {
 		pMap = MapUtil.map(Attr.Predicate,URI);
 		inserter.createRelationship(src,dst,TypeEdge,pMap);
+		E++;
 	}
 
 	public void close() {

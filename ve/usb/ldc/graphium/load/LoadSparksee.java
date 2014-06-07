@@ -18,7 +18,7 @@
 
 package ve.usb.ldc.graphium.load;
 
-import java.util.*;
+import java.util.Date;
 import java.lang.*;
 import java.io.*;
 
@@ -36,7 +36,6 @@ public class LoadSparksee extends LoadNT {
 	private int[] NodeType = new int[3];
 	private int[] AttrType = new int[9];
 	private int TypeEdge, AttrEdge;
-	private int E;
 	private Value valdb = new Value();
 
 	public LoadSparksee(String pathDB) {
@@ -48,7 +47,6 @@ public class LoadSparksee extends LoadNT {
 			db = sparksee.create(pathDB+"/SparkseeDB.gdb","SparkseeBD");
 			sess = db.newSession();
 			g = sess.getGraph();
-			E = 0;
 			sess.begin();
 
 			// URI Nodes
@@ -90,11 +88,6 @@ public class LoadSparksee extends LoadNT {
 
 	public long addNode(int indexType, String value) {
 		long newNode;
-		E++;
-		if (E % 100000 == 0) {
-			sess.commit();
-			sess.begin();
-		}
 		switch (indexType) {
 		case 2:
 			newNode = g.newNode(NodeType[2]);
@@ -103,6 +96,7 @@ public class LoadSparksee extends LoadNT {
 			char[] buff = value.toCharArray();
 			valStream.write(buff, buff.length);
 			valStream.close();
+			V++;
 			break;
 		default:
 			newNode = g.findObject(AttrType[indexType],
@@ -111,8 +105,13 @@ public class LoadSparksee extends LoadNT {
 				newNode = g.newNode(NodeType[indexType]);
 				g.setAttribute(newNode, AttrType[indexType],
 					valdb.setString(value));
+				V++;
 			}
 			break;
+		}
+		if (V % 100000 == 0) {
+			sess.commit();
+			sess.begin();
 		}
 		return newNode;
 	}
@@ -135,6 +134,7 @@ public class LoadSparksee extends LoadNT {
 	public void addRelationship(long src, long dst, String URI) {
 		long edgeID = g.newEdge(TypeEdge,src,dst);
 		g.setAttribute(edgeID,AttrEdge,valdb.setString(URI));
+		E++;
 	}
 
 	public void close() {
