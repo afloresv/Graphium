@@ -28,7 +28,7 @@ public final class DenseSubgraph {
 
 	private static HashMap<Vertex,Integer> index;
 	private static int[] degreeIn, degreeOut;
-	private static boolean[] validIn, validOut;
+	private static BitSet validIn, validOut;
 	private static Vertex[] vArray;
 	private static int V, E, S, T;
 
@@ -94,8 +94,8 @@ public final class DenseSubgraph {
 		S = T = V = g.V();
 		E = g.E();
 		index     = new HashMap<Vertex,Integer>();
-		validIn   = new boolean[V];
-		validOut  = new boolean[V];
+		validIn   = new BitSet(V);
+		validOut  = new BitSet(V);
 		degreeIn  = new int[V];
 		degreeOut = new int[V];
 		vArray    = new Vertex[V];
@@ -110,10 +110,10 @@ public final class DenseSubgraph {
 			degreeIn[i]  = v.getInDegree();
 			degreeOut[i] = v.getOutDegree();
 			if (degreeIn[i] > 0)
-				validIn[i] = true;
+				validIn.set(i);
 			else T--;
 			if (degreeOut[i] > 0)
-				validOut[i] = true;
+				validOut.set(i);
 			else S--;
 			i++;
 		}
@@ -134,8 +134,8 @@ public final class DenseSubgraph {
 			if (d > density) {
 				density = d;
 				for (i=0 ; i<V ; i++) {
-					validIn[i]  = degreeIn[i]  > 0;
-					validOut[i] = degreeOut[i] > 0;
+					validIn.set(i,degreeIn[i]>0);
+					validOut.set(i,degreeOut[i]>0);
 				}
 			}
 		}
@@ -151,12 +151,12 @@ public final class DenseSubgraph {
 			Edge rel;
 			Vertex v;
 			for (int i=0 ; i<V ; i++)
-			if (validOut[i]) {
+			if (validOut.get(i)) {
 				it = vArray[i].getEdgesOut();
 				while (it.hasNext()) {
 					rel = it.next();
 					v = rel.getEnd();
-					if (validIn[index.get(v)])
+					if (validIn.get(index.get(v)))
 					subgraph.println(
 						vArray[i].getAny() + " " +
 						rel.getURI() + " " +
