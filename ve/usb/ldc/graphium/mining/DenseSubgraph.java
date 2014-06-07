@@ -121,9 +121,7 @@ public final class DenseSubgraph {
 
 		double density = CalcDensity();
 
-		int h=0;
-		while (h<20 && E!=0) {
-			h++;
+		while (E!=0) {
 			i = OptimumIn();
 			j = OptimumOut();
 			if (degreeIn[i] <= degreeOut[j])
