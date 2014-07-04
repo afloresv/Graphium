@@ -204,12 +204,13 @@ public class SparkseeRDF extends Graphium {
 				return (this.node_id == ((VertexSparksee)other).node_id);
 			return false;
 		}
+		@Override
 		public int hashCode() {
 			return (new Long(this.node_id)).hashCode();
 		}
 	}
 
-	public class EdgeSparksee implements Edge {
+	public class EdgeSparksee extends Edge {
 		private long rel_id;
 		public EdgeSparksee(long _id) {
 			rel_id = _id;
@@ -217,11 +218,21 @@ public class SparkseeRDF extends Graphium {
 		public URI getURI() {
 			return (new URI(g.getAttribute(rel_id,AttrPredicate).getString()));
 		}
-		public Vertex getStart() {
+		protected Vertex start() {
 			return (new VertexSparksee(g.getEdgeData(rel_id).getTail()));
 		}
-		public Vertex getEnd() {
+		protected Vertex end() {
 			return (new VertexSparksee(g.getEdgeData(rel_id).getHead()));
+		}
+		@Override
+		public boolean equals(Object other) {
+			if (other instanceof EdgeSparksee)
+				return (this.rel_id == ((EdgeSparksee)other).rel_id);
+			return false;
+		}
+		@Override
+		public int hashCode() {
+			return (new Long(this.rel_id)).hashCode();
 		}
 	}
 

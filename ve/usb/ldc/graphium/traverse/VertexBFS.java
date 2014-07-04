@@ -16,35 +16,43 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package ve.usb.ldc.graphium.core;
+package ve.usb.ldc.graphium.traverse;
 
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public abstract class Edge {
+import ve.usb.ldc.graphium.core.*;
 
-	public Vertex _s = null,
-	              _e = null;
+public class VertexBFS implements GraphIterator<Vertex> {
 
-	public abstract URI getURI();
-	protected abstract Vertex start();
-	protected abstract Vertex end();
+	LinkedList<Vertex> list;
+	HashSet<Vertex> visited;
 
-	public Vertex getStart() {
-		if (_s!=null) return _s;
-		else return (_s = this.start());
+	public VertexBFS(Vertex src) {
+		list = new LinkedList<Vertex>();
+		list.add(src);
+		visited = new HashSet<Vertex>();
+		visited.add(src);
 	}
-	public Vertex getEnd() {
-		if (_e!=null) return _e;
-		else return (_e = this.end());
+	public boolean hasNext() {
+		return !list.isEmpty();
 	}
-	@Override
-	public String toString() {
-		return (
-			getStart().getAny()
-			+ " " + getURI() + " " +
-			getEnd().getAny()
-		);
+	public Vertex next() {
+		Vertex n = list.poll(), temp;
+		GraphIterator<Edge> it = n.getEdgesOut();
+		while (it.hasNext()) {
+			temp = it.next().getEnd();
+			if (!visited.contains(temp)) {
+				list.add(temp);
+				visited.add(temp);
+			}
+		}
+		it.close();
+		return n;
+	}
+	public void close() {
+		list.clear();
+		visited.clear();
 	}
 }

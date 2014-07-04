@@ -24,32 +24,40 @@ import java.io.*;
 
 import ve.usb.ldc.graphium.core.*;
 
-public class IterBFS implements GraphIterator<Vertex> {
+public class EdgeBFS implements GraphIterator<Edge> {
 
-	LinkedList<Vertex> list;
+	LinkedList<Edge> list;
 	HashSet<Vertex> visited;
 
-	public IterBFS(Vertex src) {
-		list = new LinkedList<Vertex>();
-		list.add(src);
+	public EdgeBFS(Vertex src) {
+		list    = new LinkedList<Edge>();
 		visited = new HashSet<Vertex>();
 		visited.add(src);
+		GraphIterator<Edge> it = src.getEdgesOut();
+		while (it.hasNext()) {
+			Edge e = it.next();
+			list.add(e);
+			visited.add(e.getEnd());
+		}
+		it.close();
 	}
 	public boolean hasNext() {
 		return !list.isEmpty();
 	}
-	public Vertex next() {
-		Vertex n = list.poll(), temp;
-		GraphIterator<Edge> it = n.getEdgesOut();
+	public Edge next() {
+		Edge e = list.poll(), temp;
+		Vertex v;
+		GraphIterator<Edge> it = e.getEnd().getEdgesOut();
 		while (it.hasNext()) {
-			temp = it.next().getEnd();
-			if (!visited.contains(temp)) {
+			temp = it.next();
+			v = temp.getEnd();
+			if (!visited.contains(v)) {
 				list.add(temp);
-				visited.add(temp);
+				visited.add(v);
 			}
 		}
 		it.close();
-		return n;
+		return e;
 	}
 	public void close() {
 		list.clear();

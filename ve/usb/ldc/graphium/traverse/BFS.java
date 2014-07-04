@@ -26,7 +26,11 @@ import ve.usb.ldc.graphium.core.*;
 
 public final class BFS {
 
-	public static final GraphIterator<Vertex> run(Vertex src) {
-		return (new IterBFS(src));
+	public static final GraphIterator<Vertex> vertex(Vertex src) {
+		return (new VertexBFS(src));
+	}
+
+	public static final GraphIterator<Edge> edge(Vertex src) {
+		return (new EdgeBFS(src));
 	}
 }

@@ -146,12 +146,13 @@ public class Neo4jRDF extends Graphium {
 				return (this.node_id.equals(((VertexNeo4j)other).node_id));
 			return false;
 		}
+		@Override
 		public int hashCode() {
 			return this.node_id.hashCode();
 		}
 	}
 
-	public class EdgeNeo4j implements Edge {
+	public class EdgeNeo4j extends Edge {
 		private Relationship rel_id;
 		public EdgeNeo4j(Relationship _id) {
 			rel_id = _id;
@@ -159,11 +160,21 @@ public class Neo4jRDF extends Graphium {
 		public URI getURI() {
 			return (new URI((String)rel_id.getProperty(Attr.Predicate)));
 		}
-		public Vertex getStart() {
+		protected Vertex start() {
 			return (new VertexNeo4j(rel_id.getStartNode()));
 		}
-		public Vertex getEnd() {
+		protected Vertex end() {
 			return (new VertexNeo4j(rel_id.getEndNode()));
+		}
+		@Override
+		public boolean equals(Object other) {
+			if (other instanceof EdgeNeo4j)
+				return (this.rel_id.equals(((EdgeNeo4j)other).rel_id));
+			return false;
+		}
+		@Override
+		public int hashCode() {
+			return this.rel_id.hashCode();
 		}
 	}
 
