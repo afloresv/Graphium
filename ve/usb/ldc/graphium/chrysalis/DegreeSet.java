@@ -27,6 +27,7 @@ import ve.usb.ldc.graphium.core.*;
 public class DegreeSet {
 
 	public static Graphium g;
+	public static String rdftype = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 
 	public static void main(String[] args) {
 
@@ -43,27 +44,20 @@ public class DegreeSet {
 		g = GraphiumLoader.open(args[0]);
 
 		Vertex ver;
-		Edge rel;
-		GraphIterator<Edge> ite;
-		GraphIterator<Vertex> itv;
+		GraphIterator<Vertex> it;
 
-		itv = g.getAllVertex();
-		while (itv.hasNext()) {
+		it = g.getAllVertex();
+		while (it.hasNext()) {
 
-			int count = 0;
-			ver = itv.next();
-			if (in) ite = ver.getEdgesIn();
-			else    ite = ver.getEdgesOut();
-			while (ite.hasNext()) {
-				rel = ite.next();
-				count++;
-			}
-			ite.close();
+			int count;
+			ver = it.next();
+			if (in) count = ver.getInDegree();
+			else    count = ver.getOutDegree();
 
 			if (count >= degree)
 				System.out.println(ver.getAny());
 		}
-		itv.close();
+		it.close();
 		g.close();
 	}
 }
