@@ -1,0 +1,3 @@
+#!/bin/bash
+source lib/lib.sh
+java $FLAGS -classpath $LIBS ve.usb.ldc.graphium.traverse.kHop $@
