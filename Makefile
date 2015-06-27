@@ -4,7 +4,7 @@ SPARKSEE = lib/sparkseejava.jar
 LIBS = "./:$(NEO):$(SPARKSEE)"
 FLAGS = -source 7 -nowarn -cp $(LIBS)
 
-all: load core traverse mining chrysalis-demo
+all: load core traverse mining tools
 
 load:
 	rm -f ve/usb/ldc/graphium/load/*.class
@@ -22,9 +22,9 @@ mining:
 	rm -f ve/usb/ldc/graphium/mining/*.class
 	javac $(FLAGS) ve/usb/ldc/graphium/mining/*.java
 
-chrysalis-demo:
-	rm -f ve/usb/ldc/graphium/chrysalis/*.class
-	javac $(FLAGS) ve/usb/ldc/graphium/chrysalis/*.java
+tools:
+	rm -f ve/usb/ldc/graphium/tools/*.class
+	javac $(FLAGS) ve/usb/ldc/graphium/tools/*.java
 
 testing:
 	rm -f test/*.class

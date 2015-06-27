@@ -5,7 +5,7 @@
 # Test directory #
 ##################
 tests/
-tools/
+extra-tools/
 log/
 
 # Other Files #

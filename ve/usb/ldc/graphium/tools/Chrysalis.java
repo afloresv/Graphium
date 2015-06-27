@@ -24,7 +24,7 @@ import java.io.*;
 
 import ve.usb.ldc.graphium.core.*;
 
-public class run {
+public class Chrysalis {
 
 	public static Graphium g;
 	public static int[][] ioDegree = new int[51][51];
@@ -66,9 +66,6 @@ public class run {
 			else if (ver.isLiteral()) n_Literal++;
 			else if (ver.isBlankNode())  n_BlankNode++;
 
-			adj1.clear();
-			adj2.clear();
-
 			ite = ver.getEdgesOut();
 			while (ite.hasNext()) {
 				rel = ite.next();
@@ -95,10 +92,11 @@ public class run {
 			ioDegree[Math.min(countIn,50)][Math.min(countOut,50)]++;
 			outDegree[Math.min(countOut,9999)]++;
 			inDegree [Math.min(countIn ,9999)]++;
+
+			adj1.clear();
+			adj2.clear();
 		}
 		itv.close();
-
-		g.close();
 
 		int inHindex = -1, outHindex = -1, acumIn = 0, acumOut = 0;
 		for (int i=9999 ; i>=0 && (inHindex<0 || outHindex<0) ; i--) {
@@ -113,20 +111,58 @@ public class run {
 		}
 
 		int n_vertices = n_URI + n_BlankNode + n_Literal;
-		System.out.format("uri=%d%n",n_URI);
-		System.out.format("blanknode=%d%n",n_BlankNode);
-		System.out.format("literal=%d%n",n_Literal);
-		System.out.format("edge=%d%n",n_Edges);
-		System.out.format("predicate=%d%n",predicates.size());
-		System.out.format("in-h-index=%d%n",inHindex);
-		System.out.format("out-h-index=%d%n",outHindex);
-		System.out.format("mutual-edge=%d%n",n_mutual/2);
-
-		System.out.format("io-degree%n");
+		System.out.println("{");
+		System.out.format("\t\"uri\":%d,%n",n_URI);
+		System.out.format("\t\"blanknode\":%d,%n",n_BlankNode);
+		System.out.format("\t\"literal\":%d,%n",n_Literal);
+		System.out.format("\t\"edge\":%d,%n",n_Edges);
+		System.out.format("\t\"predicate\":%d,%n",predicates.size());
+		System.out.format("\t\"in_h_index\":%d,%n",inHindex);
+		System.out.format("\t\"out_h_index\":%d,%n",outHindex);
+		System.out.format("\t\"mutual_edge\":%d,%n",n_mutual/2);
+                             
+		System.out.format("\t\"io_degree\":[%n");
 		for (int i=50 ; i>=0 ; i--) {
+			System.out.print("\t\t[");
 			for (int j=0 ; j<50 ; j++)
 				System.out.print(ioDegree[i][j] + ",");
-			System.out.println(ioDegree[i][50]);
+			System.out.println(ioDegree[i][50] + "]" + (i==0 ? "" : ","));
 		}
+		System.out.println("\t],");
+
+		int count;
+		itv = g.getAllVertex();
+		while (itv.hasNext()) {
+			ver = itv.next();
+			count = ver.getInDegree();
+			if (count >= inHindex) adj1.add(ver);
+			count = ver.getOutDegree();
+			if (count >= outHindex) adj2.add(ver);
+		}
+		itv.close();
+
+		RDFobject obj;
+		String sep = "[";
+		System.out.print("\t\"in_h_set\":");
+		for (Vertex v : adj1) {
+			if      (v.isURI()) obj = v.getURI();
+			else if (v.isLiteral()) obj = v.getLiteral();
+			else obj = v.getBlankNode();
+			System.out.print(sep + "\"" + obj + "\"");
+			sep = ",";
+		}
+		System.out.println("],");
+		sep = "[";
+		System.out.print("\t\"out_h_set\":");
+		for (Vertex v : adj2) {
+			if      (v.isURI()) obj = v.getURI();
+			else if (v.isLiteral()) obj = v.getLiteral();
+			else obj = v.getBlankNode();
+			System.out.print(sep + "\"" + obj + "\"");
+			sep = ",";
+		}
+		System.out.println("]");
+		System.out.println("}");
+		g.close();
 	}
 }
